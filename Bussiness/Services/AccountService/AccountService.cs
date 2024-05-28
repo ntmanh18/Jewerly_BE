@@ -1,4 +1,5 @@
-﻿using Bussiness.Services.AuthenticateService;
+﻿using Bussiness.Security;
+using Bussiness.Services.AuthenticateService;
 using Data.Model.AuthenticateModel;
 using Data.Model.ResultModel;
 using Data.Repository.UserRepo;
@@ -40,7 +41,9 @@ namespace Bussiness.Services.AccountService
                     res.Message = "Ban khong co quyen truy cap";
                     return res;
                 }
-                if (existedUser.Password != user.password)
+                bool isMatch = HashPass.VerifyPassword(user.password, existedUser.Password);
+
+                if (isMatch == false)
                 {
                     res.IsSuccess = false;
                     res.Code = 400;
@@ -75,6 +78,10 @@ namespace Bussiness.Services.AccountService
                 res.Message = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return res;
+        }
+        bool IAccountService.IsValidRole(string userRole, List<int> validRole)
+        {
+            return validRole.Any(role => role.ToString() == userRole);
         }
     }
 }

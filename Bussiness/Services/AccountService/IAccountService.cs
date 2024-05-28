@@ -11,5 +11,7 @@ namespace Bussiness.Services.AccountService
     public interface IAccountService
     {
         public Task<ResultModel> LoginService(UserLoginReqModel user);
+        public bool IsValidRole(string userRole, List<int> validRole);
+
     }
 }

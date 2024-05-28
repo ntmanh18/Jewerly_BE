@@ -1,0 +1,15 @@
+﻿using Data.Model.ResultModel;
+using Data.Model.UserModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bussiness.Services.UserService
+{
+    public interface IUserService
+    {
+        Task<ResultModel> CreateUser(string token, CreateUserReqModel model);
+    }
+}

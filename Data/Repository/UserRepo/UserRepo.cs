@@ -17,9 +17,14 @@ namespace Data.Repository.UserRepo
             _context = context;
         }
 
+
         public async Task<List<User>> GetAllUser()
         {
             return await _context.Users.ToListAsync();
+        }
+        public async Task<User> GetByIdAsync(string id)
+        {
+            return  _context.Users.FirstOrDefault(c=>c.UserId == id);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)

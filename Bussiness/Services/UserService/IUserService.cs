@@ -11,5 +11,6 @@ namespace Bussiness.Services.UserService
     public interface IUserService
     {
         Task<ResultModel> CreateUser(string token, CreateUserReqModel model);
+        Task<ResultModel> UpdateUser(string token, UpdateUserReqModel model);
     }
 }

@@ -10,8 +10,12 @@ namespace Data.Repository.UserRepo
 {
     public interface IUserRepo :IRepository<User>
     {
-        public Task<User?> GetByUsernameAsync(string username);
+        public Task<User> GetByUsernameAsync(string username);
+
         public Task<List<User>> GetAllUser();
+
+        public Task<User> GetByIdAsync(string id);
+
 
     }
 }

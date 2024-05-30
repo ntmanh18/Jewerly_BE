@@ -25,5 +25,15 @@ namespace API.Controllers
             var res = await _userService.CreateUser(token,userModel);
             return StatusCode(res.Code, res);
         }
+
+        [Route("update-user")]
+        [HttpPost]
+
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserReqModel userModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _userService.UpdateUser(token,userModel);
+            return StatusCode(res.Code, res);
+        }
     }
 }

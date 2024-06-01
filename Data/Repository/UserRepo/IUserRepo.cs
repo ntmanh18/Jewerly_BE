@@ -15,6 +15,7 @@ namespace Data.Repository.UserRepo
         public Task<List<User>> GetAllUser();
 
         public Task<User> GetByIdAsync(string id);
+        public Task<List<User>> GetAllUserQuery();
 
 
     }

@@ -22,6 +22,27 @@ namespace Data.Repository.UserRepo
         {
             return await _context.Users.ToListAsync();
         }
+
+        public async Task<List<User>> GetAllUserQuery()
+        {
+            return await _context.Users.Select(
+                u => new User
+                {
+                    UserId = u.UserId,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Role = u.Role,
+                    FullName = u.FullName,
+                    DoB = u.DoB,
+                    Phone = u.Phone,
+                    Address = u.Address,
+                    Status = u.Status
+
+                }).AsQueryable().ToListAsync();   
+                
+                ;
+        }
+
         public async Task<User> GetByIdAsync(string id)
         {
             return  _context.Users.FirstOrDefault(c=>c.UserId == id);

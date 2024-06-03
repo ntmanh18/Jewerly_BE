@@ -23,6 +23,7 @@ namespace API.Controllers
         public async Task<ActionResult> GetProducts()
         {
             
+
             var result = await _productService.GetProducts();
             return Ok(result.ToList());
         }

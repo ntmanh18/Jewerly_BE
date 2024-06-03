@@ -34,6 +34,7 @@ namespace Bussiness.Services.CustomerService
             )
         {
             
+
             _token = token;
             _authentocateService = authenticateService;
             _accountService = accountService;
@@ -43,6 +44,7 @@ namespace Bussiness.Services.CustomerService
         public async Task<ResultModel> CreateCustomer(string? token, CustomerCreateModel customerModel)
         {
             
+
 
             var resultModel = new ResultModel
             {

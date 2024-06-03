@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Route("api/controller")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthorizeController : Controller
     {
@@ -13,13 +14,13 @@ namespace API.Controllers
         public AuthorizeController(IAccountService accountService)
         {
             _accountService = accountService;   
+            _accountService = accountService;
         }
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginReqModel user)
         {
             ResultModel resultModel = await _accountService.LoginService(user);
-            return resultModel.IsSuccess ? Ok(resultModel) : BadRequest(resultModel);
         }
     }
 }

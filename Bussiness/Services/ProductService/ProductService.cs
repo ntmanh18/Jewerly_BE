@@ -31,12 +31,14 @@ namespace Bussiness.Services.ProductService
             IAccountService accountService)
         {
             
+
             _productRepo = productRepo;
             _token = token;
             _authentocateService = authenticateService;
             _accountService = accountService;
         }
         
+
 
         public async Task<IEnumerable<ProductRequestModel>> GetProducts()
         {
@@ -63,6 +65,7 @@ namespace Bussiness.Services.ProductService
 
             }
             
+
             return updatedProducts;
         }
 
@@ -112,6 +115,7 @@ namespace Bussiness.Services.ProductService
 
 
             
+
             if (String.IsNullOrEmpty(name))
             {
                 resultModel.Code = 200;
@@ -133,6 +137,7 @@ namespace Bussiness.Services.ProductService
                     resultModel.Message = "Not found";
                 }
                 
+
                 resultModel.Data = updatedProducts2;
             }
             return resultModel;
@@ -179,6 +184,7 @@ namespace Bussiness.Services.ProductService
 
             }
             
+
             if (String.IsNullOrEmpty(productId))
             {
                 resultModel.Code = 200;
@@ -214,6 +220,7 @@ namespace Bussiness.Services.ProductService
             return resultModel;
 
             }
+        }
 
         public async Task<ResultModel> UpdateProduct(string? token, ProductRequestModel productModel)
         {
@@ -278,6 +285,7 @@ namespace Bussiness.Services.ProductService
         }
 
         
+
         private string RemoveDiacritics(string text)
         {
             var stringBuilder = new StringBuilder();
@@ -303,6 +311,7 @@ namespace Bussiness.Services.ProductService
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }   
+        }
         public static bool IsNumber(string input)
         {
             return Regex.IsMatch(input, @"^\d+(\.\d+)?$");

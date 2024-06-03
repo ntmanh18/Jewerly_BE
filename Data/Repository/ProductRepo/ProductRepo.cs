@@ -21,6 +21,7 @@ namespace Data.Repository.ProductRepo
         {
             var products = await _context.Products.ToListAsync();
             return products;
+
         }
         public async Task<IEnumerable<Product>> GetProductsByName()
         {
@@ -31,7 +32,7 @@ namespace Data.Repository.ProductRepo
         {
             return await _context.Products.ToListAsync();
         }
-        
+
         public async Task<Product> UpdateProduct(Product productUpdate)
         {
             try
@@ -44,10 +45,11 @@ namespace Data.Repository.ProductRepo
             {
 
                 throw new Exception(ex.Message);
+
+
             }
 
-        }
 
-        
+        }
     }
 }

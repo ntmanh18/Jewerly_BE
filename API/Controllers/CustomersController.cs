@@ -1,6 +1,7 @@
 ﻿using Bussiness.Services.CustomerService;
 using Data.Entities;
 using Data.Model.CustomerModel;
+using Data.Model.ProductModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,14 @@ namespace API.Controllers
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _customerService.GetCustomerByPhone(token, phone);
+            return StatusCode(res.Code, res);
+        }
+
+        [HttpPut("customerIdUpdate")]
+        public async Task<ActionResult> UpdateProduct(CustomerUpdateModel customerUpdate)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _customerService.UpdateCustomer(token, customerUpdate);
             return StatusCode(res.Code, res);
         }
     }

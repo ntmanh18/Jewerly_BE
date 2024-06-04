@@ -36,5 +36,44 @@ namespace Data.Repository.CustomerRepo
         {
             return await _context.Customers.ToListAsync();
         }
+
+        public async Task<IEnumerable<Customer>> GetCustomerById()
+        {
+            return await _context.Customers.ToListAsync();
+        }
+        public async Task<Customer> UpdateCustomer(Customer customerUpdate)
+        {
+            try
+            {
+                _context.Update(customerUpdate);
+                await _context.SaveChangesAsync();
+                return customerUpdate;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
+        //public async Task<Customer> DeactiveCustomer(Customer customerDeactive)
+        //{
+        //    try
+        //    {
+        //        _context.Update(customerDeactive);
+        //        await _context.SaveChangesAsync();
+        //        return customerDeactive;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw new Exception(ex.Message);
+        //    }
+
+        //}
+        //public async Task<Customer> GetCustomerById(string customerId)
+        //{
+        //    return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
+        //}
     }
 }

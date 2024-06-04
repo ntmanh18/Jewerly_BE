@@ -11,6 +11,7 @@ namespace Data.Repository.CustomerRepo
     {
         public Task CreateCustomer(Customer customerFilter);
         public Task<IEnumerable<Customer>> GetCustomers();
-
+        Task<IEnumerable<Customer>> GetCustomersByName();
+        Task<IEnumerable<Customer>> GetCustomerByPhone();
     }
 }

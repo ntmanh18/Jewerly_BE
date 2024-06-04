@@ -13,5 +13,7 @@ namespace Bussiness.Services.CustomerService
     {
         public Task<ResultModel> CreateCustomer(string token, CustomerCreateModel customerModel);
         public Task<IEnumerable<CustomerViewModel>> GetCustomers();
+        Task<ResultModel> GetCustomersByName(string? token, string name);
+        Task<ResultModel> GetCustomerByPhone(string? token, string phone);
     }
 }

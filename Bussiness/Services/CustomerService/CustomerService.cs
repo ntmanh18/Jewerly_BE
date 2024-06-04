@@ -10,6 +10,7 @@ using Data.Repository.UserRepo;
 using RTools_NTS.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -145,6 +146,157 @@ namespace Bussiness.Services.CustomerService
 
             return updatedCustomers;
         }
+
+        public async Task<ResultModel> GetCustomersByName(string? token, string name)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            //var products = await _productRepo.GetProducts();
+            IEnumerable<Customer> customers = await _customerRepo.GetCustomers();
+            List<CustomerViewModel> updatedCustomers = new List<CustomerViewModel>();
+            foreach (var customer in customers)
+            {
+                CustomerViewModel customer1 = new CustomerViewModel
+                {
+                    CustomerId = customer.CustomerId,
+                    FullName = customer.FullName,
+                    DoB = customer.DoB,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    Phone = customer.Phone,
+                    Point = customer.Point,
+                    Rate = customer.Rate,
+                };
+                updatedCustomers.Add(customer1);
+
+            }
+
+            IEnumerable<CustomerViewModel> updatedCustomers2 = updatedCustomers;
+
+
+
+            if (String.IsNullOrEmpty(name))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any product name";
+                resultModel.Data = updatedCustomers2;
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                updatedCustomers2 = updatedCustomers2.Where(c => RemoveDiacritics(c.FullName).ToLower().Contains(RemoveDiacritics(name).ToLower()));
+                if (updatedCustomers2.Count() > 0)
+                {
+                    resultModel.Message = $"Success - There are {customers.Count()} found";
+                }
+                else
+                {
+                    resultModel.Message = "Not found";
+                }
+
+                resultModel.Data = updatedCustomers2;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetCustomerByPhone(string? token, string phone)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+
+            IEnumerable<Customer> customers = await _customerRepo.GetCustomers();
+            List<CustomerViewModel> updatedCustomers = new List<CustomerViewModel>();
+            foreach (var customer in customers)
+            {
+                CustomerViewModel customer1 = new CustomerViewModel
+                {
+                    CustomerId = customer.CustomerId,
+                    FullName = customer.FullName,
+                    DoB = customer.DoB,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    Phone = customer.Phone,
+                    Point = customer.Point,
+                    Rate = customer.Rate,
+                };
+                updatedCustomers.Add(customer1);
+
+            }
+
+            if (String.IsNullOrEmpty(phone))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any phone number";
+
+            }
+            else if(!IsPhoneNumber(phone)){
+                resultModel.IsSuccess = false;
+                resultModel.Code = 400;
+                resultModel.Message = "Wrong Phone Type";
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+
+                for (int i = 0; i < updatedCustomers.Count; i++)
+                {
+                    if (updatedCustomers[i].Phone != phone)
+                    {
+                        updatedCustomers.RemoveAll(c => c.Phone == updatedCustomers[i].Phone);
+                        i = i - 1;
+                    }
+
+                }
+                if (updatedCustomers.Count() > 0)
+                {
+                    resultModel.Message = "Product found";
+                }
+                else
+                {
+                    resultModel.Message = "Not found";
+                }
+                IEnumerable<CustomerViewModel> updatedCustomers2 = updatedCustomers;
+                resultModel.Data = updatedCustomers2;
+            }
+            return resultModel;
+
+        }
         private static bool IsValid(string email)
         {
             var valid = true;
@@ -170,6 +322,32 @@ namespace Bussiness.Services.CustomerService
             int randomNumber = _random.Next(0, 10000);
             string numberPart = randomNumber.ToString("D5");
             return "C" + numberPart;
+        }
+
+        private string RemoveDiacritics(string text)
+        {
+            var stringBuilder = new StringBuilder();
+            try
+            {
+                var normalizedString = text.Normalize(NormalizationForm.FormD);
+
+
+                foreach (var c in normalizedString)
+                {
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(c);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

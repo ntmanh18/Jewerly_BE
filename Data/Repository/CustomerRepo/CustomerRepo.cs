@@ -27,5 +27,14 @@ namespace Data.Repository.CustomerRepo
             var customers = await _context.Customers.ToListAsync();
             return customers;
         }
+
+        public async Task<IEnumerable<Customer>> GetCustomersByName()
+        {
+            return await _context.Customers.ToListAsync();
+        }
+        public async Task<IEnumerable<Customer>> GetCustomerByPhone()
+        {
+            return await _context.Customers.ToListAsync();
+        }
     }
 }

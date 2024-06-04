@@ -10,5 +10,7 @@ namespace Data.Repository.CustomerRepo
     public interface ICustomerRepo
     {
         public Task CreateCustomer(Customer customerFilter);
+        public Task<IEnumerable<Customer>> GetCustomers();
+
     }
 }

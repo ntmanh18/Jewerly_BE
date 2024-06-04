@@ -27,7 +27,7 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddBusiness().AddRepository(builder.Configuration);
+builder.Services.AddBusiness().AddRepository(builder.Configuration);
 
 builder.Services.AddDbContext<JewerlyV6Context>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB"));

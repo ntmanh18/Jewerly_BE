@@ -3,6 +3,7 @@ using Bussiness.Services.AuthenticateService;
 using Bussiness.Services.TokenService;
 using Data.Entities;
 using Data.Model.CustomerModel;
+using Data.Model.ProductModel;
 using Data.Model.ResultModel;
 using Data.Repository.CustomerRepo;
 using Data.Repository.UserRepo;
@@ -117,6 +118,32 @@ namespace Bussiness.Services.CustomerService
                 throw new Exception(ex.Message);
             }
             return resultModel;
+        }
+
+        public async Task<IEnumerable<CustomerViewModel>> GetCustomers()
+        {
+
+            var customers = await _customerRepo.GetCustomers();
+            List<CustomerViewModel> updatedCustomers = new List<CustomerViewModel>();
+
+            foreach (var customer in customers)
+            {
+                CustomerViewModel customer1 = new CustomerViewModel
+                {
+                    CustomerId = customer.CustomerId,
+                    FullName = customer.FullName,
+                    DoB = customer.DoB,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    Phone = customer.Phone,
+                    Point = customer.Point,
+                    Rate = customer.Rate,
+                };
+                updatedCustomers.Add(customer1);
+
+            }
+
+            return updatedCustomers;
         }
         private static bool IsValid(string email)
         {

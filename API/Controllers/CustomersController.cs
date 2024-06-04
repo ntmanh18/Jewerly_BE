@@ -29,5 +29,13 @@ namespace API.Controllers
             //var result = await _customerService.CreateCustomer(customerModel);
             //return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProducts()
+        {
+
+            var result = await _customerService.GetCustomers();
+            return Ok(result.ToList());
+        }
     }
 }

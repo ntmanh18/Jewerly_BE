@@ -1,5 +1,6 @@
 ﻿using Data.Entities;
 using Data.Repository.GenericRepo;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,12 @@ namespace Data.Repository.CustomerRepo
         {
             await _context.AddAsync(customerFilter);
             _context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Customer>> GetCustomers()
+        {
+            var customers = await _context.Customers.ToListAsync();
+            return customers;
         }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using Bussiness.Services.AccountService;
 using Bussiness.Services.AuthenticateService;
+
 using Bussiness.Services.CustomerService;
+using Bussiness.Services.GemService;
 using Bussiness.Services.ProductService;
+
+
 using Bussiness.Services.TokenService;
 using Bussiness.Services.UserService;
 using Bussiness.Services.Validate;
@@ -19,9 +23,15 @@ namespace Bussiness
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserValidate, UserValidate>();
             services.AddScoped<IToken,TokenService>();
+
+         
+            
+
             services.AddScoped<IToken, TokenService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IGemService, GemService>();
+
 
             return services;
         }

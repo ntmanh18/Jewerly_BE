@@ -1,24 +1,21 @@
-﻿using Data.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Model.UserModel
+namespace Data.Model.CustomerModel
 {
-    public class CreateUserReqModel
+    public class CustomerCreateModel
     {
-        public int Role { get; set; }
-
         public string FullName { get; set; } = null!;
 
         public DateTime DoB { get; set; }
 
-        public string Phone { get; set; } = null!;
-
         public string Address { get; set; } = null!;
 
+        public string Email { get; set; } = null!;
 
+        public string Phone { get; set; } = null!;
     }
 }

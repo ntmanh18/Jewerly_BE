@@ -220,7 +220,7 @@ namespace Bussiness.Services.ProductService
             return resultModel;
 
             }
-        }
+        
 
         public async Task<ResultModel> UpdateProduct(string? token, ProductRequestModel productModel)
         {
@@ -311,7 +311,7 @@ namespace Bussiness.Services.ProductService
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }   
-        }
+        
         public static bool IsNumber(string input)
         {
             return Regex.IsMatch(input, @"^\d+(\.\d+)?$");

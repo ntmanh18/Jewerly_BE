@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Bussiness.Services.AuthenticateService
 {
     public class AuthenticateService :IAuthenticateService
-    public class AuthenticateService : IAuthenticateService
+ 
     {
         private readonly JwtSecurityTokenHandler _tokenHandler;
         private readonly IConfiguration _config;

@@ -13,7 +13,6 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services
     .AddBusiness()
     .AddRepository(builder.Configuration);
@@ -28,15 +27,9 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddBusiness().AddRepository(builder.Configuration);
-
-builder.Services.AddDbContext<JewerlyV6Context>(options => {
+//builder.Services.AddBusiness().AddRepository(builder.Configuration);
 builder.Services.AddDbContext<JewerlyV6Context>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB"));
-    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-});
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB")));
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 builder.Services.AddCors(options =>
 {
@@ -46,8 +39,6 @@ builder.Services.AddCors(options =>
                           policy.AllowAnyOrigin()
                           .AllowAnyHeader()
                           .AllowAnyMethod();
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
                       });
 });
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -104,10 +95,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-// Apply the CORS policy
-app.UseCors("AllowAll");
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

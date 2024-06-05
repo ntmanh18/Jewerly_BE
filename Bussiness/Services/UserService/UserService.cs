@@ -61,7 +61,7 @@ namespace Bussiness.Services.UserService
                 res.Message = "Old password is wrong";
                 return res;
             }
-            try {
+          
             try
             {
 
@@ -85,6 +85,7 @@ namespace Bussiness.Services.UserService
 
 
         }
+            
 
         public async Task<ResultModel> CreateUser(string token, CreateUserReqModel model)
         {
@@ -228,7 +229,7 @@ namespace Bussiness.Services.UserService
 
                 return res;
             }
-            if(!(model.Role ==1 || model.Role ==2 || model.Role == 3)) {
+            
             if (!(model.Role == 1 || model.Role == 2 || model.Role == 3))
             {
 
@@ -294,7 +295,7 @@ namespace Bussiness.Services.UserService
                 return res;
             }
             var existingUser =await _userRepo.GetByIdAsync(decodeModel.userid);
-            var existingUser = await _userRepo.GetByIdAsync(decodeModel.userid);
+            
             if (existingUser == null)
             {
                 return new ResultModel
@@ -341,7 +342,7 @@ namespace Bussiness.Services.UserService
                     Message = "Update successfully!",
                 };
             }
-            catch (Exception ex) {
+           
             catch (Exception ex)
             {
                 return new ResultModel

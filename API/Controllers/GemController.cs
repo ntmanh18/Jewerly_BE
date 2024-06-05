@@ -37,6 +37,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
         [HttpPut("createGem")]
+        [HttpPost("createGem")]
         public async Task<ActionResult> CreateGem(CreateGemModel creategem)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];

@@ -17,6 +17,8 @@ public partial class Cashier
 
     public string UserId { get; set; } = null!;
 
+    public int? Status { get; set; }
+
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
     public virtual User User { get; set; } = null!;

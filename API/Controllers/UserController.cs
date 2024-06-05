@@ -21,9 +21,12 @@ namespace API.Controllers
         [HttpPost]
         
         public async Task<IActionResult> CreateUser([FromBody]CreateUserReqModel userModel)
+
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserReqModel userModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.CreateUser(token,userModel);
+            var res = await _userService.CreateUser(token, userModel);
             return StatusCode(res.Code, res);
         }
 
@@ -34,6 +37,7 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.UpdateUser(token,userModel);
+            var res = await _userService.UpdateUser(token, userModel);
             return StatusCode(res.Code, res);
         }
 
@@ -43,6 +47,7 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.DeactiveUser(token,new DeactiveUserReqModel { UserId = userId });
+            var res = await _userService.DeactiveUser(token, new DeactiveUserReqModel { UserId = userId });
             return StatusCode(res.Code, res);
         }
 
@@ -52,6 +57,7 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.UpdateRole(token,model);
+            var res = await _userService.UpdateRole(token, model);
             return StatusCode(res.Code, res);
         }
 
@@ -62,6 +68,7 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res  = await _userService.ViewUserList(token,query);
+            var res = await _userService.ViewUserList(token, query);
             return StatusCode(res.Code, res);
         }
 
@@ -71,6 +78,7 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.ChangePassword(token,model);
+            var res = await _userService.ChangePassword(token, model);
             return StatusCode(res.Code, res);
         }
     }

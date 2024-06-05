@@ -43,7 +43,10 @@ public partial class JewerlyV6Context : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=Jewerly_v6;User ID=sa;Password=12345;Trust Server Certificate=True", x => x.UseNetTopologySuite());
+
+        => optionsBuilder.UseSqlServer("Server=NTMANHHH\\SQLEXPRESS;uid=sa;pwd=12345;database=Jewerly_v6;TrustServerCertificate=True;", x => x.UseNetTopologySuite());
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Bill>(entity =>
@@ -60,9 +63,11 @@ public partial class JewerlyV6Context : DbContext
                 .IsUnicode(false)
                 .HasColumnName("CashierID");
             entity.Property(e => e.CustomerCustomerId)
+            entity.Property(e => e.CustomerId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("CustomerCustomerID");
+                .IsUnicode(false);
             entity.Property(e => e.PublishDay).HasColumnType("datetime");
             entity.Property(e => e.VoucherVoucherId)
                 .HasMaxLength(10)
@@ -72,6 +77,10 @@ public partial class JewerlyV6Context : DbContext
                 .HasForeignKey(d => d.CashierId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Cashier_Bill");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Bills)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("FK_Bill_Customer");
 
             entity.HasOne(d => d.VoucherVoucher).WithMany(p => p.Bills)
                 .HasForeignKey(d => d.VoucherVoucherId)
@@ -89,6 +98,7 @@ public partial class JewerlyV6Context : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.EndCash).HasColumnType("datetime");
             entity.Property(e => e.StartCash).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasDefaultValue(1);
             entity.Property(e => e.UserId)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -128,6 +138,7 @@ public partial class JewerlyV6Context : DbContext
             entity.Property(e => e.Rate)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Status).HasDefaultValue(true);
         });
 
         modelBuilder.Entity<Discount>(entity =>
@@ -345,6 +356,7 @@ public partial class JewerlyV6Context : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Password)
                 .HasMaxLength(20)
+                .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(10)

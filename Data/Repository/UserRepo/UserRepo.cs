@@ -41,11 +41,15 @@ namespace Data.Repository.UserRepo
                 }).AsQueryable().ToListAsync();   
                 
                 ;
+                }).AsQueryable().ToListAsync();
+
+            ;
         }
 
         public async Task<User> GetByIdAsync(string id)
         {
             return  _context.Users.FirstOrDefault(c=>c.UserId == id);
+            return _context.Users.FirstOrDefault(c => c.UserId == id);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)

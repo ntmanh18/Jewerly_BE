@@ -19,6 +19,7 @@ namespace Bussiness
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserValidate, UserValidate>();
             services.AddScoped<IToken,TokenService>();
+            services.AddScoped<IToken, TokenService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IProductService, ProductService>();
 

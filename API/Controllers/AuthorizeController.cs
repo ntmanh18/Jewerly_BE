@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/controller")]
     
     [Route("api/[controller]")]
     [ApiController]
@@ -15,8 +14,6 @@ namespace API.Controllers
         public AuthorizeController(IAccountService accountService)
         {
             _accountService = accountService;   
-            _accountService = accountService;
-            
         }
         [HttpPost]
         [Route("login")]

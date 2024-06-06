@@ -51,8 +51,6 @@ namespace Bussiness.Services.ProductService
             {
                 ProductRequestModel productAll = null;
 
-                var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
-                ProductRequestModel product1 = new ProductRequestModel
                     foreach (var productGem in product.ProductGems)
                     {
                             var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
@@ -78,8 +76,6 @@ namespace Bussiness.Services.ProductService
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
-                    Material = product.Material,
-                    Material = gold,
                     Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
@@ -88,10 +84,7 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                 };
-                updatedProducts.Add(product1);
 
-            }
-            
                 if(productAll != null){
                     updatedProducts.Add(productAll);
                 }
@@ -132,7 +125,6 @@ namespace Bussiness.Services.ProductService
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
             foreach (var product in products)
             {
-                ProductRequestModel product1 = new ProductRequestModel
                 ProductRequestModel productAll = null;
 
                 foreach (var productGem in product.ProductGems)
@@ -160,7 +152,6 @@ namespace Bussiness.Services.ProductService
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
-                    Material = product.Material,
                     Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
@@ -169,7 +160,6 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                 };
-                updatedProducts.Add(product1);
 
                 if (productAll != null)
                 {

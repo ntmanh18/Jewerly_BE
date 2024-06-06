@@ -209,6 +209,7 @@ namespace Bussiness.Services.CustomerService
                 if (updatedCustomers2.Count() > 0)
                 {
                     resultModel.Message = $"Success - There are {customers.Count()} found";
+                    resultModel.Message = $"Success - There are {updatedCustomers2.Count()} found";
                 }
                 else
                 {

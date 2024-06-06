@@ -113,6 +113,7 @@ namespace Bussiness.Services.ProductService
                 
             }
 
+
             return updatedProducts;
         }
 
@@ -520,6 +521,5 @@ namespace Bussiness.Services.ProductService
         {
             return await _productRepo.GetGoldById(goldId);
         }
-        
     }
 }

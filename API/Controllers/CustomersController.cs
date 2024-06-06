@@ -65,5 +65,13 @@ namespace API.Controllers
             var res = await _customerService.UpdateCustomer(token, customerUpdate);
             return StatusCode(res.Code, res);
         }
+
+        [HttpPut("deactivate")]
+        public async Task<ActionResult<Product>> DeactiveCustomer(string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _customerService.DeactiveCustomer(token, id);
+            return StatusCode(res.Code, res);
+        }
     }
 }

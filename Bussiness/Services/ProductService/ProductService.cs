@@ -49,15 +49,38 @@ namespace Bussiness.Services.ProductService
 
             foreach (var product in products)
             {
+                ProductRequestModel productAll = null;
 
                 var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
                 ProductRequestModel product1 = new ProductRequestModel
+                    foreach (var productGem in product.ProductGems)
+                    {
+                            var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                            ProductRequestModel product1 = new ProductRequestModel
+                            {
+                            ProductId = productGem.GemGem.Name,
+                            ProductName = product.ProductName,
+                            Category = product.Category,
+                            Material = gold,
+                            Weight = product.Weight,
+                            MachiningCost = product.MachiningCost,
+                            Size = product.Size,
+                            Amount = product.Amount,
+                            Desc = product.Desc,
+                            Image = product.Image,
+                            };
+                    productAll = product1;
+                    }
+
+                var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                ProductRequestModel product2 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
                     Material = product.Material,
                     Material = gold,
+                    Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -69,7 +92,17 @@ namespace Bussiness.Services.ProductService
 
             }
             
+                if(productAll != null){
+                    updatedProducts.Add(productAll);
+                }
+                else
+                {
+                    updatedProducts.Add(product2);
+                }
+                    
 
+                
+            }
 
             return updatedProducts;
         }
@@ -100,11 +133,35 @@ namespace Bussiness.Services.ProductService
             foreach (var product in products)
             {
                 ProductRequestModel product1 = new ProductRequestModel
+                ProductRequestModel productAll = null;
+
+                foreach (var productGem in product.ProductGems)
+                {
+                    var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                    ProductRequestModel product1 = new ProductRequestModel
+                    {
+                        ProductId = productGem.GemGem.Name,
+                        ProductName = product.ProductName,
+                        Category = product.Category,
+                        Material = gold,
+                        Weight = product.Weight,
+                        MachiningCost = product.MachiningCost,
+                        Size = product.Size,
+                        Amount = product.Amount,
+                        Desc = product.Desc,
+                        Image = product.Image,
+                    };
+                    productAll = product1;
+                }
+
+                var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                ProductRequestModel product2 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
                     Material = product.Material,
+                    Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -113,6 +170,17 @@ namespace Bussiness.Services.ProductService
                     Image = product.Image,
                 };
                 updatedProducts.Add(product1);
+
+                if (productAll != null)
+                {
+                    updatedProducts.Add(productAll);
+                }
+                else
+                {
+                    updatedProducts.Add(product2);
+                }
+
+
 
             }
 

@@ -14,7 +14,7 @@ namespace Data.Repository.ProductRepo
         Task<IEnumerable<Product>> GetProductsByName();
         Task<IEnumerable<Product>> GetProductById();
         public Task<Product> UpdateProduct(Product productUpdate);
-
+        public Task<Gold> GetGoldById(string goldId);
 
 
     }

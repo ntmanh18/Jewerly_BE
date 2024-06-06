@@ -46,14 +46,18 @@ namespace Bussiness.Services.ProductService
             var products = await _productRepo.GetProducts();
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
 
+
             foreach (var product in products)
             {
+
+                var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
                 ProductRequestModel product1 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
                     Material = product.Material,
+                    Material = gold,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -65,6 +69,7 @@ namespace Bussiness.Services.ProductService
 
             }
             
+
 
             return updatedProducts;
         }
@@ -315,6 +320,11 @@ namespace Bussiness.Services.ProductService
         public static bool IsNumber(string input)
         {
             return Regex.IsMatch(input, @"^\d+(\.\d+)?$");
+        }
+
+        public async Task<Gold> GetGoldById(string goldId)
+        {
+            return await _productRepo.GetGoldById(goldId);
         }
     }
 }

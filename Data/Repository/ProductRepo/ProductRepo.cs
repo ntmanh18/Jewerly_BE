@@ -51,5 +51,9 @@ namespace Data.Repository.ProductRepo
 
 
         }
+        public async Task<Gold> GetGoldById(string goldId)
+        {
+            return await _context.Golds.FirstOrDefaultAsync(g => g.GoldId == goldId);
+        }
     }
 }

@@ -113,6 +113,8 @@ namespace Bussiness.Services.ProductService
                 
             }
 
+                
+            }
 
             return updatedProducts;
         }
@@ -177,6 +179,17 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                 };
+
+                if (productAll != null)
+                {
+                    updatedProducts.Add(productAll);
+                }
+                else
+                {
+                    updatedProducts.Add(product2);
+                }
+
+
 
                 if (productAll != null)
                 {

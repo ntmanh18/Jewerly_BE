@@ -13,5 +13,9 @@ namespace Data.Repository.CashierRepo
         public Task<User> GetUserById(string userId);
 
         public Task<List<Cashier>> GetCashiers();
+        public Task<IEnumerable<Cashier>> GetAllCashiers();
+        public Task<Cashier> UpdateCashier(Cashier cashierUpdate);
+        Task<IEnumerable<Cashier>> GetCashierById();
+
     }
 }

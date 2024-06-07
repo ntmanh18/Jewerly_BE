@@ -28,8 +28,6 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddBusiness().AddRepository(builder.Configuration);
-builder.Services.AddDbContext<JewerlyV6Context>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB")));
 builder.Services.AddDbContext<JewerlyV6Context>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB"));
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

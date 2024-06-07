@@ -33,5 +33,32 @@ namespace Data.Repository.CashierRepo
             var cashiers = await _context.Cashiers.ToListAsync();
             return cashiers;
         }
+
+        public async Task<IEnumerable<Cashier>> GetAllCashiers()
+        {
+            var cashiers = await _context.Cashiers.ToListAsync();
+            return cashiers;
+        }
+
+        public async Task<Cashier> UpdateCashier(Cashier cashierUpdate)
+        {
+            try
+            {
+                _context.Update(cashierUpdate);
+                await _context.SaveChangesAsync();
+                return cashierUpdate;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task<IEnumerable<Cashier>> GetCashierById()
+        {
+            return await _context.Cashiers.ToListAsync();
+        }
     }
 }

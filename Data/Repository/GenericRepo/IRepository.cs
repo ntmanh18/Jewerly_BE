@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,6 @@ namespace Data.Repository.GenericRepo
         Task Insert(T entity);
         Task<bool> Update(T entity);
         Task<bool> Remove(T entity);
-
     }
 }
 

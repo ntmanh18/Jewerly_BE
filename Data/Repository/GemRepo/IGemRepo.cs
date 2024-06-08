@@ -6,7 +6,7 @@ using Data.Model.GemModel;
 namespace Data.Repository.GemRepo
 {
     public interface IGemRepo
-    {
+       {
         public Task<Gem> CreateGem(Gem gem);
         Task<IEnumerable<Gem>> GetGemByName();
         Task<IEnumerable<Gem>> GetGemById();

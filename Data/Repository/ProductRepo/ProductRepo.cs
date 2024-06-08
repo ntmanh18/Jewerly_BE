@@ -59,6 +59,16 @@ namespace Data.Repository.ProductRepo
         public async Task<Gold> GetGoldById(string goldId)
         {
             return await _context.Golds.FirstOrDefaultAsync(g => g.GoldId == goldId);
+            }
+
+        public async Task<List<Product>> GetAllProductsv2()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
+        public async Task<Product> GetProductByIdv2(string id)
+        {
+            return await _context.Products.FirstOrDefaultAsync(c => c.ProductId == id);
         }
     }
 }

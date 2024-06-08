@@ -46,13 +46,17 @@ namespace Data.Repository.GemRepo
         }
 
         public async Task<IEnumerable<Gem>> GetGemById()
+        public async Task<Gem> GetGemById(string id)
         {
             return await _context.Gems.ToListAsync();
+            return await _context.Gems.FirstOrDefaultAsync(c => c.GemId == id);
         }
 
         public async Task<IEnumerable<Gem>> GetGemByName()
+        public async Task<Gem> GetGemByName(string name)
         {
             return await _context.Gems.ToListAsync();
+            return await _context.Gems.FirstOrDefaultAsync(c => c.Name == name);
         }
         public async Task<Gem> GetGemByNameAsync(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
 

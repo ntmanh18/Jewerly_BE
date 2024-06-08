@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Repository.ProductRepo
-{
     public interface IProductRepo
  
     
+{   
     public interface IProductRepo : IRepository<Product>    
     {
         public Task<IEnumerable<Product>> GetProducts();
@@ -22,7 +22,6 @@ namespace Data.Repository.ProductRepo
         Task<Product> GetProductByIdv2(string id);   
 
         public Task<Gold> GetGoldById(string goldId);
-
 
     }
 }

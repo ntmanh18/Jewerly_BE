@@ -237,6 +237,7 @@ namespace Bussiness.Services.GemService
                 return resultModel;
             }
             var existingGem = await _gemRepo.GetGemByNameAsync(CreateGemModel.Name);
+            var existingGem = await _gemRepo.GetGemByName(CreateGemModel.Name);
             if (existingGem != null)
             {
                 resultModel.IsSuccess = false;

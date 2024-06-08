@@ -11,11 +11,13 @@ namespace Data.Repository.CashierRepo
     {
         public Task CreateCashier(Cashier cashierFilter);
         public Task<User> GetUserById(string userId);
-
         public Task<List<Cashier>> GetCashiers();
         public Task<IEnumerable<Cashier>> GetAllCashiers();
         public Task<Cashier> UpdateCashier(Cashier cashierUpdate);
         Task<IEnumerable<Cashier>> GetCashierById();
-
+        public Task<Cashier> DeactiveCashier(Cashier cashierDeactie);
+        public Task<Cashier> GetCashierByIdCashier(string cashierId);
+        Task<IEnumerable<Cashier>> GetCashiersByUserId();
+        Task<IEnumerable<Cashier>> GetCashiersByDate();
     }
 }

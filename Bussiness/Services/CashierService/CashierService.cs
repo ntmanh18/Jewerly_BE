@@ -9,6 +9,7 @@ using Data.Repository.CashierRepo;
 using Data.Repository.CustomerRepo;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -108,13 +109,22 @@ namespace Bussiness.Services.CashierService
                         Income = cashierModel.Income,
                         CashNumber = cashierModel.CashNumber,
                         UserId = cashierModel.UserId,
-                        User = user,
-
+                        //User = user,
                     };
                     await _cashierRepo.CreateCashier(cashier);
+                    CashierUpdateModel cashierUpdateModel = new CashierUpdateModel
+                    {
+                        CashId = GenerateCustomerId(),
+                        StartCash = cashierModel.StartCash,
+                        EndCash = cashierModel.EndCash,
+                        Income = cashierModel.Income,
+                        CashNumber = cashierModel.CashNumber,
+                        UserId = cashierModel.UserId,
+                        Status = cashierModel.Status,
+                    };
                     resultModel.IsSuccess = true;
                     resultModel.Code = 200;
-                    resultModel.Data = cashier;
+                    resultModel.Data = cashierUpdateModel;
                     resultModel.Message = "Correct";
 
                 }
@@ -128,7 +138,6 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-
         public static string GenerateCustomerId()
         {
 
@@ -136,6 +145,7 @@ namespace Bussiness.Services.CashierService
             string numberPart = randomNumber.ToString("D5");
             return "CH" + numberPart;
         }
+
         public async Task<User> GetUserById(string customerId)
         {
             return await _cashierRepo.GetUserById(customerId);
@@ -156,6 +166,7 @@ namespace Bussiness.Services.CashierService
 
             return overlappingCashiers;
         }
+
         public static List<User> GetOverlappingCashiersUpdate(DateTime startTime, DateTime endTime, List<Cashier> cashiers, CashierUpdateModel cashierModel)
         {
             var overlappingCashiers = cashiers
@@ -165,6 +176,7 @@ namespace Bussiness.Services.CashierService
 
             return overlappingCashiers;
         }
+
         public async Task<List<Cashier>> GetCashiers()
         {
 
@@ -213,7 +225,7 @@ namespace Bussiness.Services.CashierService
                 return resultModel;
             }
             var cashiers = await _cashierRepo.GetAllCashiers();
-            List<Cashier> updatedCashiers = new List<Cashier>();
+            List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
 
             foreach (var cashier in cashiers)
             {
@@ -227,7 +239,18 @@ namespace Bussiness.Services.CashierService
                     UserId = cashier.UserId,
                     Status= cashier.Status,
                 };
-                updatedCashiers.Add(cashier1);
+                CashierUpdateModel cashierUpdateModel = new CashierUpdateModel
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+
+                updatedCashiers.Add(cashierUpdateModel);
 
             }
             resultModel.Code = 200;
@@ -380,12 +403,249 @@ namespace Bussiness.Services.CashierService
                         Income = cashierModel.Income,
                         CashNumber = cashierModel.CashNumber,
                         UserId = cashierModel.UserId,
-                        User = user,
+                        //User = user,
+                        Status = cashierModel.Status,
                     };
                     var cashierUpdate = await _cashierRepo.UpdateCashier(cashier);
+                    CashierUpdateModel cashierUpdateModel = new CashierUpdateModel
+                    {
 
-                    resultModel.Data = cashierUpdate;
+                        CashId = cashierModel.CashId,
+                        StartCash = cashierModel.StartCash,
+                        EndCash = cashierModel.EndCash,
+                        Income = cashierModel.Income,
+                        CashNumber = cashierModel.CashNumber,
+                        UserId = cashierModel.UserId,
+                        //User = user,
+                        Status = cashierModel.Status,
+                    };
+                    resultModel.Data = cashierUpdateModel;
                 }
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> DeactiveCashier(string? token, string id)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            var existingProduct = await _cashierRepo.GetCashierByIdCashier(id);
+
+            if (existingProduct == null)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Request cashier not found";
+            }
+            else if (existingProduct.Status == 0)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Cashier almost deactived";
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Deavtive success";
+                Cashier cashier = new Cashier
+                {
+                    CashId = existingProduct.CashId,
+                    StartCash = existingProduct.StartCash,
+                    EndCash = existingProduct.EndCash,
+                    Income = existingProduct.Income,
+                    CashNumber = existingProduct.CashNumber,
+                    UserId = existingProduct.UserId,
+                    //User = existingProduct.User,
+                    Status = 0
+                };
+                var cashierUpdate = await _cashierRepo.DeactiveCashier(cashier);
+            }
+            return resultModel;
+        }
+
+        public async Task<Cashier> GetCashierByIdCashier(string cashierId)
+
+        {
+            return await _cashierRepo.GetCashierByIdCashier(cashierId);
+        }
+        public async Task<ResultModel> GetCashiersByUserId(string? token, string id)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            //var products = await _productRepo.GetProducts();
+            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
+            List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
+            foreach (var cashier in cashiers)
+            {
+                CashierUpdateModel cashier1 = new CashierUpdateModel
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            IEnumerable<CashierUpdateModel> updatedCashiers2 = updatedCashiers;
+
+
+
+            if (String.IsNullOrEmpty(id))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any user id";
+                resultModel.Data = updatedCashiers2;
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                updatedCashiers2 = updatedCashiers2.Where(c => RemoveDiacritics(c.UserId).ToLower().Contains(RemoveDiacritics(id).ToLower()));
+                if (updatedCashiers2.Count() > 0)
+                {
+                    resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                }
+                else
+                {
+                    resultModel.Message = "Not found";
+                }
+
+                resultModel.Data = updatedCashiers2;
+            }
+            return resultModel;
+        }
+        private string RemoveDiacritics(string text)
+        {
+            var stringBuilder = new StringBuilder();
+            try
+            {
+                var normalizedString = text.Normalize(NormalizationForm.FormD);
+
+
+                foreach (var c in normalizedString)
+                {
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(c);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        public async Task<ResultModel> GetCashiersByDate(string? token, DateTime date)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+
+            
+            //var products = await _productRepo.GetProducts();
+            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
+            List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
+            foreach (var cashier in cashiers)
+            {
+                CashierUpdateModel cashier1 = new CashierUpdateModel
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            IEnumerable<CashierUpdateModel> updatedCashiers2 = updatedCashiers;
+
+
+
+            if (String.IsNullOrEmpty(date.ToString()))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any user id";
+                resultModel.Data = updatedCashiers2;
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash >= date && c.StartCash <= date);
+                if (updatedCashiers2.Count() > 0)
+                {
+                    resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                }
+                else
+                {
+                    resultModel.Message = "Not found";
+                }
+
+                resultModel.Data = updatedCashiers2;
             }
             return resultModel;
         }

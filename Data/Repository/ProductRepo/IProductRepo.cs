@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Data.Repository.ProductRepo
 {
     public interface IProductRepo
+ 
     
     public interface IProductRepo : IRepository<Product>    
     {

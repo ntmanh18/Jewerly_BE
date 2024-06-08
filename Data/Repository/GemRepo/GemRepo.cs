@@ -44,7 +44,6 @@ namespace Data.Repository.GemRepo
             var gems = await _context.Gems.ToListAsync();
             return gems;
         }
-
         public async Task<IEnumerable<Gem>> GetGemById()
         public async Task<Gem> GetGemById(string id)
         {

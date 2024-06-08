@@ -56,6 +56,7 @@ namespace Data.Repository.GemRepo
         {
             return await _context.Gems.ToListAsync();
             return await _context.Gems.FirstOrDefaultAsync(c => c.Name == name);
+        {            return await _context.Gems.FirstOrDefaultAsync(c => c.GemId == id);
         }
         public async Task<Gem> GetGemByNameAsync(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
         public async Task<Gem> GetGemByName(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);

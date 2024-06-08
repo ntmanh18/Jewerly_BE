@@ -1,6 +1,6 @@
 ﻿using Bussiness.Services.AccountService;
 using Bussiness.Services.AuthenticateService;
-
+using Bussiness.Services.CashierService;
 using Bussiness.Services.CustomerService;
 using Bussiness.Services.GemService;
 using Bussiness.Services.ProductGemService;
@@ -29,6 +29,7 @@ namespace Bussiness
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IGemService, GemService>();
+            services.AddScoped<ICashierService, CashierService>();
             services.AddScoped<IProductGemService,ProductGemService>();
 
             return services;

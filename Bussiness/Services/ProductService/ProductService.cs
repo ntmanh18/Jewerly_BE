@@ -62,14 +62,37 @@ namespace Bussiness.Services.ProductService
             var products = await _productRepo.GetProducts();
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
 
+
             foreach (var product in products)
             {
-                ProductRequestModel product1 = new ProductRequestModel
+                ProductRequestModel productAll = null;
+
+                    foreach (var productGem in product.ProductGems)
+                    {
+                            var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                            ProductRequestModel product1 = new ProductRequestModel
+                            {
+                            ProductId = productGem.GemGem.Name,
+                            ProductName = product.ProductName,
+                            Category = product.Category,
+                            Material = gold,
+                            Weight = product.Weight,
+                            MachiningCost = product.MachiningCost,
+                            Size = product.Size,
+                            Amount = product.Amount,
+                            Desc = product.Desc,
+                            Image = product.Image,
+                            };
+                    productAll = product1;
+                    }
+
+                var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                ProductRequestModel product2 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
-                    Material = product.Material,
+                    Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -77,10 +100,18 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                 };
-                updatedProducts.Add(product1);
 
+                if(productAll != null){
+                    updatedProducts.Add(productAll);
+                }
+                else
+                {
+                    updatedProducts.Add(product2);
+                }
+                    
+
+                
             }
-            
 
             return updatedProducts;
         }
@@ -110,12 +141,34 @@ namespace Bussiness.Services.ProductService
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
             foreach (var product in products)
             {
-                ProductRequestModel product1 = new ProductRequestModel
+                ProductRequestModel productAll = null;
+
+                foreach (var productGem in product.ProductGems)
+                {
+                    var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                    ProductRequestModel product1 = new ProductRequestModel
+                    {
+                        ProductId = productGem.GemGem.Name,
+                        ProductName = product.ProductName,
+                        Category = product.Category,
+                        Material = gold,
+                        Weight = product.Weight,
+                        MachiningCost = product.MachiningCost,
+                        Size = product.Size,
+                        Amount = product.Amount,
+                        Desc = product.Desc,
+                        Image = product.Image,
+                    };
+                    productAll = product1;
+                }
+
+                var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                ProductRequestModel product2 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
-                    Material = product.Material,
+                    Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -123,7 +176,17 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                 };
-                updatedProducts.Add(product1);
+
+                if (productAll != null)
+                {
+                    updatedProducts.Add(productAll);
+                }
+                else
+                {
+                    updatedProducts.Add(product2);
+                }
+
+
 
             }
 
@@ -332,6 +395,10 @@ namespace Bussiness.Services.ProductService
         {
             return Regex.IsMatch(input, @"^\d+(\.\d+)?$");
         }
+
+        public async Task<Gold> GetGoldById(string goldId)
+        {
+            return await _productRepo.GetGoldById(goldId);}
         private async Task<string> GenerateId(string? category, string? material,string name)
         {
             var id = "";

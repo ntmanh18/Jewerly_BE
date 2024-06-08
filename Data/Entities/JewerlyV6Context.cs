@@ -42,7 +42,8 @@ public partial class JewerlyV6Context : DbContext
     public virtual DbSet<Warranty> Warranties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer("Server=NTMANHHH\\SQLEXPRESS;uid=sa;pwd=12345;database=Jewerly_v6;TrustServerCertificate=True;", x => x.UseNetTopologySuite());
+
+            => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=Jewerly_v6;User ID=sa;Password=12345;Trust Server Certificate=True", x => x.UseNetTopologySuite());
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

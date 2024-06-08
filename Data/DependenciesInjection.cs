@@ -1,7 +1,8 @@
 
 
 
-﻿using Data.Repository.CustomerRepo;
+using Data.Repository.CashierRepo;
+using Data.Repository.CustomerRepo;
 using Data.Repository.GemRepo;
 using Data.Repository.GoldRepo;
 using Data.Repository.ProductGemRepo;
@@ -25,6 +26,7 @@ namespace Data
             services.AddScoped<ICustomerRepo, CustomerRepo>();
             services.AddScoped<IProductRepo, ProductRepo>();
             services.AddScoped<IGemRepo, GemRepo>();
+            services.AddScoped<ICashierRepo, CashierRepo>();
             services.AddScoped<IGoldRepo,GoldRepo>();
             services.AddScoped<IProductGemRepo,ProductGemRepo>();
 

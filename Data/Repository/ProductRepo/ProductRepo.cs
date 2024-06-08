@@ -19,13 +19,18 @@ namespace Data.Repository.ProductRepo
         }
         public async Task<IEnumerable<Product>> GetProducts()
         {
-            var products = await _context.Products.ToListAsync();
+            //var products = await _context.Products.ToListAsync();
+            var products = await _context.Products.Include(p => p.ProductGems)
+            .ThenInclude(pg => pg.GemGem)
+        .ToListAsync();
             return products;
 
         }
         public async Task<IEnumerable<Product>> GetProductsByName()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products.Include(p => p.ProductGems)
+            .ThenInclude(pg => pg.GemGem)
+        .ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetProductById()
@@ -51,7 +56,10 @@ namespace Data.Repository.ProductRepo
 
 
         }
-
+        public async Task<Gold> GetGoldById(string goldId)
+        {
+            return await _context.Golds.FirstOrDefaultAsync(g => g.GoldId == goldId);
+}
         public async Task<List<Product>> GetAllProductsv2()
         {
             return await _context.Products.ToListAsync();
@@ -61,5 +69,6 @@ namespace Data.Repository.ProductRepo
         {
             return await _context.Products.FirstOrDefaultAsync(c => c.ProductId == id);
         }
+        
     }
 }

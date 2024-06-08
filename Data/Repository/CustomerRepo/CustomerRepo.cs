@@ -66,14 +66,31 @@ namespace Data.Repository.CustomerRepo
         //    }
         //    catch (Exception ex)
         //    {
+        public async Task<Customer> DeactiveCustomer(Customer customerDeactive)
+        {
+            try
+            {
+                _context.Update(customerDeactive);
+                await _context.SaveChangesAsync();
+                return customerDeactive;
+            }
+            catch (Exception ex)
+            {
 
         //        throw new Exception(ex.Message);
         //    }
+                throw new Exception(ex.Message);
+            }
 
         //}
         //public async Task<Customer> GetCustomerById(string customerId)
         //{
         //    return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
         //}
+        }
+        public async Task<Customer> GetCustomerById(string customerId)
+        {
+            return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
+        }
     }
 }

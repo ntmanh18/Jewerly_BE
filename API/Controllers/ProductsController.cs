@@ -1,5 +1,6 @@
 ﻿using Bussiness.Services.ProductService;
 using Data.Entities;
+using Data.Model.ProductGemModel;
 using Data.Model.ProductModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +24,7 @@ namespace API.Controllers
         public async Task<ActionResult> GetProducts()
         {
             
+
 
             var result = await _productService.GetProducts();
             return Ok(result.ToList());
@@ -66,6 +68,14 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
             //var result = await _productService.UpdateProduct(productUpdate);
             //return Ok(result);
+        }
+        [HttpPost]
+        [Route("create-product")]
+        public async Task<ActionResult> Create([FromBody]CreateProductReqModel product)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _productService.CreateProduct(token, product);
+            return StatusCode(res.Code, res);
         }
     }
 }

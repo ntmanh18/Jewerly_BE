@@ -36,7 +36,6 @@ namespace API.Controllers
             var res = await _gemService.GetGemById(token, searchGemId);
             return StatusCode(res.Code, res);
         }
-        [HttpPut("createGem")]
         [HttpPost("createGem")]
         public async Task<ActionResult> CreateGem(CreateGemModel creategem)
         {

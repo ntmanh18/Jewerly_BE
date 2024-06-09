@@ -212,6 +212,14 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "Gem not found.";
                 return resultModel;
             }
+            var existingGem = await _gemRepo.GetGemByNameAsync(gemRequestModel.Name);
+            if (existingGem != null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Conflict;
+                resultModel.Message = "A gem with the same name already exists.";
+                return resultModel;
+            }
             resultModel.Data = updatedGem;
             resultModel.Message = "Gem updated successfully.";
             return resultModel;

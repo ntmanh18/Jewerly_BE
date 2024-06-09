@@ -2,6 +2,7 @@
 using Bussiness.Services.AuthenticateService;
 using Bussiness.Services.CashierService;
 using Bussiness.Services.CustomerService;
+using Bussiness.Services.DiscountService;
 using Bussiness.Services.GemService;
 using Bussiness.Services.ProductGemService;
 using Bussiness.Services.ProductService;
@@ -10,6 +11,7 @@ using Bussiness.Services.ProductService;
 using Bussiness.Services.TokenService;
 using Bussiness.Services.UserService;
 using Bussiness.Services.Validate;
+using Data.Repository.DiscountRepo;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bussiness
@@ -31,6 +33,7 @@ namespace Bussiness
             services.AddScoped<IGemService, GemService>();
             services.AddScoped<IProductGemService,ProductGemService>();
             services.AddScoped<ICashierService, CashierService>();
+            services.AddScoped<IDiscountService,DiscountService>();
 
             return services;
         }

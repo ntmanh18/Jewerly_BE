@@ -42,15 +42,14 @@ public partial class JewerlyV6Context : DbContext
     public virtual DbSet<Warranty> Warranties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-            => optionsBuilder.UseSqlServer("Server=NTMANHHH\\SQLEXPRESS;uid=sa;pwd=12345;database=Jewerly_v6;TrustServerCertificate=True", x => x.UseNetTopologySuite());
-
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=NTMANHHH\\SQLEXPRESS;uid=sa;pwd=12345;database=Jewerly_v6;TrustServerCertificate=True;", x => x.UseNetTopologySuite());
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Bill>(entity =>
         {
-            entity.HasKey(e => e.BillId).HasName("PK__Bill__11F2FC6A3C94365A");
+            entity.HasKey(e => e.BillId).HasName("PK__Bill__11F2FC6A52F490D6");
 
             entity.ToTable("Bill");
 
@@ -61,11 +60,8 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("CashierID");
-            entity.Property(e => e.CustomerCustomerId);
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("CustomerCustomerID")
                 .IsUnicode(false);
             entity.Property(e => e.PublishDay).HasColumnType("datetime");
             entity.Property(e => e.VoucherVoucherId)
@@ -88,7 +84,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Cashier>(entity =>
         {
-            entity.HasKey(e => e.CashId).HasName("PK__Cashier__6B801A6B043F63C0");
+            entity.HasKey(e => e.CashId).HasName("PK__Cashier__6B801A6B8E6916DC");
 
             entity.ToTable("Cashier");
 
@@ -110,13 +106,13 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64B8A88CCADB");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64B8735B4866");
 
             entity.ToTable("Customer");
 
-            entity.HasIndex(e => e.Phone, "UQ__Customer__5C7E359E07EAE794").IsUnique();
+            entity.HasIndex(e => e.Phone, "UQ__Customer__5C7E359E241F4332").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Customer__A9D10534BB2CB339").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Customer__A9D10534F8EF5CDA").IsUnique();
 
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(10)
@@ -142,7 +138,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.DiscountId).HasName("PK__Discount__E43F6D96FF6F5E33");
+            entity.HasKey(e => e.DiscountId).HasName("PK__Discount__E43F6D9655F50469");
 
             entity.ToTable("Discount");
 
@@ -171,13 +167,13 @@ public partial class JewerlyV6Context : DbContext
                         .HasConstraintName("FKDiscount_P628904"),
                     j =>
                     {
-                        j.HasKey("DiscountDiscountId", "ProductProductId").HasName("PK__Discount__77CD65F212BD41C2");
+                        j.HasKey("DiscountDiscountId", "ProductProductId").HasName("PK__Discount__77CD65F2BC31142C");
                         j.ToTable("Discount_Product");
                         j.IndexerProperty<string>("DiscountDiscountId")
                             .HasMaxLength(10)
                             .IsUnicode(false);
                         j.IndexerProperty<string>("ProductProductId")
-                            .HasMaxLength(10)
+                            .HasMaxLength(50)
                             .IsUnicode(false)
                             .HasColumnName("ProductProductID");
                     });
@@ -185,7 +181,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Gem>(entity =>
         {
-            entity.HasKey(e => e.GemId).HasName("PK__Gem__F101D5806716437D");
+            entity.HasKey(e => e.GemId).HasName("PK__Gem__F101D580545DC696");
 
             entity.ToTable("Gem");
 
@@ -200,7 +196,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Gold>(entity =>
         {
-            entity.HasKey(e => e.GoldId).HasName("PK__Gold__5CD52C53E8B947B9");
+            entity.HasKey(e => e.GoldId).HasName("PK__Gold__5CD52C53D0BF9A04");
 
             entity.ToTable("Gold");
 
@@ -223,12 +219,12 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<OldProduct>(entity =>
         {
-            entity.HasKey(e => e.OproductId).HasName("PK__OldProdu__167AC33B6C4C639F");
+            entity.HasKey(e => e.OproductId).HasName("PK__OldProdu__167AC33B54EB3740");
 
             entity.ToTable("OldProduct");
 
             entity.Property(e => e.OproductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("OProductID");
             entity.Property(e => e.BillBillId)
@@ -238,7 +234,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.ProductProductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("ProductProductID");
 
@@ -255,12 +251,12 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6ED21854A10");
+            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6ED018DFCFA");
 
             entity.ToTable("Product");
 
             entity.Property(e => e.ProductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("ProductID");
             entity.Property(e => e.Category)
@@ -285,12 +281,12 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<ProductBill>(entity =>
         {
-            entity.HasKey(e => new { e.ProductProductId, e.BillBillId }).HasName("PK__Product___275EBE85477CAE4F");
+            entity.HasKey(e => new { e.ProductProductId, e.BillBillId }).HasName("PK__Product___275EBE85016BD6A6");
 
             entity.ToTable("Product_Bill");
 
             entity.Property(e => e.ProductProductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("ProductProductID");
             entity.Property(e => e.BillBillId)
@@ -310,12 +306,12 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<ProductGem>(entity =>
         {
-            entity.HasKey(e => new { e.ProductProductId, e.GemGemId }).HasName("PK__Product___C3A8263651DBCDAE");
+            entity.HasKey(e => new { e.ProductProductId, e.GemGemId }).HasName("PK__Product___C3A82636264B2B0D");
 
             entity.ToTable("Product_Gem");
 
             entity.Property(e => e.ProductProductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("ProductProductID");
             entity.Property(e => e.GemGemId)
@@ -335,13 +331,13 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__User__1788CCACC41B2E03");
+            entity.HasKey(e => e.UserId).HasName("PK__User__1788CCACFBE05D3B");
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.Username, "UQ__User__536C85E40AB6F2E8").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__User__536C85E4EDD4AC41").IsUnique();
 
-            entity.HasIndex(e => e.Phone, "UQ__User__5C7E359E8B1D431F").IsUnique();
+            entity.HasIndex(e => e.Phone, "UQ__User__5C7E359E7C480640").IsUnique();
 
             entity.Property(e => e.UserId)
                 .HasMaxLength(10)
@@ -354,7 +350,6 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Password)
-                .HasMaxLength(20)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
@@ -367,7 +362,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Voucher>(entity =>
         {
-            entity.HasKey(e => e.VoucherId).HasName("PK__Voucher__3AEE79215676ED04");
+            entity.HasKey(e => e.VoucherId).HasName("PK__Voucher__3AEE792155A96670");
 
             entity.ToTable("Voucher");
 
@@ -395,7 +390,7 @@ public partial class JewerlyV6Context : DbContext
 
         modelBuilder.Entity<Warranty>(entity =>
         {
-            entity.HasKey(e => e.WarrantyId).HasName("PK__Warranty__2ED318F33D6F5C58");
+            entity.HasKey(e => e.WarrantyId).HasName("PK__Warranty__2ED318F3715337D1");
 
             entity.ToTable("Warranty");
 
@@ -411,7 +406,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.ProductId)
-                .HasMaxLength(10)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("ProductID");
 

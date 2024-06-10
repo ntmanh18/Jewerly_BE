@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Data.Model.VoucherModel
 {
-    public class VoucherCreateModel
+    public class VoucherRequestModel
     {
+        public string VoucherId { get; set; } = null!;
         public string CreatedBy { get; set; } = null!;
 
         public DatePart ExpiredDay { get; set; }

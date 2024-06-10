@@ -14,6 +14,7 @@ namespace Data.Repository.VoucherRepo
     public interface IVoucherRepo
     {
         public Task<Voucher> CreateVoucherAsync(Voucher voucher);
-        
+        public Task<Voucher> UpdateVoucherAsync(Voucher voucher);
+        public Task<Voucher> GetVoucherByIdAsync(string voucherId);
     }
 }

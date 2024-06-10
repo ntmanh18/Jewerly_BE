@@ -76,12 +76,13 @@ namespace Bussiness.Services.VoucherService
             }
 
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
-            DateOnly publishedDay = DateOnly.FromDateTime(DateTime.Today);
-            if (expiredDay < publishedDay)
+            DateOnly publishedDay = new DateOnly(voucherCreate.PublishedDay.Year, voucherCreate.PublishedDay.Month, voucherCreate.PublishedDay.Day);
+            DateOnly now = DateOnly.FromDateTime(DateTime.Today);
+            if (expiredDay < publishedDay && publishedDay< now)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay.";
+                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
                 return resultModel;
             }
             var voucher = new Voucher
@@ -99,6 +100,73 @@ namespace Bussiness.Services.VoucherService
             resultModel.Message = "Voucher created successfully.";
             return resultModel;
         }
-        
+
+        public async Task<ResultModel> UpdateVoucher(string token, VoucherRequestModel voucherUpdate)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var voucherExists = await _voucherRepo.GetVoucherByIdAsync(voucherUpdate.VoucherId);
+            if (voucherExists == null)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Request voucher not found";
+                return resultModel;
+            }
+            var userExists = await _userRepo.GetByIdAsync(voucherUpdate.CreatedBy);
+            if (userExists == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = $"User with ID {voucherUpdate.CreatedBy} does not exist.";
+                return resultModel;
+            }
+            var customerExists = await _customerRepo.GetCustomerById(voucherUpdate.CustomerCustomerId);
+            if (customerExists == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = $"Customer with ID {voucherUpdate.CustomerCustomerId} does not exist.";
+                return resultModel;
+            }
+            DateOnly expiredDay = new DateOnly(voucherUpdate.ExpiredDay.Year, voucherUpdate.ExpiredDay.Month, voucherUpdate.ExpiredDay.Day);
+            DateOnly publishedDay = new DateOnly(voucherUpdate.PublishedDay.Year, voucherUpdate.PublishedDay.Month, voucherUpdate.PublishedDay.Day);
+            DateOnly now = DateOnly.FromDateTime(DateTime.Today);
+            if (expiredDay < publishedDay && publishedDay < now)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
+                return resultModel;
+            }
+            Voucher voucher = new Voucher
+            {
+                VoucherId = voucherUpdate.VoucherId,
+                CreatedBy = voucherUpdate.CreatedBy,
+                ExpiredDay = expiredDay,
+                PublishedDay = publishedDay,
+                Cost = voucherUpdate.Cost,
+                CustomerCustomerId = voucherUpdate.CustomerCustomerId,
+            };
+            var voucherUpdateLast = await _voucherRepo.UpdateVoucherAsync(voucher);
+            resultModel.Data = voucherUpdateLast;
+            resultModel.Message = "Voucher updated successfully.";
+            return resultModel;
+        }
     }
 }

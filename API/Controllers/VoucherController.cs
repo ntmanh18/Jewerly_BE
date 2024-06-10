@@ -24,7 +24,14 @@ namespace API.Controllers
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _voucherService.CreateVoucher(token, voucher);
-        return StatusCode(res.Code, res);
+            return StatusCode(res.Code, res);
+        }
+        [HttpPut("UpdatedVoucher")]
+        public async Task<ActionResult> UpdateVoucher(VoucherRequestModel voucherRequest)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _voucherService.UpdateVoucher(token, voucherRequest);
+            return StatusCode(res.Code, res);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Data.Model.VoucherModel;
 using Data.Repository.GenericRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,28 @@ namespace Data.Repository.VoucherRepo
             _context.Vouchers.Add(voucher);
             await _context.SaveChangesAsync();
             return voucher;
+        }
+
+        public async Task<Voucher> GetVoucherByIdAsync(string voucherId) => _context.Vouchers.FirstOrDefault(g => g.VoucherId == voucherId);
+
+        public async Task<Voucher> UpdateVoucherAsync(Voucher voucher)
+        {
+            try
+            {
+                var existingVoucher = await _context.Vouchers.FindAsync(voucher.VoucherId);
+                if (existingVoucher != null)
+                {
+                    _context.Entry(existingVoucher).CurrentValues.SetValues(voucher);
+                }
+
+                _context.Update(voucher);
+                await _context.SaveChangesAsync();
+                return voucher;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

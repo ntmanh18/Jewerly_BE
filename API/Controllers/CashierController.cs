@@ -57,5 +57,30 @@ namespace API.Controllers
             var res = await _cashierService.UpdateCashier(token, cashierUpdate);
             return StatusCode(res.Code, res);
         }
+        [HttpPut("deactivate")]
+        public async Task<ActionResult<Cashier>> DeactiveCashier(string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.DeactiveCashier(token, id);
+            return StatusCode(res.Code, res);
+        }
+
+        [HttpGet("SearchByUserId")]
+        public async Task<ActionResult> GetCashierByUserId([FromQuery] string? id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetCashiersByUserId(token, id);
+            return StatusCode(res.Code, res);
+
+        }
+
+        [HttpGet("SearchByDate-Example-2024-06-01T15:00:00")]
+        public async Task<ActionResult> GetCashierByDate([FromQuery] DateTime date)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetCashiersByDate(token, date);
+            return StatusCode(res.Code, res);
+
+        }
     }
 }

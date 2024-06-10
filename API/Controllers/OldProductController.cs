@@ -1,6 +1,8 @@
 ﻿using Bussiness.Services.CashierService;
 using Bussiness.Services.OldProductService;
+using Data.Entities;
 using Data.Model.OldProductModel;
+using Data.Model.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,14 @@ namespace API.Controllers
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _OPService.GetByProductIdAsync(token, productId);
+            return StatusCode(res.Code, res);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ResultModel>> Create([FromBody] OldProductCreateModel oldProduct)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _OPService.AddAsync(token, oldProduct);
             return StatusCode(res.Code, res);
         }
     }

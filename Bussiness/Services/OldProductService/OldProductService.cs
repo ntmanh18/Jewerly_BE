@@ -5,6 +5,7 @@ using Data.Entities;
 using Data.Model.OldProductModel;
 using Data.Model.ResultModel;
 using Data.Repository.OldProductRepo;
+using Microsoft.EntityFrameworkCore;
 using RTools_NTS.Util;
 using System;
 using System.Collections.Generic;
@@ -17,18 +18,21 @@ namespace Bussiness.Services.OldProductService
 {
     public class OldProductService : IOldProductService
     {
+        private static Random _random = new Random();
         private readonly IOldProductRepo _repository;
         private readonly IAccountService _accountService;
         private readonly IAuthenticateService _authentocateService;
         private readonly IToken _token;
+        private readonly JewerlyV6Context _context;
         public OldProductService(IOldProductRepo repository, IToken token,
             IAuthenticateService authenticateService,
-            IAccountService accountService)
+            IAccountService accountService, JewerlyV6Context context)
         {
             _repository = repository;
             _token = token;
             _authentocateService = authenticateService;
             _accountService = accountService;
+            _context = context;
         }
 
         public async Task<ResultModel> GetAllAsync(string token)
@@ -153,5 +157,67 @@ namespace Bussiness.Services.OldProductService
             return resultModel;
         }
 
+        public async Task<ResultModel> AddAsync(string token, OldProductCreateModel oldProduct)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            var productExists = await _context.Products.AnyAsync(p => p.ProductId == oldProduct.ProductProductId);
+            var billExists = await _context.Bills.AnyAsync(b => b.BillId == oldProduct.BillBillId);
+
+            if (!productExists)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = 400;
+                resultModel.Message = "Product not found";
+            }
+            else if (!billExists)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = 400;
+                resultModel.Message = "Bill not found";
+            }
+            else
+            {
+                var product = new OldProduct()
+                {
+                    OproductId = GenerateOPId(),
+                    ProductProductId = oldProduct.ProductProductId,
+                    Desc = oldProduct.Desc,
+                    BillBillId = oldProduct.BillBillId,
+
+                };
+                await _repository.AddAsync(product);
+                resultModel.IsSuccess = true;
+                resultModel.Code = 400;
+                resultModel.Message = "Add success";
+                resultModel.Data = oldProduct;
+            }
+            
+            return resultModel;
+        }
+
+        public static string GenerateOPId()
+        {
+
+            int randomNumber = _random.Next(0, 100);
+            string numberPart = randomNumber.ToString("D3");
+            return "OP" + numberPart;
+        }
     }
 }

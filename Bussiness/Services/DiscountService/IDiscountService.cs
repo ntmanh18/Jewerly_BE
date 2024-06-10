@@ -13,6 +13,7 @@ namespace Bussiness.Services.DiscountService
         Task<ResultModel> GetAllDiscount(string token, DiscountQueryModel query);
         Task<ResultModel> CreateDiscount(string token, CreateDiscountReqModel req);
         Task<ResultModel> CreateDiscountProduct(string token,CreateDiscountProductReqModel req);
-        
+        Task<ResultModel> UpdateDiscount(string token, UpdateDiscountReqModel req);
+        Task<ResultModel> DeleteDiscount(string token, string discountId);
     }
 }

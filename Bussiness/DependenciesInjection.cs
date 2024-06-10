@@ -6,6 +6,7 @@ using Bussiness.Services.CustomerService;
 using Bussiness.Services.DiscountService;
 using Bussiness.Services.GemService;
 using Bussiness.Services.ProductBillService;
+using Bussiness.Services.OldProductService;
 using Bussiness.Services.ProductGemService;
 using Bussiness.Services.ProductService;
 
@@ -38,6 +39,7 @@ namespace Bussiness
             services.AddScoped<IProductGemService,ProductGemService>();
             services.AddScoped<ICashierService, CashierService>();
             services.AddScoped<IDiscountService,DiscountService>();
+            services.AddScoped<IOldProductService, OldProductService>();
             services.AddScoped<IProductBillService, ProductBillService>();  
             services.AddScoped<IBillService,BillService>();
 

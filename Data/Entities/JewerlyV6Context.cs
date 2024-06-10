@@ -177,6 +177,7 @@ public partial class JewerlyV6Context : DbContext
                             .HasMaxLength(50)
                             .IsUnicode(false)
                             .HasColumnName("ProductProductID");
+
                     });
         });
 

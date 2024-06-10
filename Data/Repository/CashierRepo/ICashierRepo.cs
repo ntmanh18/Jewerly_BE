@@ -23,5 +23,9 @@ namespace Data.Repository.CashierRepo
         public Task<Cashier?> GetCashierByUser(string userId,DateTime startcash);
 
         public Task<Cashier> UpdateStatusCashier(Cashier updateStatus);
+        public Task<Cashier> DeactiveCashier(Cashier cashierDeactie);
+        public Task<Cashier> GetCashierByIdCashier(string cashierId);
+        Task<IEnumerable<Cashier>> GetCashiersByUserId();
+        Task<IEnumerable<Cashier>> GetCashiersByDate();
     }
 }

@@ -52,7 +52,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        [HttpGet("Search-By-User-Id")]
+        [HttpGet("SearchByUserId")]
         public async Task<ActionResult> GetCashierByUserId([FromQuery] string? id)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -61,35 +61,13 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("Search-By-Date")]
-        public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
-        [FromQuery] int month,
-        [FromQuery] int day,
-        [FromQuery] int hour,
-        [FromQuery] int minute,
-        [FromQuery] int second)
-        {
-            DateTime dateTime;
-            try
-            {
-                dateTime = new DateTime(year, month, day, hour, minute, second);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Invalid date-time parameters: {ex.Message}");
-            }
-
-            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _cashierService.GetCashiersByDate(token, dateTime);
-            return StatusCode(res.Code, res);
-
-        }
-        [HttpPut("Update-Status-Cashier")]
-        public async Task<ActionResult<Cashier>> UpdateStatusCashier(string id)
+        [HttpGet("SearchByDate-Example-2024-06-01T15:00:00")]
+        public async Task<ActionResult> GetCashierByDate([FromQuery] DateTime date)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _cashierService.UpdateStatusCashier(token, id);
+            var res = await _cashierService.GetCashiersByDate(token, date);
             return StatusCode(res.Code, res);
+
         }
     }
 }

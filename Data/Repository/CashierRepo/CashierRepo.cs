@@ -107,5 +107,19 @@ namespace Data.Repository.CashierRepo
             }
 
         }
+        public async Task<Cashier> GetCashierByIdCashier(string cashierId)
+        {
+            return await _context.Cashiers.FirstOrDefaultAsync(c => c.CashId == cashierId);
+        }
+
+        public async Task<IEnumerable<Cashier>> GetCashiersByUserId()
+        {
+            return await _context.Cashiers.ToListAsync();
+        }
+        public async Task<IEnumerable<Cashier>> GetCashiersByDate()
+        {
+            return await _context.Cashiers.ToListAsync();
+        }
+        
     }
 }

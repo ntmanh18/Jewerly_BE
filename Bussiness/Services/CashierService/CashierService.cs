@@ -104,7 +104,7 @@ namespace Bussiness.Services.CashierService
                 {
                     Cashier cashier = new Cashier
                     {
-                        CashId = GenerateCustomerId(),
+                        CashId = await GenerateCustomerId(),
                         StartCash = cashierModel.StartCash,
                         EndCash = cashierModel.EndCash,
                         Income = 0,
@@ -117,7 +117,7 @@ namespace Bussiness.Services.CashierService
                     await _cashierRepo.CreateCashier(cashier);
                     CashierUpdateModel cashierUpdateModel = new CashierUpdateModel
                     {
-                        CashId = GenerateCustomerId(),
+                        CashId = cashier.CashId,
                         StartCash = cashierModel.StartCash,
                         EndCash = cashierModel.EndCash,
                         Income = cashierModel.Income,
@@ -493,12 +493,28 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-        public static string GenerateCustomerId()
-        {
+        //public static string GenerateCustomerId()
+        //{
 
-            int randomNumber = _random.Next(0, 10000);
-            string numberPart = randomNumber.ToString("D5");
-            return "CH" + numberPart;
+        //    int randomNumber = _random.Next(0, 10000);
+        //    string numberPart = randomNumber.ToString("D5");
+        //    return "CH" + numberPart;
+        //}
+
+        private async Task<string> GenerateCustomerId()
+        {
+            var existingIds = await _cashierRepo.GetAllCashiers();
+            HashSet<string> existingIdSet = new HashSet<string>(existingIds.Select(op => op.CashId));
+
+            string newItem;
+            do
+            {
+                int randomNumber = _random.Next(1, 100);
+                string numberPart = randomNumber.ToString("D3");
+                newItem = "CH" + numberPart;
+            } while (existingIdSet.Contains(newItem));
+
+            return newItem;
         }
 
         public async Task<User> GetUserById(string customerId)

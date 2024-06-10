@@ -19,16 +19,16 @@ namespace Bussiness.Services.OldProductService
     public class OldProductService : IOldProductService
     {
         private static Random _random = new Random();
-        private readonly IOldProductRepo _repository;
+        private readonly IOldProductRepo _OPrepo;
         private readonly IAccountService _accountService;
         private readonly IAuthenticateService _authentocateService;
         private readonly IToken _token;
         private readonly JewerlyV6Context _context;
-        public OldProductService(IOldProductRepo repository, IToken token,
+        public OldProductService(IOldProductRepo OPrepo, IToken token,
             IAuthenticateService authenticateService,
             IAccountService accountService, JewerlyV6Context context)
         {
-            _repository = repository;
+            _OPrepo = OPrepo;
             _token = token;
             _authentocateService = authenticateService;
             _accountService = accountService;
@@ -55,7 +55,7 @@ namespace Bussiness.Services.OldProductService
 
                 return resultModel;
             }
-            var oldProducts = await _repository.GetAllAsync();
+            var oldProducts = await _OPrepo.GetAllAsync();
 
 
 
@@ -94,7 +94,7 @@ namespace Bussiness.Services.OldProductService
                 return resultModel;
             }
 
-            var oldProduct = await _repository.GetByIdAsync(id);
+            var oldProduct = await _OPrepo.GetByIdAsync(id);
             if (oldProduct == null)
             {
                 return null;
@@ -134,7 +134,7 @@ namespace Bussiness.Services.OldProductService
 
                 return resultModel;
             }
-            var oldProducts = await _repository.GetByProductIdAsync(productId);
+            var oldProducts = await _OPrepo.GetByProductIdAsync(productId);
             IEnumerable < OldProductRequestModel > get = oldProducts.Select(op => new OldProductRequestModel
             {
                 OproductId = op.OproductId,
@@ -196,13 +196,13 @@ namespace Bussiness.Services.OldProductService
             {
                 var product = new OldProduct()
                 {
-                    OproductId = GenerateOPId(),
+                    OproductId = await GenerateOPId(),
                     ProductProductId = oldProduct.ProductProductId,
                     Desc = oldProduct.Desc,
                     BillBillId = oldProduct.BillBillId,
 
                 };
-                await _repository.AddAsync(product);
+                await _OPrepo.AddAsync(product);
                 resultModel.IsSuccess = true;
                 resultModel.Code = 400;
                 resultModel.Message = "Add success";
@@ -212,12 +212,29 @@ namespace Bussiness.Services.OldProductService
             return resultModel;
         }
 
-        public static string GenerateOPId()
+        //private async Task<string> GenerateOPId()
+        //{
+        //    string newItem;
+        //    var a = await _OPrepo.GetAllAsync();
+        //    int randomNumber = _random.Next(0, 100);
+        //    string numberPart = randomNumber.ToString("D3");
+        //    newItem = "OP" + numberPart;
+        //    return newItem; 
+        //}
+        private async Task<string> GenerateOPId()
         {
+            var existingIds = await _OPrepo.GetAllAsync();
+            HashSet<string> existingIdSet = new HashSet<string>(existingIds.Select(op => op.OproductId));
 
-            int randomNumber = _random.Next(0, 100);
-            string numberPart = randomNumber.ToString("D3");
-            return "OP" + numberPart;
+            string newItem;
+            do
+            {
+                int randomNumber = _random.Next(1, 100);
+                string numberPart = randomNumber.ToString("D3");
+                newItem = "OP" + numberPart;
+            } while (existingIdSet.Contains(newItem));
+
+            return newItem;
         }
     }
 }

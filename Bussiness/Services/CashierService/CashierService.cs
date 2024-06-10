@@ -138,72 +138,6 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-        public static string GenerateCustomerId()
-        {
-
-            int randomNumber = _random.Next(0, 10000);
-            string numberPart = randomNumber.ToString("D5");
-            return "CH" + numberPart;
-        }
-
-        public async Task<User> GetUserById(string customerId)
-        {
-            return await _cashierRepo.GetUserById(customerId);
-        }
-
-        static bool IsMoreThanFourHoursDifference(DateTime dt1, DateTime dt2)
-        {
-            TimeSpan difference = dt1 - dt2;
-            return difference.TotalHours > 4;
-        }
-
-        public static List<User> GetOverlappingCashiers(DateTime startTime, DateTime endTime, List<Cashier> cashiers, CashierRequestModel cashierModel)
-        {
-            var overlappingCashiers = cashiers
-                .Where(c => startTime < c.EndCash && endTime > c.StartCash && c.Status == 1 && c.UserId == cashierModel.UserId)
-                .Select(c => c.User)
-                .ToList();
-
-            return overlappingCashiers;
-        }
-
-        public static List<User> GetOverlappingCashiersUpdate(DateTime startTime, DateTime endTime, List<Cashier> cashiers, CashierUpdateModel cashierModel)
-        {
-            var overlappingCashiers = cashiers
-                .Where(c => startTime < c.EndCash && endTime > c.StartCash && c.Status == 1 && c.UserId == cashierModel.UserId)
-                .Select(c => c.User)
-                .ToList();
-
-            return overlappingCashiers;
-        }
-
-        public async Task<List<Cashier>> GetCashiers()
-        {
-
-            var cashiers = await _cashierRepo.GetCashiers();
-            List<Cashier> updatedCashiers = new List<Cashier>();
-
-            foreach (var cashier in cashiers)
-            {
-                Cashier cashier1 = new Cashier
-                {
-                    CashId =  cashier.CashId,
-                    StartCash = cashier.StartCash,
-                    EndCash = cashier.EndCash,
-                    Income = cashier.Income,
-                    CashNumber = cashier.CashNumber,
-                    UserId = cashier.UserId,
-                    Status = cashier.Status,
-                    User = cashier.User,
-
-                };
-                updatedCashiers.Add(cashier1);
-
-            }
-
-            return updatedCashiers;
-        }
-
         public async Task<ResultModel> GetAllCashiers(string token)
         {
             var resultModel = new ResultModel
@@ -237,7 +171,7 @@ namespace Bussiness.Services.CashierService
                     Income = cashier.Income,
                     CashNumber = cashier.CashNumber,
                     UserId = cashier.UserId,
-                    Status= cashier.Status,
+                    Status = cashier.Status,
                 };
                 CashierUpdateModel cashierUpdateModel = new CashierUpdateModel
                 {
@@ -257,70 +191,6 @@ namespace Bussiness.Services.CashierService
             resultModel.IsSuccess = true;
             resultModel.Data = updatedCashiers;
             return resultModel;
-        }
-
-        public async Task<ResultModel> GetCashierById(string id)
-        {
-            var resultModel = new ResultModel
-            {
-                IsSuccess = true,
-                Code = (int)HttpStatusCode.OK,
-                Data = null,
-                Message = null,
-            };
-            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
-            List<Cashier> updatedCashiers = new List<Cashier>();
-            foreach (var cashier in cashiers)
-            {
-                Cashier cashier1 = new Cashier
-                {
-                    CashId = cashier.CashId,
-                    StartCash = cashier.StartCash,
-                    EndCash = cashier.EndCash,
-                    Income = cashier.Income,
-                    CashNumber = cashier.CashNumber,
-                    UserId = cashier.UserId,
-                    Status = cashier.Status,
-                };
-                updatedCashiers.Add(cashier1);
-
-            }
-
-            if (String.IsNullOrEmpty(id))
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                resultModel.Message = "Please enter any id";
-
-            }
-
-            else
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-
-                for (int i = 0; i < updatedCashiers.Count; i++)
-                {
-                    if (updatedCashiers[i].CashId != id)
-                    {
-                        updatedCashiers.RemoveAll(c => c.CashId == updatedCashiers[i].CashId);
-                        i = i - 1;
-                    }
-
-                }
-                if (updatedCashiers.Count() > 0)
-                {
-                    resultModel.Message = "Cashier found";
-                }
-                else
-                {
-                    resultModel.Message = "Not found";
-                }
-                IEnumerable<Cashier> updatedCashiers2 = updatedCashiers;
-                resultModel.Data = updatedCashiers2;
-            }
-            return resultModel;
-
         }
 
         public async Task<ResultModel> UpdateCashier(string? token, CashierUpdateModel cashierModel)
@@ -480,11 +350,6 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-        public async Task<Cashier> GetCashierByIdCashier(string cashierId)
-
-        {
-            return await _cashierRepo.GetCashierByIdCashier(cashierId);
-        }
         public async Task<ResultModel> GetCashiersByUserId(string? token, string id)
         {
             var resultModel = new ResultModel
@@ -553,31 +418,6 @@ namespace Bussiness.Services.CashierService
             }
             return resultModel;
         }
-        private string RemoveDiacritics(string text)
-        {
-            var stringBuilder = new StringBuilder();
-            try
-            {
-                var normalizedString = text.Normalize(NormalizationForm.FormD);
-
-
-                foreach (var c in normalizedString)
-                {
-                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                    {
-                        stringBuilder.Append(c);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
 
         public async Task<ResultModel> GetCashiersByDate(string? token, DateTime date)
         {
@@ -600,7 +440,7 @@ namespace Bussiness.Services.CashierService
                 return resultModel;
             }
 
-            
+
             //var products = await _productRepo.GetProducts();
             IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
             List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
@@ -649,5 +489,171 @@ namespace Bussiness.Services.CashierService
             }
             return resultModel;
         }
+
+        public static string GenerateCustomerId()
+        {
+
+            int randomNumber = _random.Next(0, 10000);
+            string numberPart = randomNumber.ToString("D5");
+            return "CH" + numberPart;
+        }
+
+        public async Task<User> GetUserById(string customerId)
+        {
+            return await _cashierRepo.GetUserById(customerId);
+        }
+
+        static bool IsMoreThanFourHoursDifference(DateTime dt1, DateTime dt2)
+        {
+            TimeSpan difference = dt1 - dt2;
+            return difference.TotalHours > 4;
+        }
+
+        public static List<User> GetOverlappingCashiers(DateTime startTime, DateTime endTime, List<Cashier> cashiers, CashierRequestModel cashierModel)
+        {
+            var overlappingCashiers = cashiers
+                .Where(c => startTime < c.EndCash && endTime > c.StartCash && c.Status == 1 && c.UserId == cashierModel.UserId)
+                .Select(c => c.User)
+                .ToList();
+
+            return overlappingCashiers;
+        }
+
+        public static List<User> GetOverlappingCashiersUpdate(DateTime startTime, DateTime endTime, List<Cashier> cashiers, CashierUpdateModel cashierModel)
+        {
+            var overlappingCashiers = cashiers
+                .Where(c => startTime < c.EndCash && endTime > c.StartCash && c.Status == 1 && c.UserId == cashierModel.UserId)
+                .Select(c => c.User)
+                .ToList();
+
+            return overlappingCashiers;
+        }
+
+        public async Task<List<Cashier>> GetCashiers()
+        {
+
+            var cashiers = await _cashierRepo.GetCashiers();
+            List<Cashier> updatedCashiers = new List<Cashier>();
+
+            foreach (var cashier in cashiers)
+            {
+                Cashier cashier1 = new Cashier
+                {
+                    CashId =  cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                    User = cashier.User,
+
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            return updatedCashiers;
+        }
+
+
+        public async Task<ResultModel> GetCashierById(string id)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
+            List<Cashier> updatedCashiers = new List<Cashier>();
+            foreach (var cashier in cashiers)
+            {
+                Cashier cashier1 = new Cashier
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            if (String.IsNullOrEmpty(id))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any id";
+
+            }
+
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+
+                for (int i = 0; i < updatedCashiers.Count; i++)
+                {
+                    if (updatedCashiers[i].CashId != id)
+                    {
+                        updatedCashiers.RemoveAll(c => c.CashId == updatedCashiers[i].CashId);
+                        i = i - 1;
+                    }
+
+                }
+                if (updatedCashiers.Count() > 0)
+                {
+                    resultModel.Message = "Cashier found";
+                }
+                else
+                {
+                    resultModel.Message = "Not found";
+                }
+                IEnumerable<Cashier> updatedCashiers2 = updatedCashiers;
+                resultModel.Data = updatedCashiers2;
+            }
+            return resultModel;
+
+        }
+
+
+
+        public async Task<Cashier> GetCashierByIdCashier(string cashierId)
+
+        {
+            return await _cashierRepo.GetCashierByIdCashier(cashierId);
+        }
+        private string RemoveDiacritics(string text)
+        {
+            var stringBuilder = new StringBuilder();
+            try
+            {
+                var normalizedString = text.Normalize(NormalizationForm.FormD);
+
+
+                foreach (var c in normalizedString)
+                {
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(c);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+
     }
 }

@@ -100,7 +100,7 @@ namespace Bussiness.Services.CustomerService
 
                     Customer customer = new Customer
                     {
-                        CustomerId = GenerateCustomerId(),
+                        CustomerId = await GenerateCustomerId(),
                         FullName = customerRequestModel.FullName,
                         DoB = customerRequestModel.DoB,
                         Address = customerRequestModel.Address,
@@ -586,12 +586,28 @@ namespace Bussiness.Services.CustomerService
         {
             return Regex.Match(number, @"^([0-9]{10})$").Success;
         }
-        public static string GenerateCustomerId()
-        {
+        //public static string GenerateCustomerId()
+        //{
 
-            int randomNumber = _random.Next(0, 10000);
-            string numberPart = randomNumber.ToString("D5");
-            return "C" + numberPart;
+        //    int randomNumber = _random.Next(0, 10000);
+        //    string numberPart = randomNumber.ToString("D5");
+        //    return "C" + numberPart;
+        //}
+
+        private async Task<string> GenerateCustomerId()
+        {
+            var existingIds = await _customerRepo.GetCustomers();
+            HashSet<string> existingIdSet = new HashSet<string>(existingIds.Select(op => op.CustomerId));
+
+            string newItem;
+            do
+            {
+                int randomNumber = _random.Next(1, 100);
+                string numberPart = randomNumber.ToString("D3");
+                newItem = "C" + numberPart;
+            } while (existingIdSet.Contains(newItem));
+
+            return newItem;
         }
 
         private string RemoveDiacritics(string text)

@@ -13,6 +13,5 @@ namespace Data.Repository.OldProductRepo
         Task<OldProduct> GetByIdAsync(string id);
         Task<IEnumerable<OldProduct>> GetByProductIdAsync(string productId);
         Task AddAsync(OldProduct oldProduct);
-
     }
 }

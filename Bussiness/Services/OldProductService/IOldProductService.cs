@@ -14,6 +14,6 @@ namespace Bussiness.Services.OldProductService
         public Task<ResultModel> GetAllAsync(string token);
         Task<ResultModel> GetByIdAsync(string token, string id);
         Task<ResultModel> GetByProductIdAsync(string token, string productId);
-
+        Task<ResultModel> AddAsync(string token, OldProductCreateModel oldProduct);
     }
 }

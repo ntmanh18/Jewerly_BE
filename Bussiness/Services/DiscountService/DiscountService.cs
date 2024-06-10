@@ -243,7 +243,7 @@ namespace Bussiness.Services.DiscountService
                 var data = new
                 {
                     discount = req.DiscountId,
-                    productList = productList
+                    productList = req.ProductIds
                 };
                 res.Data = data;
                 return res;
@@ -257,6 +257,135 @@ namespace Bussiness.Services.DiscountService
             }
 
 
+        }
+
+        public async Task<ResultModel> UpdateDiscount(string token, UpdateDiscountReqModel req)
+        {
+            var res = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "You don't permission to perform this action.";
+                return res;
+            }
+            var oldDiscount =await _discountRepo.GetDiscountById(req.discountId);
+            if(oldDiscount == null)
+            {
+                res.IsSuccess = false;
+                res.Code= (int)HttpStatusCode.NotFound;
+                res.Message = "Discount is not existed";
+                return res;
+            }
+           
+            var isValidUpdatePubDate = oldDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.Now));
+            if (isValidUpdatePubDate < 0)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Can not update in use discount";
+                return res;
+            }
+            var a = DateOnly.FromDateTime(req.PublishDay);
+            var b = DateOnly.FromDateTime(DateTime.Now.AddHours(1));
+            var isValidPubDate = a.CompareTo(b);
+            if (isValidPubDate < 0)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Publish Day can not be earlier than today";
+                return res;
+            }
+            var isValidDate = req.ExpiredDay.CompareTo(req.PublishDay);
+            if (isValidDate < 0)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Expired Day must be later than publish day";
+                return res;
+            }
+            if(req.Cost < 0)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Invalid code";
+                return res;
+            }
+
+            oldDiscount.ExpiredDay = DateOnly.FromDateTime(req.ExpiredDay);
+            oldDiscount.PublishDay = DateOnly.FromDateTime(req.PublishDay);
+            oldDiscount.Cost = req.Cost;
+            try
+            {
+                await _discountRepo.Update(oldDiscount);
+                res.IsSuccess = true;
+                res.Code = (int)HttpStatusCode.OK;
+                res.Message = "Update discount successfully";
+                res.Data = req;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccess = false;
+                res.Data = ex.ToString();
+                return res;
+            }
+
+        }
+        public async Task<ResultModel> DeleteDiscount(string token, string discountId)
+        {
+            var res = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "You don't permission to perform this action.";
+                return res;
+            }
+            var oldDiscount = await _discountRepo.GetDiscountById(discountId);
+            if (oldDiscount == null)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.NotFound;
+                res.Message = "Discount is not existed";
+                return res;
+            }
+
+            try
+            {
+                //await _discountRepo.DeleteDiscountProduct(discountId);
+                //oldDiscount = await _discountRepo.GetDiscountById(discountId);
+                
+                await _discountRepo.DeleteDiscountProduct(oldDiscount);
+                res.IsSuccess = true;
+                res.Code = (int)HttpStatusCode.OK;
+                res.Message = "Delete Discount Successfully";
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccess = false;
+                res.Data = ex.ToString();
+                return res;
+            }
         }
     }
 }

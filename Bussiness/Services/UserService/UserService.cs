@@ -353,12 +353,6 @@ namespace Bussiness.Services.UserService
                     Message = ex.Message,
                 };
             }
-            
-
-
-
-
-
         }
 
         public async Task<ResultModel> ViewUserList(string token, UserQueryObject query)

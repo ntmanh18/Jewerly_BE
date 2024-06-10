@@ -63,7 +63,34 @@ namespace Data.Repository.CashierRepo
 
         public async Task<Cashier?> GetCashierByUser(string userId, DateTime cash)
         {
-            return await _context.Cashiers.Where(c => c.UserId == userId && c.StartCash <= cash && c.EndCash >= cash).FirstOrDefaultAsync();
+            return await _context.Cashiers.Where(c => c.UserId == userId && c.StartCash <= cash && c.EndCash >= cash).FirstOrDefaultAsync();}
+        public async Task<Cashier> DeactiveCashier(Cashier cashierDeavtive)
+        {
+            try
+            {
+                _context.Update(cashierDeavtive);
+                await _context.SaveChangesAsync();
+                return cashierDeavtive;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
+        public async Task<Cashier> GetCashierByIdCashier(string cashierId)
+        {
+            return await _context.Cashiers.FirstOrDefaultAsync(c => c.CashId == cashierId);
+        }
+
+        public async Task<IEnumerable<Cashier>> GetCashiersByUserId()
+        {
+            return await _context.Cashiers.ToListAsync();
+        }
+        public async Task<IEnumerable<Cashier>> GetCashiersByDate()
+        {
+            return await _context.Cashiers.ToListAsync();
         }
     }
 }

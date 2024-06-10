@@ -37,19 +37,13 @@ namespace Data.Repository.VoucherRepo
 
         public async Task<Voucher> GetVoucherByIdAsync(string voucherId) => _context.Vouchers.FirstOrDefault(g => g.VoucherId == voucherId);
 
-        public async Task<Voucher> UpdateVoucherAsync(Voucher voucher)
+        public async Task<Voucher> UpdateVoucherAsync(Voucher voucherUpdate)
         {
             try
             {
-                var existingVoucher = await _context.Vouchers.FindAsync(voucher.VoucherId);
-                if (existingVoucher != null)
-                {
-                    _context.Entry(existingVoucher).CurrentValues.SetValues(voucher);
-                }
-
-                _context.Update(voucher);
+                _context.Update(voucherUpdate);
                 await _context.SaveChangesAsync();
-                return voucher;
+                return voucherUpdate;
             }
             catch (Exception ex)
             {

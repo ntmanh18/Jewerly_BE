@@ -5,8 +5,7 @@
 using Data.Repository.GemRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
-
-
+using Data.Repository.VoucherRepo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
@@ -23,6 +22,7 @@ namespace Data
             services.AddScoped<ICustomerRepo, CustomerRepo>();
             services.AddScoped<IProductRepo, ProductRepo>();
             services.AddScoped<IGemRepo, GemRepo>();
+            services.AddScoped<IVoucherRepo, VoucherRepo>();
 
 
             return services;

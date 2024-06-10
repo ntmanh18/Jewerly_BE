@@ -9,6 +9,7 @@ using Bussiness.Services.ProductService;
 using Bussiness.Services.TokenService;
 using Bussiness.Services.UserService;
 using Bussiness.Services.Validate;
+using Bussiness.Services.VoucherService;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bussiness
@@ -31,7 +32,7 @@ namespace Bussiness
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IGemService, GemService>();
-
+            services.AddScoped<IVoucherService, VoucherService>();
 
             return services;
         }

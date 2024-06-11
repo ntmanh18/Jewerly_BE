@@ -1,11 +1,13 @@
 
 
 
+using Data.Repository.BillRepo;
 using Data.Repository.CashierRepo;
 using Data.Repository.CustomerRepo;
 using Data.Repository.DiscountRepo;
 using Data.Repository.GemRepo;
 using Data.Repository.GoldRepo;
+using Data.Repository.ProductBillRepo;
 using Data.Repository.ProductGemRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
@@ -31,6 +33,8 @@ namespace Data
             services.AddScoped<IProductGemRepo,ProductGemRepo>();
             services.AddScoped<ICashierRepo, CashierRepo>();
             services.AddScoped<IDiscountRepo, DiscountRepo>();
+            services.AddScoped<IProductBillRepo,ProductBillRepo>();
+            services.AddScoped <IBillRepo,BillRepo>();
 
             return services;
         }

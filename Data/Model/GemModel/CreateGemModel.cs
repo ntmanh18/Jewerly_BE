@@ -8,7 +8,6 @@ namespace Data.Model.GemModel
 {
     public class CreateGemModel
     {
-        public float rate { get; set; }
         public string Name { get; set; } = null!;
 
         public int Type { get; set; }

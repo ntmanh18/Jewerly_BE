@@ -489,6 +489,13 @@ namespace Bussiness.Services.ProductService
                 res.Message = "Weight, Cost and Size must be a positive number";
                 return res;
             }
+            if(productModel.MarkupRate < 1)
+            {
+                res.IsSuccess = false;
+                res.Code= (int)HttpStatusCode.Forbidden;
+                res.Message = "MarkupRate must greater than or equal to 1";
+                return res;
+            }
             
             Gold material = await _goldRepo.GetGoldById(productModel.Material);
              if (material == null)
@@ -513,6 +520,7 @@ namespace Bussiness.Services.ProductService
                 Amount = productModel.Amount,
                 Desc = productModel.Desc,
                 Image = productModel.Image,
+                MarkupRate = productModel.MarkupRate,
             };
             
             await _productRepo.Insert(p);

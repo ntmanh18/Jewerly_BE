@@ -17,6 +17,12 @@ public partial class Gold
 
     public DateTime ModifiedDate { get; set; }
 
+    public string? Kara { get; set; }
+
+    public string? GoldPercent { get; set; }
+
+    public float? WorldPrice { get; set; }
+
     public virtual User ModifiedByNavigation { get; set; } = null!;
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();

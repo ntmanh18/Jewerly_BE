@@ -15,5 +15,7 @@ public partial class Gem
 
     public string? Desc { get; set; }
 
+    public float? Rate { get; set; }
+
     public virtual ICollection<ProductGem> ProductGems { get; set; } = new List<ProductGem>();
 }

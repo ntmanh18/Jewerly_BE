@@ -10,6 +10,6 @@ namespace Data.Model.BillModel
     public class CreateBillReqModel :CreateProductBillReqModel
     {
         public string VoucherId { get; set; }
-
+        public string CustomerId { get; set; }
     }
 }

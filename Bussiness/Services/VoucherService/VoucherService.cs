@@ -237,56 +237,26 @@ namespace Bussiness.Services.VoucherService
             {
                 query = query.Where(v => v.ExpiredDay == new DateOnly(voucherSearch.expiredDay.Year, voucherSearch.expiredDay.Month, voucherSearch.expiredDay.Day));
             }
-            else
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.NotFound;
-                resultModel.Message = "Voucher not found.";
-                return resultModel;
-            }
+           
 
             if (!string.IsNullOrEmpty(voucherSearch.customerId))
             {
                 query = query.Where(v => v.CustomerCustomer.CustomerId == voucherSearch.customerId);
-            }else{
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.NotFound;
-                resultModel.Message = "Voucher not found.";
-                return resultModel;
             }
 
             if (!string.IsNullOrEmpty(voucherSearch.customerName))
             {
                 query = query.Where(v => v.CustomerCustomer.FullName.Contains(voucherSearch.customerName));
-            }else{
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.NotFound;
-                resultModel.Message = "Voucher not found.";
-                return resultModel;
             }
 
             if (!string.IsNullOrEmpty(voucherSearch.customerPhone))
             {
                 query = query.Where(v => v.CustomerCustomer.Phone.Contains(voucherSearch.customerPhone));
             }
-            else
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.NotFound;
-                resultModel.Message = "Voucher not found.";
-                return resultModel;
-            }
-
+            
             if (!string.IsNullOrEmpty(voucherSearch.customerEmail))
             {
                 query = query.Where(v => v.CustomerCustomer.Email.Contains(voucherSearch.customerEmail));
-            }
-            else
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.NotFound;
-                resultModel.Message = "Voucher not found.";
-                return resultModel;
             }
 
             var vouchers = await query.ToListAsync();

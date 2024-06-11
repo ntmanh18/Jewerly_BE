@@ -10,6 +10,7 @@ using Data.Repository.GemRepo;
 using Data.Repository.UserRepo;
 using Data.Repository.VoucherRepo;
 using Microsoft.EntityFrameworkCore;
+using RTools_NTS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Bussiness.Services.VoucherService
             _accountService = accountService;
         }
 
-        public async Task<ResultModel> CreateVoucher(string token, VoucherCreateModel voucherCreate)
+        public async Task<ResultModel> CreateVoucher(string? token, VoucherCreateModel voucherCreate)
         {
             var resultModel = new ResultModel
             {
@@ -101,7 +102,50 @@ namespace Bussiness.Services.VoucherService
             return resultModel;
         }
 
-        public async Task<ResultModel> UpdateVoucher(string token, VoucherRequestModel voucherUpdate)
+        public async Task<ResultModel> DeleteVoucherAsync(string? token, string voucherId)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            try
+            {
+                var voucher = await _voucherRepo.GetVoucherByIdAsync(voucherId);
+                if (voucher == null)
+                {
+                    resultModel.IsSuccess = false;
+                    resultModel.Code = (int)HttpStatusCode.NotFound;
+                    resultModel.Message = "Voucher not found.";
+                    return resultModel;
+                }
+                await _voucherRepo.DeleteVoucherAsync(voucher);
+                resultModel.Data = voucher;
+                resultModel.Message = "Voucher deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.InternalServerError;
+                resultModel.Message = $"Error deleting voucher: {ex.Message}";
+            }
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> UpdateVoucher(string? token, VoucherRequestModel voucherUpdate)
         {
             var resultModel = new ResultModel
             {
@@ -166,6 +210,88 @@ namespace Bussiness.Services.VoucherService
             var voucherUpdateLast = await _voucherRepo.UpdateVoucherAsync(voucher);
             resultModel.Data = voucherUpdateLast;
             resultModel.Message = "Voucher updated successfully.";
+            return resultModel;
+        }
+
+        public async Task<ResultModel> ViewListVoucher(string? token, VoucherSearchModel voucherSearch)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _voucherRepo.GetVoucherQuery();
+            if (voucherSearch.expiredDay?.Year != null && voucherSearch.expiredDay?.Month != null && voucherSearch.expiredDay?.Day != null)
+            {
+                query = query.Where(v => v.ExpiredDay == new DateOnly(voucherSearch.expiredDay.Year, voucherSearch.expiredDay.Month, voucherSearch.expiredDay.Day));
+            }
+            else
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Voucher not found.";
+                return resultModel;
+            }
+
+            if (!string.IsNullOrEmpty(voucherSearch.customerId))
+            {
+                query = query.Where(v => v.CustomerCustomer.CustomerId == voucherSearch.customerId);
+            }else{
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Voucher not found.";
+                return resultModel;
+            }
+
+            if (!string.IsNullOrEmpty(voucherSearch.customerName))
+            {
+                query = query.Where(v => v.CustomerCustomer.FullName.Contains(voucherSearch.customerName));
+            }else{
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Voucher not found.";
+                return resultModel;
+            }
+
+            if (!string.IsNullOrEmpty(voucherSearch.customerPhone))
+            {
+                query = query.Where(v => v.CustomerCustomer.Phone.Contains(voucherSearch.customerPhone));
+            }
+            else
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Voucher not found.";
+                return resultModel;
+            }
+
+            if (!string.IsNullOrEmpty(voucherSearch.customerEmail))
+            {
+                query = query.Where(v => v.CustomerCustomer.Email.Contains(voucherSearch.customerEmail));
+            }
+            else
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Voucher not found.";
+                return resultModel;
+            }
+
+            var vouchers = await query.ToListAsync();
+            resultModel.Data = vouchers;
+
             return resultModel;
         }
     }

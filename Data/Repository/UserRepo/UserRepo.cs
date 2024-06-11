@@ -47,7 +47,7 @@ namespace Data.Repository.UserRepo
       
         
 
-        public async Task<User> GetByIdAsync(string id)
+        public async Task<User?> GetByIdAsync(string id)
         {
         return  _context.Users.FirstOrDefault(c => c.UserId == id);
         }

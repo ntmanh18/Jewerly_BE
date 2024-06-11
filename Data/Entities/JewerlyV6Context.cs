@@ -64,6 +64,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.PublishDay).HasColumnType("datetime");
+            entity.Property(e => e.Type).HasColumnName("type");
             entity.Property(e => e.VoucherVoucherId)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -159,10 +160,10 @@ public partial class JewerlyV6Context : DbContext
                     "DiscountProduct",
                     r => r.HasOne<Product>().WithMany()
                         .HasForeignKey("ProductProductId")
-                        .HasConstraintName("FKDiscount_P804639").OnDelete(DeleteBehavior.SetNull),
+                        .HasConstraintName("FKDiscount_P804639"),
                     l => l.HasOne<Discount>().WithMany()
                         .HasForeignKey("DiscountDiscountId")
-                        .HasConstraintName("FKDiscount_P628904").OnDelete(DeleteBehavior.SetNull),
+                        .HasConstraintName("FKDiscount_P628904"),
                     j =>
                     {
                         j.HasKey("DiscountDiscountId", "ProductProductId").HasName("PK__Discount__77CD65F20E017925");
@@ -174,7 +175,6 @@ public partial class JewerlyV6Context : DbContext
                             .HasMaxLength(50)
                             .IsUnicode(false)
                             .HasColumnName("ProductProductID");
-
                     });
         });
 
@@ -191,6 +191,7 @@ public partial class JewerlyV6Context : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Rate).HasColumnName("rate");
         });
 
         modelBuilder.Entity<Gold>(entity =>
@@ -204,6 +205,13 @@ public partial class JewerlyV6Context : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.GoldName)
                 .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.GoldPercent)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("GoldPErcent");
+            entity.Property(e => e.Kara)
+                .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.ModifiedBy)
                 .HasMaxLength(10)
@@ -264,6 +272,7 @@ public partial class JewerlyV6Context : DbContext
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.MarkupRate).HasDefaultValue(1f);
             entity.Property(e => e.Material)
                 .HasMaxLength(10)
                 .IsUnicode(false);

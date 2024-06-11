@@ -17,6 +17,8 @@ public partial class Bill
 
     public string? CustomerId { get; set; }
 
+    public bool? Type { get; set; }
+
     public virtual Cashier Cashier { get; set; } = null!;
 
     public virtual Customer? Customer { get; set; }

@@ -93,9 +93,6 @@ namespace Data.Repository.CustomerRepo
         //    return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
         //}
         }
-        public async Task<Customer> GetCustomerById(string customerId)
-        {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
-        }
+       
     }
 }

@@ -353,12 +353,6 @@ namespace Bussiness.Services.UserService
                     Message = ex.Message,
                 };
             }
-            
-
-
-
-
-
         }
 
         public async Task<ResultModel> ViewUserList(string token, UserQueryObject query)
@@ -453,6 +447,7 @@ namespace Bussiness.Services.UserService
             string name = nameList.Last();
             return name + id;
         }
+
 
     }
 }

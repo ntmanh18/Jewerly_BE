@@ -45,16 +45,11 @@ namespace Data.Repository.GemRepo
             return gems;
         }
 
-        public async Task<IEnumerable<Gem>> GetGemById()
+        public async Task<Gem> GetGemById(string id)
         {
-            return await _context.Gems.ToListAsync();
+            return await _context.Gems.FirstOrDefaultAsync(c => c.GemId == id);
         }
-
-        public async Task<IEnumerable<Gem>> GetGemByName()
-        {
-            return await _context.Gems.ToListAsync();
-        }
-        public async Task<Gem> GetGemByNameAsync(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
+        public async Task<Gem> GetGemByName(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
 
         public async Task<Gem> UpdateGemAsync(GemRequestModel gemRequestModel)
         {

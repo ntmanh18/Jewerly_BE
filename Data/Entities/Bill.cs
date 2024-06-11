@@ -11,12 +11,13 @@ public partial class Bill
 
     public DateTime PublishDay { get; set; }
 
-    public string? CustomerCustomerId { get; set; }
     public string? VoucherVoucherId { get; set; }
 
     public string CashierId { get; set; } = null!;
 
     public string? CustomerId { get; set; }
+
+    public bool? Type { get; set; }
 
     public virtual Cashier Cashier { get; set; } = null!;
 

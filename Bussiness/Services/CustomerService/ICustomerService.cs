@@ -20,6 +20,8 @@ namespace Bussiness.Services.CustomerService
         Task<ResultModel> UpdateCustomer(string? token, CustomerUpdateModel customerModel);
         //Task<ResultModel> DeactiveCustomer(string? token, string id);
         //Task<Customer> GetCustomerById(string customerId);
+        Task<ResultModel> DeactiveCustomer(string? token, string id);
+        Task<Customer> GetCustomerById(string customerId);
 
     }
 }

@@ -27,5 +27,6 @@ namespace Data.Model.ProductModel
         public string? Desc { get; set; }
 
         public string Image { get; set; } = null!;
+        public float? MarkupRate { get; set; }
     }
 }

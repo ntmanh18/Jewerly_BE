@@ -13,6 +13,7 @@ using Bussiness.Services.ProductService;
 using Bussiness.Services.TokenService;
 using Bussiness.Services.UserService;
 using Bussiness.Services.Validate;
+using Bussiness.Services.VoucherService;
 using Data.Repository.DiscountRepo;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,10 +34,12 @@ namespace Bussiness
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IGemService, GemService>();
+            services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IProductGemService,ProductGemService>();
             services.AddScoped<ICashierService, CashierService>();
             services.AddScoped<IDiscountService,DiscountService>();
             services.AddScoped<IProductBillService, ProductBillService>();  
+
 
             services.AddScoped<IOldProductService, OldProductService>();
             return services;

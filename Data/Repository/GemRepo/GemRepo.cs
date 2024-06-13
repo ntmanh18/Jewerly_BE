@@ -66,10 +66,25 @@ namespace Data.Repository.GemRepo
                     throw new KeyNotFoundException($"Gem with ID {gemRequestModel.GemId} not found.");
                 }
 
-                gem.Name = gemRequestModel.Name;
-                gem.Type = gemRequestModel.Type;
-                gem.Price = gemRequestModel.Price;
-                gem.Desc = gemRequestModel.Desc;
+                if (!string.IsNullOrEmpty(gemRequestModel.Name))
+                {
+                    gem.Name = gemRequestModel.Name;
+                }
+
+                if (gemRequestModel.Type == 1 || gemRequestModel.Type == 2)
+                {
+                    gem.Type = gemRequestModel.Type;
+                }
+
+                if (gemRequestModel.Price != 0L)
+                {
+                    gem.Price = gemRequestModel.Price;
+                }
+
+                if (!string.IsNullOrEmpty(gemRequestModel.Desc))
+                {
+                    gem.Desc = gemRequestModel.Desc;
+                }
 
 
                 _context.Gems.Update(gem);

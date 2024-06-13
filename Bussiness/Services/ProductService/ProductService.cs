@@ -82,6 +82,7 @@ namespace Bussiness.Services.ProductService
                             Amount = product.Amount,
                             Desc = product.Desc,
                             Image = product.Image,
+                            MarkupRate = product.MarkupRate,
                             };
                     productAll = product1;
                     }
@@ -99,6 +100,7 @@ namespace Bussiness.Services.ProductService
                     Amount = product.Amount,
                     Desc = product.Desc,
                     Image = product.Image,
+                    MarkupRate= product.MarkupRate,
                 };
 
                 if(productAll != null){
@@ -161,6 +163,7 @@ namespace Bussiness.Services.ProductService
                         Amount = product.Amount,
                         Desc = product.Desc,
                         Image = product.Image,
+                        MarkupRate = product.MarkupRate,
                     };
                     productAll = product1;
                 }
@@ -178,6 +181,7 @@ namespace Bussiness.Services.ProductService
                     Amount = product.Amount,
                     Desc = product.Desc,
                     Image = product.Image,
+                    MarkupRate= product.MarkupRate,
                 };
 
                 if (productAll != null)
@@ -272,6 +276,7 @@ namespace Bussiness.Services.ProductService
                     Amount = product.Amount,
                     Desc = product.Desc,
                     Image = product.Image,
+                    MarkupRate = product.MarkupRate,
                 };
                 updatedProducts.Add(product1);
 
@@ -351,6 +356,12 @@ namespace Bussiness.Services.ProductService
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
                 }
+                else if (productModel.MarkupRate < 1)
+                {
+                    resultModel.Message = "Markup rate should be > 1";
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                }
                 else
                 {
                     resultModel.Code = 200;
@@ -368,6 +379,7 @@ namespace Bussiness.Services.ProductService
                         Amount = productModel.Amount,
                         Desc = productModel.Desc,
                         Image = productModel.Image,
+                        MarkupRate = productModel.MarkupRate,
                     };
                     var productUpdate = await _productRepo.UpdateProduct(product);
 
@@ -498,8 +510,14 @@ namespace Bussiness.Services.ProductService
                 res.Message = "Material is not existed ";
                 return res;
             }
-           
-            
+            if (productModel.MarkupRate < 1)
+            {
+                res.Message = "Markup rate should be > 1";
+                res.Code = 400;
+                res.IsSuccess = false;
+                return res;
+            }
+
             string id = await GenerateId(productModel.Category,material.GoldName,  productModel.ProductName);
             
             Product p = new Product(){
@@ -513,6 +531,7 @@ namespace Bussiness.Services.ProductService
                 Amount = productModel.Amount,
                 Desc = productModel.Desc,
                 Image = productModel.Image,
+                MarkupRate = productModel.MarkupRate,
             };
             
             await _productRepo.Insert(p);

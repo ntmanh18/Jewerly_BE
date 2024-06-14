@@ -61,11 +61,26 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("SearchByDate-Example-2024-06-01T15:00:00")]
-        public async Task<ActionResult> GetCashierByDate([FromQuery] DateTime date)
+        [HttpGet("SearchByDate")]
+        public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
+        [FromQuery] int month,
+        [FromQuery] int day,
+        [FromQuery] int hour,
+        [FromQuery] int minute,
+        [FromQuery] int second)
         {
+            DateTime dateTime;
+            try
+            {
+                dateTime = new DateTime(year, month, day, hour, minute, second);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid date-time parameters: {ex.Message}");
+            }
+
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _cashierService.GetCashiersByDate(token, date);
+            var res = await _cashierService.GetCashiersByDate(token, dateTime);
             return StatusCode(res.Code, res);
 
         }

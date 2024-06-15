@@ -39,6 +39,7 @@ namespace Bussiness.Services.GemService
                     Type = gem1.Type,
                     Price = gem1.Price,
                     Desc = gem1.Desc,
+                    rate = gem1.Rate,
                 }; 
                 getGem.Add(gem2);
             }
@@ -76,6 +77,7 @@ namespace Bussiness.Services.GemService
                     Type = gem1.Type,
                     Price = gem1.Price,
                     Desc = gem1.Desc,
+                    rate = gem1.Rate,
                 };
                 gemList.Add(gem2);
 
@@ -149,6 +151,7 @@ namespace Bussiness.Services.GemService
                     Type = gem1.Type,
                     Price = gem1.Price,
                     Desc = gem1.Desc,
+                    rate = gem1.Rate,
                 };
                 gemList.Add(gem2);
 
@@ -252,12 +255,24 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "A gem with the same name already exists.";
                 return resultModel;
             }
+            if (CreateGemModel.Type!=1 || CreateGemModel.Type !=2)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Conflict;
+                resultModel.Message = "The Type of the gem is incorrect. It must be 1 or 2.";
+                return resultModel;
+            }
+            if (CreateGemModel.Rate<0 || CreateGemModel.Rate>1)
+            {
+                CreateGemModel.Rate = 0;
+            }
             var gem = new Gem
             {
                 Name = CreateGemModel.Name,
                 Type = CreateGemModel.Type,
                 Price = CreateGemModel.Price,
                 Desc = CreateGemModel.Desc,
+                Rate = CreateGemModel.Rate
             };
             await _gemRepo.CreateGem(gem);
             resultModel.Data = gem;

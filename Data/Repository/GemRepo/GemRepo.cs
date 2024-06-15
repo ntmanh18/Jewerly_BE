@@ -85,6 +85,10 @@ namespace Data.Repository.GemRepo
                 {
                     gem.Desc = gemRequestModel.Desc;
                 }
+                if (gemRequestModel.rate >= 0 && gemRequestModel.rate <=1 ) 
+                {
+                    gem.Rate = gemRequestModel.rate;
+                }
 
 
                 _context.Gems.Update(gem);

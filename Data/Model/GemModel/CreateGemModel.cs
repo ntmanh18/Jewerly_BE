@@ -15,5 +15,6 @@ namespace Data.Model.GemModel
         public long Price { get; set; }
 
         public string? Desc { get; set; }
+        public float Rate { get; set; }
     }
 }

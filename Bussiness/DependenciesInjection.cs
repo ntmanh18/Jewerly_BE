@@ -16,6 +16,7 @@ using Bussiness.Services.TokenService;
 using Bussiness.Services.UserService;
 using Bussiness.Services.Validate;
 using Bussiness.Services.VoucherService;
+using Bussiness.Services.WarrantyService;
 using Data.Repository.DiscountRepo;
 using Microsoft.Extensions.DependencyInjection;
 using Data.Repository.GoldRepo;
@@ -43,6 +44,7 @@ namespace Bussiness
             services.AddScoped<ICashierService, CashierService>();
             services.AddScoped<IDiscountService,DiscountService>();
             services.AddScoped<IProductBillService, ProductBillService>();
+            services.AddScoped<IWarrantyService, WarrantyService>();
             services.AddScoped<IGoldService, GoldService>();
 
             services.AddScoped<IOldProductService, OldProductService>();

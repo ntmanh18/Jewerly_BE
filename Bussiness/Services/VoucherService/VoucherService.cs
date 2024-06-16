@@ -51,7 +51,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() {1, 2, 3 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -86,16 +86,30 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
                 return resultModel;
             }
+            var lastVoucher = await _voucherRepo.GetLastVoucherAsync();
+            int number = 1;
+            if (lastVoucher != null)
+            {
+                if (int.TryParse(lastVoucher.VoucherId.Substring(1), out int lastIdNumber))
+                {
+                    number = lastIdNumber + 1;
+                }
+            }
+
             var voucher = new Voucher
             {
-                CreatedBy = decodeModel.userid,
+                VoucherId = $"V{number:000}",
+                CreatedBy = voucherCreate.CreatedBy,
                 ExpiredDay = expiredDay,
                 PublishedDay = publishedDay,
                 Cost = voucherCreate.Cost,
                 CustomerCustomerId = voucherCreate.CustomerCustomerId,
             };
+
             await _voucherRepo.CreateVoucherAsync(voucher);
-            resultModel.Data = voucher;
+            var createdVoucherWithIncludes = await _voucherRepo.GetVoucherByIdWithIncludesAsync(voucher.VoucherId);
+
+            resultModel.Data = createdVoucherWithIncludes;
             resultModel.IsSuccess = true;
             resultModel.Code = (int)HttpStatusCode.OK;
             resultModel.Message = "Voucher created successfully.";
@@ -207,8 +221,9 @@ namespace Bussiness.Services.VoucherService
                 Cost = voucherUpdate.Cost,
                 CustomerCustomerId = voucherUpdate.CustomerCustomerId,
             };
-            var voucherUpdateLast = await _voucherRepo.UpdateVoucherAsync(voucher);
-            resultModel.Data = voucherUpdateLast;
+            await _voucherRepo.UpdateVoucherAsync(voucher);
+            var updateVoucherWithIncludes = await _voucherRepo.GetVoucherByIdWithIncludesAsync(voucher.VoucherId);
+            resultModel.Data = updateVoucherWithIncludes;
             resultModel.Message = "Voucher updated successfully.";
             return resultModel;
         }

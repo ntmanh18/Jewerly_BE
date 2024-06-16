@@ -13,26 +13,25 @@ namespace Data.Repository.VoucherRepo
         {
             _context = context;
         }
+        public async Task<Voucher> GetVoucherByIdWithIncludesAsync(string voucherId)
+        {
+            return await _context.Vouchers
+            .Include(v => v.CreatedByNavigation)
+            .Include(v => v.CustomerCustomer)
+            .FirstOrDefaultAsync(v => v.VoucherId == voucherId);
+        }
+
         public async Task<Voucher> CreateVoucherAsync(Voucher voucher)
         {
-            var lastVoucher = await _context.Vouchers
-                .OrderByDescending(g => g.VoucherId)
-                .FirstOrDefaultAsync();
-
-            int newIdNumber = 1;
-            if (lastVoucher != null)
-            {
-                int lastIdNumber;
-                if (int.TryParse(lastVoucher.VoucherId.Substring(1), out lastIdNumber))
-                {
-                    newIdNumber = lastIdNumber + 1;
-                }
-            }
-            voucher.VoucherId = $"V{newIdNumber:000}";
-
             _context.Vouchers.Add(voucher);
             await _context.SaveChangesAsync();
             return voucher;
+        }
+        public async Task<Voucher> GetLastVoucherAsync()
+        {
+            return await _context.Vouchers
+                .OrderByDescending(v => v.VoucherId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Voucher> DeleteVoucherAsync(Voucher voucher)

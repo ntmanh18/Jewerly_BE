@@ -18,6 +18,8 @@ namespace Data.Repository.VoucherRepo
         public Task<Voucher> UpdateVoucherAsync(Voucher voucher);
         public Task<Voucher> GetVoucherByIdAsync(string voucherId);
         public Task<Voucher> DeleteVoucherAsync(Voucher voucher);
-        IQueryable<Voucher> GetVoucherQuery(); 
+        IQueryable<Voucher> GetVoucherQuery();
+        public Task<Voucher> GetVoucherByIdWithIncludesAsync(string voucherId);
+        public Task<Voucher> GetLastVoucherAsync();
     }
 }

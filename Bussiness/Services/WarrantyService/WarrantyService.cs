@@ -115,5 +115,96 @@ namespace Bussiness.Services.WarrantyService
             resultModel.Message = "Warranty created successfully.";
             return resultModel;
         }
+
+        public async Task<ResultModel> UpdateWarranty(string? token, WarrantyUpdateModel warrantyUpdate)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var warrantyExists = await _warrantyRepo.GetWarrantyByIdAsync(warrantyUpdate.WarrantyId);
+            if (warrantyExists == null)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Request warranty not found";
+                return resultModel;
+            }
+            if (string.IsNullOrEmpty(warrantyUpdate.CustomerId))
+            {
+                warrantyUpdate.CustomerId = warrantyExists.CustomerCustomerId;
+            }
+            if (string.IsNullOrEmpty(warrantyUpdate.ProductId))
+            {
+                warrantyUpdate.ProductId = warrantyExists.ProductId;
+            }
+            if (string.IsNullOrEmpty(warrantyUpdate.Desc))
+            {
+                warrantyUpdate.Desc = warrantyExists.Desc;
+            }
+            var customerExist = await _customerRepo.GetCustomerById(warrantyUpdate.CustomerId);
+            if (customerExist == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = $"Customer with ID {warrantyUpdate.CustomerId} does not exist.";
+                return resultModel;
+            }
+            var productExist = await _productRepo.GetProductByIdv2(warrantyUpdate.ProductId);
+            if (productExist == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = $"Product with ID {warrantyUpdate.ProductId} does not exist.";
+                return resultModel;
+            }
+            DateOnly startdate = new DateOnly(warrantyUpdate.StartDate.Year, warrantyUpdate.StartDate.Month, warrantyUpdate.StartDate.Day);
+            DateOnly now = DateOnly.FromDateTime(DateTime.Today);
+            if (warrantyUpdate.StartDate.Year == 0 && warrantyUpdate.StartDate.Month == 0 && warrantyUpdate.StartDate.Day == 0)
+            {
+                startdate = warrantyExists.StartDate;
+            }
+            else if(startdate < now)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = "The start date must be today or later.";
+                return resultModel;
+            }
+            if (warrantyUpdate.Desc != "One-year warranty" && warrantyUpdate.Desc != "Half-year warranty" && warrantyUpdate.Desc != "Two-year warranty")
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = "The description must be either 'One-year warranty', 'Half-year warranty', or 'Two-year warranty'.";
+                return resultModel;
+            }
+            
+            Warranty warranty = new Warranty
+            {
+                WarrantyId = warrantyUpdate.WarrantyId,
+                CustomerCustomerId = warrantyUpdate.CustomerId,
+                StartDate = startdate,
+                Desc = warrantyUpdate.Desc,
+                ProductId = warrantyUpdate.ProductId,
+            };
+            await _warrantyRepo.UpdateWarrantyAsync(warranty);
+            var updateWarrantyWithIncludes = await _warrantyRepo.GetWarrantyByIdWithIncludesAsync(warranty.WarrantyId);
+            resultModel.Data = updateWarrantyWithIncludes;
+            resultModel.Message = "Warranty updated successfully.";
+            return resultModel;
+        }
     }
 }

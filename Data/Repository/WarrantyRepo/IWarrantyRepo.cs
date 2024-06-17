@@ -12,5 +12,7 @@ namespace Data.Repository.WarrantyRepo
         public Task<Warranty> CreateWarrantyAsync(Warranty warranty);
         public Task<Warranty> GetWarrantyByIdWithIncludesAsync(string WarrantyID);
         public Task<Warranty> GetLastWarrantyAsync();
+        public Task<Warranty> UpdateWarrantyAsync(Warranty warrantyUpdate);
+        public Task<Warranty> GetWarrantyByIdAsync(string warrantyId);
     }
 }

@@ -10,6 +10,7 @@ namespace Bussiness.Services.WarrantyService
 {
     public interface IWarrantyService
     {
-        public Task<ResultModel> CreateWarranty(string? token, WarrantyCreateModel warrantyCreate); 
+        public Task<ResultModel> CreateWarranty(string? token, WarrantyCreateModel warrantyCreate);
+        public Task<ResultModel> UpdateWarranty(string? token, WarrantyUpdateModel warrantyUpdate);
     }
 }

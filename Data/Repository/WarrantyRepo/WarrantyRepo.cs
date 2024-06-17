@@ -48,5 +48,32 @@ namespace Data.Repository.WarrantyRepo
             return await _context.Warranties
             .Include(v => v.CustomerCustomer).Include(v => v.Product).FirstOrDefaultAsync(v => v.WarrantyId == WarrantyID);
         }
+
+        public async Task<Warranty> UpdateWarrantyAsync(Warranty warrantyUpdate)
+        {
+            try
+            {
+                if (warrantyUpdate.Desc == "One-year warranty")
+                {
+                    warrantyUpdate.ExpiredDate = warrantyUpdate.StartDate.AddYears(1);
+                }
+                else if (warrantyUpdate.Desc == "Half-year warranty")
+                {
+                    warrantyUpdate.ExpiredDate = warrantyUpdate.StartDate.AddMonths(6);
+                }
+                else if (warrantyUpdate.Desc == "Two-year warranty")
+                {
+                    warrantyUpdate.ExpiredDate = warrantyUpdate.StartDate.AddYears(2);
+                }
+                _context.Update(warrantyUpdate);
+                await _context.SaveChangesAsync();
+                return warrantyUpdate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<Warranty> GetWarrantyByIdAsync(string warrantyId) => _context.Warranties.FirstOrDefault(g => g.WarrantyId == warrantyId);
     }
 }

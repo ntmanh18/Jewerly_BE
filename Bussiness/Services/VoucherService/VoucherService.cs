@@ -10,18 +10,21 @@ using Data.Repository.GemRepo;
 using Data.Repository.UserRepo;
 using Data.Repository.VoucherRepo;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RTools_NTS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Bussiness.Services.VoucherService
 {
     public class VoucherService : IVoucherService
     {
+        private readonly JewerlyV6Context _context;
         private readonly IVoucherRepo _voucherRepo;
         private readonly IUserRepo _userRepo;
         private readonly ICustomerRepo _customerRepo;
@@ -186,6 +189,18 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = "Request voucher not found";
                 return resultModel;
             }
+            if (string.IsNullOrEmpty(voucherUpdate.CreatedBy))
+            {
+                voucherUpdate.CreatedBy = voucherExists.CreatedBy;
+            }
+            if (string.IsNullOrEmpty(voucherUpdate.CustomerCustomerId))
+            {
+                voucherUpdate.CustomerCustomerId = voucherExists.CustomerCustomerId;
+            }
+            if (voucherUpdate.Cost < 0)
+            {
+                voucherUpdate.Cost = voucherExists.Cost;
+            }
             var userExists = await _userRepo.GetByIdAsync(voucherUpdate.CreatedBy);
             if (userExists == null)
             {
@@ -205,6 +220,7 @@ namespace Bussiness.Services.VoucherService
             DateOnly expiredDay = new DateOnly(voucherUpdate.ExpiredDay.Year, voucherUpdate.ExpiredDay.Month, voucherUpdate.ExpiredDay.Day);
             DateOnly publishedDay = new DateOnly(voucherUpdate.PublishedDay.Year, voucherUpdate.PublishedDay.Month, voucherUpdate.PublishedDay.Day);
             DateOnly now = DateOnly.FromDateTime(DateTime.Today);
+            //so sánh expiređay và punlisheDay
             if (expiredDay < publishedDay && publishedDay < now)
             {
                 resultModel.IsSuccess = false;

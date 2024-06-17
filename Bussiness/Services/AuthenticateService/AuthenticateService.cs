@@ -21,7 +21,6 @@ namespace Bussiness.Services.AuthenticateService
         {
             _config = config;
             _tokenHandler = new JwtSecurityTokenHandler();
-
         }
 
         public string decodeToken(string jwtToken, string nameClaim)

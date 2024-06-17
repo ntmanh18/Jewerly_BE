@@ -43,6 +43,10 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod();
                       });
 });
+builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
+{
+    build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+}));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Bearer", options =>
@@ -101,5 +105,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseCors("corspolicy");
 
 app.Run();

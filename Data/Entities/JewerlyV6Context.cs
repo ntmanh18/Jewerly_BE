@@ -64,6 +64,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.PublishDay).HasColumnType("datetime");
+            entity.Property(e => e.TotalCost).HasColumnType("decimal(10, 3)");
             entity.Property(e => e.Type).HasColumnName("type");
             entity.Property(e => e.VoucherVoucherId)
                 .HasMaxLength(10)
@@ -93,6 +94,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.EndCash).HasColumnType("datetime");
+            entity.Property(e => e.Income).HasColumnType("decimal(10, 3)");
             entity.Property(e => e.StartCash).HasColumnType("datetime");
             entity.Property(e => e.Status).HasDefaultValue(1);
             entity.Property(e => e.UserId)
@@ -217,6 +219,9 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            entity.Property(e => e.PurchasePrice).HasColumnType("decimal(10, 3)");
+            entity.Property(e => e.SalePrice).HasColumnType("decimal(10, 3)");
+            entity.Property(e => e.WorldPrice).HasColumnType("decimal(10, 3)");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.Golds)
                 .HasForeignKey(d => d.ModifiedBy)

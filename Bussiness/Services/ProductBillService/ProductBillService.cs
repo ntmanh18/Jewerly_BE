@@ -88,7 +88,7 @@ namespace Bussiness.Services.ProductBillService
                     return res;
                 }
 
-                else if (await _producBillRepo.GetUniqueProductBill(b.BillId,id.Key) != null)
+                else if (await _producBillRepo.GetUniqueProductBill(b.BillId, id.Key) != null)
                 {
                     res.IsSuccess = false;
                     res.Code = (int)HttpStatusCode.Forbidden;

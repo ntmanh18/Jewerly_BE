@@ -19,7 +19,7 @@ namespace API.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginReqModel user)
         {
-            ResultModel resultModel = await _accountService.LoginService(user);
+                ResultModel resultModel = await _accountService.LoginService(user);
             return resultModel.IsSuccess ? Ok(resultModel) : BadRequest(resultModel);
         }
     }

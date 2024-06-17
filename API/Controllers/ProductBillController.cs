@@ -19,7 +19,7 @@ namespace API.Controllers
         [HttpPost]
 
 
-        public async Task<IActionResult> CreateUser([FromBody] CreateProductBillReqModel req)
+        public async Task<IActionResult> CreateProductBill([FromBody] CreateProductBillReqModel req)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _productBillService.CreateProductBill(token, req);

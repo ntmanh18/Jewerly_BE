@@ -59,14 +59,7 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = "You don't permission to perform this action.";
                 return resultModel;
             }
-            var userExists = await _userRepo.GetByIdAsync(voucherCreate.CreatedBy);
-            if (userExists == null)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = $"User with ID {voucherCreate.CreatedBy} does not exist.";
-                return resultModel;
-            }
+            
             var customerExists = await _customerRepo.GetCustomerById(voucherCreate.CustomerCustomerId);
             if (customerExists == null)
             {
@@ -75,7 +68,14 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = $"Customer with ID {voucherCreate.CustomerCustomerId} does not exist.";
                 return resultModel;
             }
+            if(voucherCreate.Cost > 1)
+            {
 
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "Cost must be smaller than 1";
+                return resultModel;
+            }
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
             DateOnly publishedDay = new DateOnly(voucherCreate.PublishedDay.Year, voucherCreate.PublishedDay.Month, voucherCreate.PublishedDay.Day);
             DateOnly now = DateOnly.FromDateTime(DateTime.Today);
@@ -88,7 +88,7 @@ namespace Bussiness.Services.VoucherService
             }
             var voucher = new Voucher
             {
-                CreatedBy = voucherCreate.CreatedBy,
+                CreatedBy = decodeModel.userid,
                 ExpiredDay = expiredDay,
                 PublishedDay = publishedDay,
                 Cost = voucherCreate.Cost,

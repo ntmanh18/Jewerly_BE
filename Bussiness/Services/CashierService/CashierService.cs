@@ -105,10 +105,11 @@ namespace Bussiness.Services.CashierService
                         CashId = GenerateCustomerId(),
                         StartCash = cashierModel.StartCash,
                         EndCash = cashierModel.EndCash,
-                        Income = cashierModel.Income,
+                        Income = 0,
                         CashNumber = cashierModel.CashNumber,
                         UserId = cashierModel.UserId,
-                        User = user,
+                        Status = 1,
+                       
 
                     };
                     await _cashierRepo.CreateCashier(cashier);

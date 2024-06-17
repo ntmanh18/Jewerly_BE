@@ -1,4 +1,4 @@
-﻿using Bussiness.Services.AccountService;
+﻿ using Bussiness.Services.AccountService;
 using Data.Model.ProductBillModel;
 using Bussiness.Services.ProductBillService;
 using Bussiness.Services.TokenService;
@@ -130,8 +130,21 @@ namespace Bussiness.Services.BillService
             Customer customer =await _customerRepo.GetCustomerById(req.CustomerId);
             Voucher voucher = await _voucherRepo.GetVoucherByIdAsync(req.VoucherId);
             Cashier cash = await _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
+            if(cash == null)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Cash can not be null";
+                return res;
+            }
             //if voucher belong to customer
-           
+           if(voucher.CustomerCustomer != customer)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Invalid voucher";
+                return res;
+            }
             
             
             foreach(var product in req.Product)
@@ -163,7 +176,17 @@ namespace Bussiness.Services.BillService
                 productPrice = CalculateCost((decimal)existProduct.MaterialNavigation.SalePrice, (decimal)existProduct.Weight, existProduct.MachiningCost, gemPrice, (decimal)existProduct.MarkupRate);
                 if(existProduct.DiscountDiscounts.Count > 0)
                 {
-                  productPrice = CostWithDiscount(productPrice,existProduct.DiscountDiscounts.ToList());
+                    var disCountList = new List<Discount>();
+                    //check available disount
+                   foreach(var discount in existProduct.DiscountDiscounts)
+                    {
+                        if(discount.PublishDay.CompareTo(DateTime.UtcNow) <= 0 &&
+                            discount.ExpiredDay.CompareTo(DateTime.UtcNow) >=0 
+                            ) {
+                            disCountList.Add(discount);
+                        }
+                    }
+                  productPrice = CostWithDiscount(productPrice,disCountList);
                 }
 
                 totalCost += productPrice;
@@ -181,9 +204,13 @@ namespace Bussiness.Services.BillService
                 b.BillId = GenerateId();
                 b.TotalCost = totalCost;
                 b.PublishDay = DateTime.Now;
-                b.VoucherVoucher = voucher;
-                b.Cashier = cash;
-                b.Customer = customer;
+                if (voucher != null)
+                {
+                    b.VoucherVoucherId = voucher.VoucherId;
+                }
+                b.CashierId = cash.CashId;
+                if(customer != null) { b.CustomerId = customer.CustomerId; }
+                
                 
                 
                 await _billRepo.Insert(b);

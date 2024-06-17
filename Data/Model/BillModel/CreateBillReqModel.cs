@@ -10,6 +10,8 @@ namespace Data.Model.BillModel
     public class CreateBillReqModel { 
         public Dictionary<string, int> Product { get; set; }
         public string VoucherId { get; set; }
+
         public string? CustomerId { get; set; }
+
     }
 }

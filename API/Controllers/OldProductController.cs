@@ -19,7 +19,7 @@ namespace API.Controllers
         {
             _OPService = OPService;
         }
-        [HttpGet]
+        [HttpGet("Get-All")]
         public async Task<ActionResult<IEnumerable<OldProductRequestModel>>> GetAll()
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -30,7 +30,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("byProduct/{productId}")]
+        [HttpGet("get-by-Productid")]
         public async Task<ActionResult<IEnumerable<OldProductRequestModel>>> GetByProductId(string productId)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -38,7 +38,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<ResultModel>> Create([FromBody] OldProductCreateModel oldProduct)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];

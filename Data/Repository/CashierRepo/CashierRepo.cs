@@ -92,6 +92,20 @@ namespace Data.Repository.CashierRepo
         {
             return await _context.Cashiers.ToListAsync();
         }
-        
+        public async Task<Cashier> UpdateStatusCashier(Cashier cashierUpdate)
+        {
+            try
+            {
+                _context.Update(cashierUpdate);
+                await _context.SaveChangesAsync();
+                return cashierUpdate;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }

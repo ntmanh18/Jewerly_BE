@@ -353,6 +353,73 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
+        public async Task<ResultModel> UpdateStatusCashier(string? token, string id)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            var existingProduct = await _cashierRepo.GetCashierByIdCashier(id);
+
+            if (existingProduct == null)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Request cashier not found";
+            }
+            else if (existingProduct.Status == 0)
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Status setted to true";
+                Cashier cashier = new Cashier
+                {
+                    CashId = existingProduct.CashId,
+                    StartCash = existingProduct.StartCash,
+                    EndCash = existingProduct.EndCash,
+                    Income = existingProduct.Income,
+                    CashNumber = existingProduct.CashNumber,
+                    UserId = existingProduct.UserId,
+                    //User = existingProduct.User,
+                    Status = 1
+                };
+                var cashierUpdate = await _cashierRepo.DeactiveCashier(cashier);
+            }
+            else
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Status setted to false";
+                Cashier cashier = new Cashier
+                {
+                    CashId = existingProduct.CashId,
+                    StartCash = existingProduct.StartCash,
+                    EndCash = existingProduct.EndCash,
+                    Income = existingProduct.Income,
+                    CashNumber = existingProduct.CashNumber,
+                    UserId = existingProduct.UserId,
+                    //User = existingProduct.User,
+                    Status = 0
+                };
+                var cashierUpdate = await _cashierRepo.DeactiveCashier(cashier);
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> GetCashiersByUserId(string? token, string id)
         {
             var resultModel = new ResultModel
@@ -493,13 +560,6 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-        //public static string GenerateCustomerId()
-        //{
-
-        //    int randomNumber = _random.Next(0, 10000);
-        //    string numberPart = randomNumber.ToString("D5");
-        //    return "CH" + numberPart;
-        //}
 
         private async Task<string> GenerateCustomerId()
         {

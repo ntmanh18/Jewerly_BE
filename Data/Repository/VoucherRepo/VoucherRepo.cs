@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Data.Model.GemModel;
 using Data.Model.ResultModel;
 using Data.Model.VoucherModel;
 using Data.Repository.GenericRepo;

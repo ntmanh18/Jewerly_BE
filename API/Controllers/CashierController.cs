@@ -52,7 +52,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        [HttpGet("SearchByUserId")]
+        [HttpGet("Search-By-User-Id")]
         public async Task<ActionResult> GetCashierByUserId([FromQuery] string? id)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -61,7 +61,7 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("SearchByDate")]
+        [HttpGet("Search-By-Date")]
         public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
         [FromQuery] int month,
         [FromQuery] int day,
@@ -83,6 +83,13 @@ namespace API.Controllers
             var res = await _cashierService.GetCashiersByDate(token, dateTime);
             return StatusCode(res.Code, res);
 
+        }
+        [HttpPut("Update-Status-Cashier")]
+        public async Task<ActionResult<Cashier>> UpdateStatusCashier(string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.UpdateStatusCashier(token, id);
+            return StatusCode(res.Code, res);
         }
     }
 }

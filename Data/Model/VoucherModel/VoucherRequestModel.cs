@@ -12,7 +12,6 @@ namespace Data.Model.VoucherModel
         public string CreatedBy { get; set; } = null!;
 
         public DatePart ExpiredDay { get; set; }
-        public DatePart PublishedDay { get; set; }
 
         public long Cost { get; set; }
 

@@ -17,7 +17,7 @@ namespace API.Controllers
             _warrantyService = warrantyService;
         }
         [HttpPost("createWarranty")]
-        public async Task<ActionResult> CreateVoucher(WarrantyCreateModel warranty)
+        public async Task<ActionResult> CreateWarranty(WarrantyCreateModel warranty)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _warrantyService.CreateWarranty(token, warranty);

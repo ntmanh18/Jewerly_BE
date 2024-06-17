@@ -20,5 +20,6 @@ namespace Data.Repository.CashierRepo
         public Task<Cashier> GetCashierByIdCashier(string cashierId);
         Task<IEnumerable<Cashier>> GetCashiersByUserId();
         Task<IEnumerable<Cashier>> GetCashiersByDate();
+        public Task<Cashier> UpdateStatusCashier(Cashier updateStatus);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,5 +29,7 @@ namespace Data.Model.ProductModel
 
         public string Image { get; set; } = null!;
         public float? MarkupRate { get; set; }
+        public virtual ICollection<GemDto> ProductGems { get; set; } = new List<GemDto>();
+
     }
 }

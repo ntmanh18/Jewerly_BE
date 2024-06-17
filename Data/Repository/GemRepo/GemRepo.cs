@@ -50,51 +50,52 @@ namespace Data.Repository.GemRepo
             return await _context.Gems.FirstOrDefaultAsync(c => c.GemId == id);
         }
         public async Task<Gem> GetGemByName(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
-
         public async Task<Gem> UpdateGemAsync(GemRequestModel gemRequestModel)
+        {
+            if (gemRequestModel == null || string.IsNullOrEmpty(gemRequestModel.GemId))
+            {
+                throw new ArgumentException("Invalid gem data provided.");
+            }
+
+            var gem = await _context.Gems.FirstOrDefaultAsync(g => g.GemId == gemRequestModel.GemId);
+            if (gem == null)
+            {
+                throw new KeyNotFoundException($"Gem with ID {gemRequestModel.GemId} not found.");
+            }
+
+            if (!string.IsNullOrEmpty(gemRequestModel.Name))
+            {
+                gem.Name = gemRequestModel.Name;
+            }
+
+            if (gemRequestModel.Type == 1 || gemRequestModel.Type == 2)
+            {
+                gem.Type = gemRequestModel.Type;
+            }
+
+            if (gemRequestModel.Price != 0L)
+            {
+                gem.Price = gemRequestModel.Price;
+            }
+
+            if (!string.IsNullOrEmpty(gemRequestModel.Desc))
+            {
+                gem.Desc = gemRequestModel.Desc;
+            }
+            if (gemRequestModel.rate >= 0 && gemRequestModel.rate <= 1)
+            {
+                gem.Rate = gemRequestModel.rate;
+            }
+            return gem;
+        }
+        public async Task<Gem> UpdateGem(Gem gemRequestModel)
         {
             try
             {
-                if (gemRequestModel == null || string.IsNullOrEmpty(gemRequestModel.GemId))
-                {
-                    throw new ArgumentException("Invalid gem data provided.");
-                }
-
-                var gem = await _context.Gems.FirstOrDefaultAsync(g => g.GemId == gemRequestModel.GemId);
-                if (gem == null)
-                {
-                    throw new KeyNotFoundException($"Gem with ID {gemRequestModel.GemId} not found.");
-                }
-
-                if (!string.IsNullOrEmpty(gemRequestModel.Name))
-                {
-                    gem.Name = gemRequestModel.Name;
-                }
-
-                if (gemRequestModel.Type == 1 || gemRequestModel.Type == 2)
-                {
-                    gem.Type = gemRequestModel.Type;
-                }
-
-                if (gemRequestModel.Price != 0L)
-                {
-                    gem.Price = gemRequestModel.Price;
-                }
-
-                if (!string.IsNullOrEmpty(gemRequestModel.Desc))
-                {
-                    gem.Desc = gemRequestModel.Desc;
-                }
-                if (gemRequestModel.rate >= 0 && gemRequestModel.rate <=1 ) 
-                {
-                    gem.Rate = gemRequestModel.rate;
-                }
-
-
-                _context.Gems.Update(gem);
+                _context.Gems.Update(gemRequestModel);
                 await _context.SaveChangesAsync();
 
-                return gem;
+                return gemRequestModel;
             }
             catch (Exception ex)
              {

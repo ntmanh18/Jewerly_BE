@@ -223,6 +223,7 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "A gem with the same name already exists.";
                 return resultModel;
             }
+            await _gemRepo.UpdateGem(updatedGem);
             resultModel.Data = updatedGem;
             resultModel.Message = "Gem updated successfully.";
             return resultModel;

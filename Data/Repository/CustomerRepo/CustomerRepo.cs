@@ -93,5 +93,21 @@ namespace Data.Repository.CustomerRepo
         //    return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == customerId);
         //}
         }
+
+        public async Task<Customer> UpdateStatusCustomer(Customer customerUpdate)
+        {
+            try
+            {
+                _context.Update(customerUpdate);
+                await _context.SaveChangesAsync();
+                return customerUpdate;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }

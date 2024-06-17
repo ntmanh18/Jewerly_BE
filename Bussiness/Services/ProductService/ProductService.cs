@@ -61,31 +61,8 @@ namespace Bussiness.Services.ProductService
 
             var products = await _productRepo.GetProducts();
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
-
-
             foreach (var product in products)
             {
-                ProductRequestModel productAll = null;
-
-                    foreach (var productGem in product.ProductGems)
-                    {
-                            var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
-                            ProductRequestModel product1 = new ProductRequestModel
-                            {
-                            ProductId = productGem.GemGem.Name,
-                            ProductName = product.ProductName,
-                            Category = product.Category,
-                            Material = gold,
-                            Weight = product.Weight,
-                            MachiningCost = product.MachiningCost,
-                            Size = product.Size,
-                            Amount = product.Amount,
-                            Desc = product.Desc,
-                            Image = product.Image,
-                            MarkupRate = product.MarkupRate,
-                            };
-                    productAll = product1;
-                    }
 
                 var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
                 ProductRequestModel product2 = new ProductRequestModel
@@ -101,23 +78,16 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                     MarkupRate= product.MarkupRate,
+                    ProductGems = product.ProductGems.Select(pg => new GemDto
+                    {
+                        GemName = pg.GemGem.Name
+                    }).ToList()
                 };
 
-                if(productAll != null){
-                    updatedProducts.Add(productAll);
-                }
-                else
-                {
+
                     updatedProducts.Add(product2);
-                }
-                    
 
-          
             }
-
-                
-            
-
             return updatedProducts;
         }
 
@@ -146,27 +116,6 @@ namespace Bussiness.Services.ProductService
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
             foreach (var product in products)
             {
-                ProductRequestModel productAll = null;
-
-                foreach (var productGem in product.ProductGems)
-                {
-                    var gold = _productRepo.GetGoldById(product.Material).Result.GoldName;
-                    ProductRequestModel product1 = new ProductRequestModel
-                    {
-                        ProductId = productGem.GemGem.Name,
-                        ProductName = product.ProductName,
-                        Category = product.Category,
-                        Material = gold,
-                        Weight = product.Weight,
-                        MachiningCost = product.MachiningCost,
-                        Size = product.Size,
-                        Amount = product.Amount,
-                        Desc = product.Desc,
-                        Image = product.Image,
-                        MarkupRate = product.MarkupRate,
-                    };
-                    productAll = product1;
-                }
 
                 var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
                 ProductRequestModel product2 = new ProductRequestModel
@@ -181,30 +130,15 @@ namespace Bussiness.Services.ProductService
                     Amount = product.Amount,
                     Desc = product.Desc,
                     Image = product.Image,
-                    MarkupRate= product.MarkupRate,
+                    MarkupRate = product.MarkupRate,
+                    ProductGems = product.ProductGems.Select(pg => new GemDto
+                    {
+                        GemName = pg.GemGem.Name
+                    }).ToList()
                 };
 
-                if (productAll != null)
-                {
-                    updatedProducts.Add(productAll);
-                }
-                else
-                {
-                    updatedProducts.Add(product2);
-                }
 
-
-
-                if (productAll != null)
-                {
-                    updatedProducts.Add(productAll);
-                }
-                else
-                {
-                    updatedProducts.Add(product2);
-                }
-
-
+                updatedProducts.Add(product2);
 
             }
 
@@ -227,7 +161,7 @@ namespace Bussiness.Services.ProductService
                 updatedProducts2 = updatedProducts2.Where(p => RemoveDiacritics(p.ProductName).ToLower().Contains(RemoveDiacritics(name).ToLower()));
                 if (updatedProducts2.Count() > 0)
                 {
-                    resultModel.Message = $"Success - There are {products.Count()} found";
+                    resultModel.Message = "Success";
                 }
                 else
                 {
@@ -264,12 +198,14 @@ namespace Bussiness.Services.ProductService
             List<ProductRequestModel> updatedProducts = new List<ProductRequestModel>();
             foreach (var product in products)
             {
-                ProductRequestModel product1 = new ProductRequestModel
+
+                var gold2 = _productRepo.GetGoldById(product.Material).Result.GoldName;
+                ProductRequestModel product2 = new ProductRequestModel
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Category = product.Category,
-                    Material = product.Material,
+                    Material = gold2,
                     Weight = product.Weight,
                     MachiningCost = product.MachiningCost,
                     Size = product.Size,
@@ -277,11 +213,17 @@ namespace Bussiness.Services.ProductService
                     Desc = product.Desc,
                     Image = product.Image,
                     MarkupRate = product.MarkupRate,
+                    ProductGems = product.ProductGems.Select(pg => new GemDto
+                    {
+                        GemName = pg.GemGem.Name
+                    }).ToList()
                 };
-                updatedProducts.Add(product1);
+
+
+                updatedProducts.Add(product2);
 
             }
-            
+
 
             if (String.IsNullOrEmpty(productId))
             {

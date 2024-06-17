@@ -22,5 +22,6 @@ namespace Bussiness.Services.CashierService
         public Task<List<Cashier>> GetCashiers();
         Task<ResultModel> GetCashierById(string id);
         Task<Cashier> GetCashierByIdCashier(string cashierId);
+        Task<ResultModel> UpdateStatusCashier(string? token, string id);
     }
 }

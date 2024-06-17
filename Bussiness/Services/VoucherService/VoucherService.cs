@@ -218,14 +218,16 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherUpdate.ExpiredDay.Year, voucherUpdate.ExpiredDay.Month, voucherUpdate.ExpiredDay.Day);
-            DateOnly publishedDay = new DateOnly(voucherUpdate.PublishedDay.Year, voucherUpdate.PublishedDay.Month, voucherUpdate.PublishedDay.Day);
-            DateOnly now = DateOnly.FromDateTime(DateTime.Today);
             //so sánh expiređay và punlisheDay
-            if (expiredDay < publishedDay && publishedDay < now)
+            if (voucherUpdate.ExpiredDay.Year == 0 && voucherUpdate.ExpiredDay.Month == 0 && voucherUpdate.ExpiredDay.Day == 0)
+            {
+                expiredDay = voucherExists.ExpiredDay;
+            }
+            if (expiredDay <= voucherExists.PublishedDay)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
+                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay";
                 return resultModel;
             }
             Voucher voucher = new Voucher
@@ -233,7 +235,6 @@ namespace Bussiness.Services.VoucherService
                 VoucherId = voucherUpdate.VoucherId,
                 CreatedBy = voucherUpdate.CreatedBy,
                 ExpiredDay = expiredDay,
-                PublishedDay = publishedDay,
                 Cost = voucherUpdate.Cost,
                 CustomerCustomerId = voucherUpdate.CustomerCustomerId,
             };

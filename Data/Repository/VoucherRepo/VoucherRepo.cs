@@ -44,7 +44,7 @@ namespace Data.Repository.VoucherRepo
 
         public async Task<Voucher> GetVoucherByIdAsync(string voucherId) => _context.Vouchers.FirstOrDefault(g => g.VoucherId == voucherId);
 
-        public IQueryable<Voucher> GetVoucherQuery() => _context.Vouchers.Include(v => v.CustomerCustomer).AsQueryable();
+        public IQueryable<Voucher> GetVoucherQuery() => _context.Vouchers.Include(v => v.CustomerCustomer).Include(v => v.CreatedByNavigation).AsQueryable();
 
         public async Task<Voucher> UpdateVoucherAsync(Voucher voucherUpdate)
         {

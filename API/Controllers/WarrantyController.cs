@@ -30,5 +30,12 @@ namespace API.Controllers
             var res = await _warrantyService.UpdateWarranty(token, warrantyUpdate);
             return StatusCode(res.Code, res);
         }
+        [HttpGet("ViewListWarranty")]
+        public async Task<ActionResult> ViewListWarranty([FromQuery] WarrantySearchModel warrantySearch)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _warrantyService.ViewListWarranty(token, warrantySearch);
+            return StatusCode(res.Code, res);
+        }
     }
 }

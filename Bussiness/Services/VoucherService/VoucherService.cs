@@ -54,7 +54,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() {1, 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -130,7 +130,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -173,7 +173,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -256,7 +256,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;

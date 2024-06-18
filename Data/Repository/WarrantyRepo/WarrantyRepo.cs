@@ -75,5 +75,9 @@ namespace Data.Repository.WarrantyRepo
             }
         }
         public async Task<Warranty> GetWarrantyByIdAsync(string warrantyId) => _context.Warranties.FirstOrDefault(g => g.WarrantyId == warrantyId);
+
+        public IQueryable<Warranty> GetWarrantyQuery() => _context.Warranties.Include(v => v.Product).Include(v => v.CustomerCustomer).AsQueryable();
+
+
     }
 }

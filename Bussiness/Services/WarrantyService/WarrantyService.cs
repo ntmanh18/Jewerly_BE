@@ -9,12 +9,14 @@ using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
 using Data.Repository.VoucherRepo;
 using Data.Repository.WarrantyRepo;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bussiness.Services.WarrantyService
@@ -204,6 +206,43 @@ namespace Bussiness.Services.WarrantyService
             var updateWarrantyWithIncludes = await _warrantyRepo.GetWarrantyByIdWithIncludesAsync(warranty.WarrantyId);
             resultModel.Data = updateWarrantyWithIncludes;
             resultModel.Message = "Warranty updated successfully.";
+            return resultModel;
+        }
+
+        public async Task<ResultModel> ViewListWarranty(string? token, WarrantySearchModel warrantySearch)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _warrantyRepo.GetWarrantyQuery();
+            if (!string.IsNullOrEmpty(warrantySearch.warrantyId))
+            {
+                query = query.Where(v => v.WarrantyId == warrantySearch.warrantyId);
+            }
+
+            if (!string.IsNullOrEmpty(warrantySearch.productId))
+            {
+                query = query.Where(v => v.ProductId.Contains(warrantySearch.productId));
+            }
+
+
+
+            var warranties = await query.ToListAsync();
+            resultModel.Data = warranties;
             return resultModel;
         }
     }

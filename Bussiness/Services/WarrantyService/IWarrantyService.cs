@@ -1,4 +1,5 @@
 ﻿using Data.Model.ResultModel;
+using Data.Model.VoucherModel;
 using Data.Model.WarrantyModel;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace Bussiness.Services.WarrantyService
     {
         public Task<ResultModel> CreateWarranty(string? token, WarrantyCreateModel warrantyCreate);
         public Task<ResultModel> UpdateWarranty(string? token, WarrantyUpdateModel warrantyUpdate);
+        public Task<ResultModel> ViewListWarranty(string? token, WarrantySearchModel warrantySearch);
     }
 }

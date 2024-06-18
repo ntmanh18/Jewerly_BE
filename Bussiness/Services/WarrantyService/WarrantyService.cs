@@ -244,6 +244,16 @@ namespace Bussiness.Services.WarrantyService
                 query = query.Where(v => v.Product.ProductName.Contains(warrantySearch.productName));
             }
 
+            if (!string.IsNullOrEmpty(warrantySearch.customerId))
+            {
+                query = query.Where(v => v.CustomerCustomerId.Contains(warrantySearch.customerId));
+            }
+
+            if (!string.IsNullOrEmpty(warrantySearch.customerName))
+            {
+                query = query.Where(v => v.CustomerCustomer.FullName.Contains(warrantySearch.customerName));
+            }
+
             var warranties = await query.ToListAsync();
             resultModel.Data = warranties;
             return resultModel;

@@ -10,5 +10,8 @@ namespace Data.Model.WarrantyModel
     {
         public string? warrantyId { get; set; } = null;
         public string? productId { get; set; } = null;
+        public string? productName { get; set;} = null;
+        public string? customerId { get; set;} = null;
+        public string? customerName { get; set;} = null;
     }
 }

@@ -17,6 +17,8 @@ using Bussiness.Services.Validate;
 using Bussiness.Services.VoucherService;
 using Data.Repository.DiscountRepo;
 using Microsoft.Extensions.DependencyInjection;
+using Data.Repository.GoldRepo;
+using Bussiness.Services.GoldService;
 
 namespace Bussiness
 {
@@ -39,6 +41,9 @@ namespace Bussiness
             services.AddScoped<IProductGemService,ProductGemService>();
             services.AddScoped<ICashierService, CashierService>();
             services.AddScoped<IDiscountService,DiscountService>();
+            services.AddScoped<IProductBillService, ProductBillService>();
+            services.AddScoped<IGoldService, GoldService>();
+
             services.AddScoped<IOldProductService, OldProductService>();
             services.AddScoped<IProductBillService, ProductBillService>();  
             services.AddScoped<IBillService,BillService>();

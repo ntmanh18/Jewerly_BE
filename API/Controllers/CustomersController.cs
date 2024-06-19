@@ -50,7 +50,7 @@ namespace API.Controllers
             
         }
 
-        [HttpGet("get-customer-by-name")]
+        [HttpGet("get-customer-by-phone")]
         public async Task<ActionResult<Product>> GetByPhone(string phone)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];

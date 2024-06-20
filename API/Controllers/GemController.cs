@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Data.Model.GemModel;
+using Data.Model.VoucherModel;
 
 namespace API.Controllers
 {
@@ -16,24 +17,11 @@ namespace API.Controllers
         {
             _gemService = gemService;
         }
-        [HttpGet]
-        public async Task<ActionResult> GetGem()
-        {
-            var result = await _gemService.GetGem();
-            return Ok(result.ToList());
-        }
-        [HttpGet("gemByName")]
-        public async Task<ActionResult> GetGemsByName([FromQuery] string? searchGemName)
+        [HttpGet("ViewListGem")]
+        public async Task<ActionResult> ViewListVoucher([FromQuery] GemSearchModel gemSearch)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _gemService.GetGemByName(token, searchGemName);
-            return StatusCode(res.Code, res);
-        }
-        [HttpGet("gemById")]
-        public async Task<ActionResult> GetGemsById([FromQuery] string? searchGemId)
-        {
-            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _gemService.GetGemById(token, searchGemId);
+            var res = await _gemService.ViewListGem(token, gemSearch);
             return StatusCode(res.Code, res);
         }
         [HttpPost("createGem")]

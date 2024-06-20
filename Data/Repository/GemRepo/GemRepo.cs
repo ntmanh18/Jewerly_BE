@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Data.Repository.GemRepo
 {
-    public class GemRepo : Repository<Gem>,IGemRepo
+    public class GemRepo : Repository<Gem>, IGemRepo
     {
         private readonly JewerlyV6Context _context;
         public GemRepo(JewerlyV6Context context) : base(context)
@@ -38,18 +38,12 @@ namespace Data.Repository.GemRepo
             await _context.SaveChangesAsync();
             return gem;
         }
-
-        public async Task<IEnumerable<Gem>> GetGem()
-        {
-            var gems = await _context.Gems.ToListAsync();
-            return gems;
-        }
+        public async Task<Gem> GetGemByName(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
 
         public async Task<Gem> GetGemById(string id)
         {
             return await _context.Gems.FirstOrDefaultAsync(c => c.GemId == id);
         }
-        public async Task<Gem> GetGemByName(string name) => await _context.Gems.FirstOrDefaultAsync(g => g.Name == name);
         public async Task<Gem> UpdateGemAsync(GemRequestModel gemRequestModel)
         {
             if (gemRequestModel == null || string.IsNullOrEmpty(gemRequestModel.GemId))
@@ -102,5 +96,7 @@ namespace Data.Repository.GemRepo
                 throw new Exception($"Error updating gem: {ex.Message}", ex);
             }
         }
+
+        public IQueryable<Gem> GetVoucherQuery() => _context.Gems.AsQueryable();
     }
 }

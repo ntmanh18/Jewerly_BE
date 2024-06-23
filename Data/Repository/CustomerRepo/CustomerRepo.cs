@@ -94,6 +94,7 @@ namespace Data.Repository.CustomerRepo
         //}
         }
 
+
         public async Task<Customer> UpdateStatusCustomer(Customer customerUpdate)
         {
             try
@@ -109,5 +110,6 @@ namespace Data.Repository.CustomerRepo
             }
 
         }
+
     }
 }

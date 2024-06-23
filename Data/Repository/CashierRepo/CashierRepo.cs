@@ -61,6 +61,7 @@ namespace Data.Repository.CashierRepo
             return await _context.Cashiers.ToListAsync();
         }
 
+
         public async Task<Cashier> DeactiveCashier(Cashier cashierDeavtive)
         {
             try
@@ -102,6 +103,11 @@ namespace Data.Repository.CashierRepo
 
                 throw new Exception(ex.Message);
             }
+
+}
+        public async Task<Cashier?> GetCashierByUser(string userId, DateTime cash)
+        {
+            return await _context.Cashiers.Where(c => c.UserId == userId && c.StartCash <= cash && c.EndCash >= cash).FirstOrDefaultAsync();
 
         }
     }

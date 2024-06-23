@@ -36,6 +36,7 @@ namespace Data
             services.AddScoped<IDiscountRepo, DiscountRepo>();
             services.AddScoped<IProductBillRepo,ProductBillRepo>();
             services.AddScoped <IBillRepo,BillRepo>();
+            services.AddScoped<IVoucherRepo, VoucherRepo>();
 
             services.AddScoped<IOldProductRepo, OldProductRepo>();
             return services;

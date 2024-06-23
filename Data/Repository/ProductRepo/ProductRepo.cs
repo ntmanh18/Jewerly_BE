@@ -61,15 +61,16 @@ namespace Data.Repository.ProductRepo
             return await _context.Golds.FirstOrDefaultAsync(g => g.GoldId == goldId);
             }
 
-        public async Task<List<Product>> GetAllProductsv2()
+        public  async Task<List<Product>> GetAllProductsv2()
         {
-            return await _context.Products.ToListAsync();
+            return  await  _context.Products.Include(c=>c.MaterialNavigation).Include(c => c.ProductGems).ThenInclude(c => c.GemGem).Include(c => c.MaterialNavigation)
+                .Include(c => c.OldProducts).ThenInclude(c => c.BillBill).Include(c => c.ProductBills).ThenInclude(c => c.BillBill).Include(c => c.Warranties).Include(c => c.DiscountDiscounts).ToListAsync();
         }
 
         public async Task<Product> GetProductByIdv2(string id)
         {
-            return await _context.Products.Include(c => c.ProductGems).ThenInclude(c => c.GemGem)
-                .Include(c => c.MaterialNavigation).Include(c => c.OldProducts).ThenInclude(c=> c.BillBill).Include(c=> c.ProductBills).ThenInclude(c=> c.BillBill).Include(c=>c.Warranties).Include(c=>c.DiscountDiscounts).
+            return  await _context.Products.Include(c => c.ProductGems).ThenInclude(c => c.GemGem).Include(c=> c.MaterialNavigation)
+                .Include(c => c.OldProducts).ThenInclude(c=> c.BillBill).Include(c=> c.ProductBills).ThenInclude(c=> c.BillBill).Include(c=>c.Warranties).Include(c=>c.DiscountDiscounts).
                 FirstOrDefaultAsync(c => c.ProductId == id);
         }
     }

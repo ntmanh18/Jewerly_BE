@@ -20,7 +20,7 @@ namespace API.Controllers
             _cashierService = cashierService;
         }
 
-        [HttpPost]
+        [HttpPost("Create-Cashier")]
         public async Task<ActionResult> CreateCashier([FromBody] CashierRequestModel cashierModel)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -28,7 +28,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        [HttpGet]
+        [HttpGet("Get-Cashiers")]
         public async Task<ActionResult> GetCashiers()
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -36,25 +36,59 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        //[HttpGet("productId")]
-        //public async Task<ActionResult<Cashier>> GetById(string productId)
-        //{
-        //    var res = await _cashierService.GetCashierById(productId);
-        //    return Ok(res);
-        //    //var product = await _productService.GetProductById(productId);
-        //    //if (product == null)
-        //    //{
-        //    //    return NotFound("Product not found");
-        //    //}
 
-        //    //return Ok(product);
-        //}
-
-        [HttpPut("cashierIdUpdate")]
+        [HttpPut("cashier-Update")]
         public async Task<ActionResult> UpdateProduct(CashierUpdateModel cashierUpdate)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _cashierService.UpdateCashier(token, cashierUpdate);
+            return StatusCode(res.Code, res);
+        }
+        [HttpPut("deactivate")]
+        public async Task<ActionResult<Cashier>> DeactiveCashier(string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.DeactiveCashier(token, id);
+            return StatusCode(res.Code, res);
+        }
+
+        [HttpGet("Search-By-User-Id")]
+        public async Task<ActionResult> GetCashierByUserId([FromQuery] string? id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetCashiersByUserId(token, id);
+            return StatusCode(res.Code, res);
+
+        }
+
+        [HttpGet("Search-By-Date")]
+        public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
+        [FromQuery] int month,
+        [FromQuery] int day,
+        [FromQuery] int hour,
+        [FromQuery] int minute,
+        [FromQuery] int second)
+        {
+            DateTime dateTime;
+            try
+            {
+                dateTime = new DateTime(year, month, day, hour, minute, second);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid date-time parameters: {ex.Message}");
+            }
+
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetCashiersByDate(token, dateTime);
+            return StatusCode(res.Code, res);
+
+        }
+        [HttpPut("Update-Status-Cashier")]
+        public async Task<ActionResult<Cashier>> UpdateStatusCashier(string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.UpdateStatusCashier(token, id);
             return StatusCode(res.Code, res);
         }
     }

@@ -23,5 +23,6 @@ namespace Data.Model.CustomerModel
         public int Point { get; set; }
 
         public string Rate { get; set; } = null!;
+        public bool? Status { get; set; }
     }
 }

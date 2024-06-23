@@ -8,6 +8,7 @@ using Data.Repository.DiscountRepo;
 using Data.Repository.GemRepo;
 using Data.Repository.GoldRepo;
 using Data.Repository.ProductBillRepo;
+using Data.Repository.OldProductRepo;
 using Data.Repository.ProductGemRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
@@ -37,6 +38,7 @@ namespace Data
             services.AddScoped <IBillRepo,BillRepo>();
             services.AddScoped<IVoucherRepo, VoucherRepo>();
 
+            services.AddScoped<IOldProductRepo, OldProductRepo>();
             return services;
         }
 

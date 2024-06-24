@@ -13,8 +13,6 @@ public partial class Discount
 
     public DateOnly PublishDay { get; set; }
 
-    public int Amount { get; set; }
-
     public long Cost { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;

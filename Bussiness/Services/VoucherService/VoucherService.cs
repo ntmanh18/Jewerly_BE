@@ -233,11 +233,11 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             var query = _voucherRepo.GetVoucherQuery();
-            if (voucherSearch.expiredDay != null)
+            if (voucherSearch.expiredDay?.Year != null && voucherSearch.expiredDay?.Month != null && voucherSearch.expiredDay?.Day != null)
             {
-                var searchDay = voucherSearch.expiredDay;
-                query = query.Where(v => v.ExpiredDay >= new DateOnly(searchDay.Year, searchDay.Month, searchDay.Day));
+                query = query.Where(v => v.ExpiredDay == new DateOnly(voucherSearch.expiredDay.Year, voucherSearch.expiredDay.Month, voucherSearch.expiredDay.Day));
             }
+           
 
             if (!string.IsNullOrEmpty(voucherSearch.customerId))
             {

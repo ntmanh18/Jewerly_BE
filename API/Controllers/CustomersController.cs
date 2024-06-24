@@ -23,7 +23,7 @@ namespace API.Controllers
 
         
 
-        [HttpPost("create-customer")]
+        [HttpPost]
         public async Task<ActionResult> CreateCustomer([FromBody] CustomerCreateModel customerModel)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -33,7 +33,7 @@ namespace API.Controllers
             //return Ok(result);
         }
 
-        [HttpGet("get-customers")]
+        [HttpGet]
         public async Task<ActionResult> GetProducts()
         {
 
@@ -41,7 +41,7 @@ namespace API.Controllers
             return Ok(result.ToList());
         }
 
-        [HttpGet("get-customers-by-name")]
+        [HttpGet("customerName")]
         public async Task<ActionResult> GetCustomersByName([FromQuery] string? searchCustomerName)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -50,7 +50,7 @@ namespace API.Controllers
             
         }
 
-        [HttpGet("get-customer-by-phone")]
+        [HttpGet("phone")]
         public async Task<ActionResult<Product>> GetByPhone(string phone)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -58,7 +58,7 @@ namespace API.Controllers
             return StatusCode(res.Code, res);
         }
 
-        [HttpPut("customer-Update")]
+        [HttpPut("customerIdUpdate")]
         public async Task<ActionResult> UpdateProduct(CustomerUpdateModel customerUpdate)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -71,14 +71,6 @@ namespace API.Controllers
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _customerService.DeactiveCustomer(token, id);
-            return StatusCode(res.Code, res);
-        }
-
-        [HttpPut("status-update")]
-        public async Task<ActionResult<Product>> UpdateStatusProduct(string id)
-        {
-            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _customerService.UpdateStatusCustomer(token, id);
             return StatusCode(res.Code, res);
         }
     }

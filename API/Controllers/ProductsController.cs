@@ -20,7 +20,7 @@ namespace API.Controllers
             _productService = productService;
         }
 
-        [HttpGet("get-products")]
+        [HttpGet]
         public async Task<ActionResult> GetProducts()
         {
             
@@ -30,7 +30,7 @@ namespace API.Controllers
             return Ok(result.ToList());
         }
 
-        [HttpGet("Get-Products-By-Name")]
+        [HttpGet("productName")]
         public async Task<ActionResult> GetProductsByName([FromQuery] string? searchProductName)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -44,7 +44,7 @@ namespace API.Controllers
             //return Ok(products);
         }
 
-        [HttpGet("Get-By-Id")]
+        [HttpGet("productId")]
         public async Task<ActionResult<Product>> GetById(string productId)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -60,7 +60,7 @@ namespace API.Controllers
         }
 
         //[HttpPut("{productId}")]
-        [HttpPut("product-Update")]
+        [HttpPut("productIdUpdate")]
         public async Task<ActionResult> UpdateProduct(ProductRequestModel productUpdate)
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];

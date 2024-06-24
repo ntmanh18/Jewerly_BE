@@ -29,6 +29,5 @@ namespace Data.Model.ProductModel
 
         public string Image { get; set; } = null!;
         public  ICollection<ProductGem> ProductGems { get; set; } = new List<ProductGem>();
-        public float? MarkupRate { get; set; }
     }
 }

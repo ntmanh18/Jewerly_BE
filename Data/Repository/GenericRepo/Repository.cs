@@ -19,7 +19,7 @@ namespace Data.Repository.GenericRepo
             _entities = context.Set<T>();
         }
 
-        public async Task<T?> Get(Guid id)
+        public async Task<T?> Get(string id)
         {
             return await _entities.FindAsync(id.ToString());
         }

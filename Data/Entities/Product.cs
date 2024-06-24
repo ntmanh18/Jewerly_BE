@@ -25,6 +25,8 @@ public partial class Product
 
     public string Image { get; set; } = null!;
 
+    public float? MarkupRate { get; set; }
+
     public virtual Gold MaterialNavigation { get; set; } = null!;
 
     public virtual ICollection<OldProduct> OldProducts { get; set; } = new List<OldProduct>();

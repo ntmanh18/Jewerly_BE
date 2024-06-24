@@ -6,6 +6,7 @@ using Data.Repository.UserRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,14 +31,14 @@ namespace Bussiness.Services.AccountService
                 if (existedUser == null)
                 {
                     res.IsSuccess = false;
-                    res.Code = 400;
+                    res.Code = (int)HttpStatusCode.Unauthorized;
                     res.Message = "User khong ton tai";
                     return res;
                 }
                 if (existedUser.Status.Equals(false))
                 {
                     res.IsSuccess = false;
-                    res.Code = 400;
+                    res.Code = (int)HttpStatusCode.Forbidden;
                     res.Message = "Ban khong co quyen truy cap";
                     return res;
                 }
@@ -46,7 +47,7 @@ namespace Bussiness.Services.AccountService
                 if (isMatch == false)
                 {
                     res.IsSuccess = false;
-                    res.Code = 400;
+                    res.Code = (int)HttpStatusCode.Unauthorized;
                     res.Message = "Mat khau sai";
                     return res;
                 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace Data.Repository.UserRepo
 {
     public interface IUserRepo :IRepository<User>
+    
     {
         public Task<User> GetByUsernameAsync(string username);
 

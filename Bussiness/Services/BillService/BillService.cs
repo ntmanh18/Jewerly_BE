@@ -1,3 +1,4 @@
+
 ﻿ using Bussiness.Services.AccountService;
 using Data.Model.ProductBillModel;
 using Bussiness.Services.ProductBillService;
@@ -15,6 +16,15 @@ using Data.Repository.ProductRepo;
 using Data.Repository.VoucherRepo;
 using System;
 using System.Net;
+﻿using Bussiness.Services.AccountService;
+using Bussiness.Services.TokenService;
+using Data.Model.BillModel;
+using Data.Model.ResultModel;
+using Data.Repository.BillRepo;
+using Data.Repository.ProductBillRepo;
+using Data.Repository.ProductRepo;
+using System;
+
 
 
 namespace Bussiness.Services.BillService
@@ -28,12 +38,14 @@ namespace Bussiness.Services.BillService
         private readonly IToken _token;
         private readonly IAccountService _accountService;
         private readonly IBillRepo _billRepo;
+
         private readonly ICustomerRepo _customerRepo;
         private readonly IVoucherRepo _voucherRepo;
         private readonly IDiscountRepo _discountRepo;
         private readonly ICashierRepo _cashierRepo;
         private readonly IProductBillService _productBillService;
         private readonly IGemRepo _gemRepo;
+
 
         public BillService(IProductBillRepo productBillRepo,
             IProductRepo productRepo,
@@ -46,6 +58,7 @@ namespace Bussiness.Services.BillService
             ICashierRepo cashierRepo,
             IProductBillService productBillService,
             IGemRepo gemRepo
+
             )
         {
             _accountService = accountService;
@@ -53,12 +66,14 @@ namespace Bussiness.Services.BillService
             _productRepo = productRepo;
             _token = token;
             _billRepo = billRepo;
+
             _customerRepo = customerRepo;
             _voucherRepo = voucherRepo; 
             _discountRepo = discountRepo;   
             _cashierRepo = cashierRepo; 
             _productBillService = productBillService;
             _gemRepo = gemRepo; 
+
         }
 
         private  string GenerateId()
@@ -68,6 +83,7 @@ namespace Bussiness.Services.BillService
             var length = bill.Result.Count() + 1;
             return  "B" + randomNumber.ToString() +  length.ToString();
         }
+
 
         private decimal CalculateCost(decimal gold, decimal weight, decimal material, decimal gem, decimal markup )
         {
@@ -242,7 +258,7 @@ namespace Bussiness.Services.BillService
                 
             }
             return res;
-        }
+
     }
 }
-
+}

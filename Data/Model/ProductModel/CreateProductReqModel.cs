@@ -26,7 +26,9 @@ namespace Data.Model.ProductModel
 
         public string Image { get; set; } = null!;
         public Dictionary<string, int> Gem { get; set; }
-        public float MarkupRate { get; set; } = 1;
+
+        public float? MarkupRate { get; set; }
+
 
     }
 }

@@ -12,9 +12,9 @@ namespace Data.Model.GoldModel
 
         public string? GoldName { get; set; }
 
-        public long PurchasePrice { get; set; }
+        public decimal? PurchasePrice { get; set; }
 
-        public long SalePrice { get; set; }
+        public decimal? SalePrice { get; set; }
 
         public DateTime ModifiedDate { get; set; }
 
@@ -22,6 +22,6 @@ namespace Data.Model.GoldModel
 
         public string? GoldPercent { get; set; }
 
-        public float? WorldPrice { get; set; }
+        public decimal? WorldPrice { get; set; }
     }
 }

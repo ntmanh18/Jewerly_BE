@@ -14,7 +14,7 @@ namespace Data.Model.CashierModel
 
         public DateTime EndCash { get; set; }
 
-        public long Income { get; set; }
+        public decimal? Income { get; set; }
 
         public int CashNumber { get; set; }
 

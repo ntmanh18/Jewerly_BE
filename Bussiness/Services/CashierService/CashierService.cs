@@ -120,10 +120,10 @@ namespace Bussiness.Services.CashierService
                         CashId = cashier.CashId,
                         StartCash = cashierModel.StartCash,
                         EndCash = cashierModel.EndCash,
-                        Income = cashierModel.Income,
+                        Income = 0,
                         CashNumber = cashierModel.CashNumber,
                         UserId = cashierModel.UserId,
-                        Status = cashierModel.Status,
+                        Status = 1
                     };
                     resultModel.IsSuccess = true;
                     resultModel.Code = 200;

@@ -106,6 +106,7 @@ namespace Data.Repository.CashierRepo
                 throw new Exception(ex.Message);
             }
 
+
         }
         public async Task<Cashier> GetCashierByIdCashier(string cashierId)
         {

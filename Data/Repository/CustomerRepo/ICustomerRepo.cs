@@ -17,5 +17,6 @@ namespace Data.Repository.CustomerRepo
         public Task<Customer> UpdateCustomer(Customer customerUpdate);
         public Task<Customer> DeactiveCustomer(Customer customerDeactive);
         public Task<Customer> GetCustomerById(string customerId);
+        public Task<Customer> UpdateStatusCustomer(Customer customerUpdateStatus);
     }
 }

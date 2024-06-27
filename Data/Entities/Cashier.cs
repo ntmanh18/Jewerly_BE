@@ -11,7 +11,7 @@ public partial class Cashier
 
     public DateTime EndCash { get; set; }
 
-    public long Income { get; set; }
+    public decimal? Income { get; set; }
 
     public int CashNumber { get; set; }
 

@@ -87,6 +87,7 @@ namespace Bussiness.Services.ProductService
 
                     updatedProducts.Add(product2);
 
+          
             }
             return updatedProducts;
         }
@@ -443,6 +444,13 @@ namespace Bussiness.Services.ProductService
                 res.Message = "Weight, Cost and Size must be a positive number";
                 return res;
             }
+            if(productModel.MarkupRate < 1)
+            {
+                res.IsSuccess = false;
+                res.Code= (int)HttpStatusCode.Forbidden;
+                res.Message = "MarkupRate must greater than or equal to 1";
+                return res;
+            }
             
             Gold material = await _goldRepo.GetGoldById(productModel.Material);
              if (material == null)
@@ -494,6 +502,101 @@ namespace Bussiness.Services.ProductService
         public async Task<Gold> GetGoldById(string goldId)
         {
             return await _productRepo.GetGoldById(goldId);
+        }
+
+        public  async Task<ResultModel> GetAllProductv2(string? token, ProductQueryObject queryObject)
+        {
+            var res = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1,2, 3 });
+            if (!isValidRole)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "You don't permission to perform this action.";
+
+                return res;
+            }
+            var product =await  _productRepo.GetAllProductsv2();
+            if(!string.IsNullOrEmpty(queryObject.ProductId))
+            {
+                product =  product.AsQueryable().Where(c => c.ProductId.ToLower() == queryObject.ProductId.ToLower()).
+                    ToList();
+            }
+            if(!string.IsNullOrEmpty(queryObject.ProductName))
+            {
+                product=product.AsQueryable().Where(c => c.ProductName.ToLower().Trim(). Contains(queryObject.ProductName)).ToList();
+            }
+            if(!string.IsNullOrEmpty(queryObject.Category))
+            {
+                product = product.AsQueryable().Where(c => c.Category.ToLower() == queryObject.Category.ToLower()).ToList();
+            }
+            if(!string.IsNullOrEmpty(queryObject.Material))
+            {
+                product=product.AsQueryable().Where(c=> c.MaterialNavigation.GoldName.ToLower() == queryObject.Material.ToLower()).ToList();
+            }
+            var price = 0;
+            
+
+            var data = product.Select(c => new ViewProductResultModel
+            {
+                ProductId = c.ProductId,
+                ProductName = c.ProductName,
+                Category = c.Category,
+                Material = c.MaterialNavigation.GoldName,
+                Amount = c.Amount,
+                Desc = c.Desc,
+                Image = c.Image,
+                MachiningCost = c.MachiningCost,
+                ProductGems = c.ProductGems.Select(c=> c.GemGem.Name).ToList(),
+                Size = c.Size,
+                Weight = c.Weight,
+                Price = CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight,c.MachiningCost,GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
+                Discount = c.DiscountDiscounts.ToList(),
+                PriceWithDiscount = CostWithDiscount(
+                    CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight, c.MachiningCost, GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
+                    c.DiscountDiscounts.AsQueryable().Where(c => c.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow) ) <= 0 &&
+                            c.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >= 0).ToList())
+                
+
+            }).ToList();
+
+            res.IsSuccess = true;
+            res.Code = (int)HttpStatusCode.OK;
+            res.Data = data;
+            return res;
+
+        }
+        private decimal CalculateCost(decimal gold, decimal weight, decimal material, decimal gem, decimal markup)
+        {
+            decimal cost = 0;
+            cost = (decimal)(((gold * weight) + material + gem) * markup);
+            return cost;
+        }
+        private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
+        {
+            decimal cost = productCost;
+            foreach (Discount discount in discountList)
+            {
+                cost = cost - discount.Cost;
+            }
+            return cost;
+        }
+        private long GemCost(List<ProductGem> gems)
+        {
+            long gemCost = 0;
+            foreach (ProductGem pGem in gems)
+            {
+                gemCost += pGem.GemGem.Price;
+            }
+            return gemCost;
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Bussiness.Services.AccountService;
 using Bussiness.Services.AuthenticateService;
+using Bussiness.Services.BillService;
 using Bussiness.Services.CashierService;
 using Bussiness.Services.CustomerService;
 using Bussiness.Services.DiscountService;
 using Bussiness.Services.GemService;
+using Bussiness.Services.OldProductService;
 using Bussiness.Services.ProductBillService;
 using Bussiness.Services.OldProductService;
 using Bussiness.Services.ProductGemService;
@@ -42,6 +44,11 @@ namespace Bussiness
             services.AddScoped<IDiscountService,DiscountService>();
             services.AddScoped<IProductBillService, ProductBillService>();
             services.AddScoped<IGoldService, GoldService>();
+
+            services.AddScoped<IOldProductService, OldProductService>();
+            services.AddScoped<IProductBillService, ProductBillService>();  
+            services.AddScoped<IBillService,BillService>();
+
 
             services.AddScoped<IOldProductService, OldProductService>();
             return services;

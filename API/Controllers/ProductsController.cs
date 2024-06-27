@@ -77,5 +77,14 @@ namespace API.Controllers
             var res = await _productService.CreateProduct(token, product);
             return StatusCode(res.Code, res);
         }
+
+        [HttpGet]
+        [Route("view-product")] 
+        public async Task<ActionResult> ViewProductV2([FromQuery]ProductQueryObject product)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _productService.GetAllProductv2(token, product);
+            return StatusCode(res.Code, res);
+        }
     }
 }

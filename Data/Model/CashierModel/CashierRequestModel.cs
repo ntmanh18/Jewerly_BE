@@ -13,12 +13,10 @@ namespace Data.Model.CashierModel
 
         public DateTime EndCash { get; set; }
 
-        public long Income { get; set; }
 
         public int CashNumber { get; set; }
 
         public string UserId { get; set; } = null!;
 
-        public int? Status { get; set; }
     }
 }

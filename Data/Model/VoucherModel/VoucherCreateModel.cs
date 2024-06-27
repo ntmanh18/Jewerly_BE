@@ -8,7 +8,7 @@ namespace Data.Model.VoucherModel
 {
     public class VoucherCreateModel
     {
-        public string CreatedBy { get; set; } = null!;
+       
 
         public DatePart ExpiredDay { get; set; }
         public DatePart PublishedDay { get; set; }

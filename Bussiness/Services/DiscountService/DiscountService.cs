@@ -77,6 +77,13 @@ namespace Bussiness.Services.DiscountService
                 res.Message = "Expired Day must be later than publish day";
                 return res;
             }
+            if (req.Cost < 10000)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Cost must be equal to or greater than 10000";
+                return res;
+            }
             
            
             var id = await GenerateIDAsync(req.ExpiredDay);
@@ -313,11 +320,11 @@ namespace Bussiness.Services.DiscountService
                 res.Message = "Expired Day must be later than publish day";
                 return res;
             }
-            if(req.Cost < 0)
+            if(req.Cost > 1)
             {
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
-                res.Message = "Invalid code";
+                res.Message = "Invalid cost";
                 return res;
             }
 

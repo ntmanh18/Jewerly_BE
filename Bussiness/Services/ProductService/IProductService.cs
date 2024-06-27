@@ -18,5 +18,6 @@ namespace Bussiness.Services.ProductService
         Task<ResultModel> UpdateProduct(string? token, ProductRequestModel productModel);
         Task<Gold> GetGoldById(string goldId);
         Task<ResultModel> CreateProduct(string token, CreateProductReqModel productModel);
+        Task<ResultModel> GetAllProductv2(string? token, ProductQueryObject queryObject);
     }
 }

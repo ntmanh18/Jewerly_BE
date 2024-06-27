@@ -87,7 +87,6 @@ namespace Bussiness.Services.ProductService
 
                     updatedProducts.Add(product2);
 
-          
             }
             return updatedProducts;
         }

@@ -54,7 +54,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -62,7 +62,7 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = "You don't permission to perform this action.";
                 return resultModel;
             }
-            
+
             var customerExists = await _customerRepo.GetCustomerById(voucherCreate.CustomerCustomerId);
             if (customerExists == null)
             {
@@ -71,7 +71,7 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = $"Customer with ID {voucherCreate.CustomerCustomerId} does not exist.";
                 return resultModel;
             }
-            if(voucherCreate.Cost > 1)
+            if (voucherCreate.Cost > 1)
             {
 
                 resultModel.IsSuccess = false;
@@ -82,7 +82,7 @@ namespace Bussiness.Services.VoucherService
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
             DateOnly publishedDay = new DateOnly(voucherCreate.PublishedDay.Year, voucherCreate.PublishedDay.Month, voucherCreate.PublishedDay.Day);
             DateOnly now = DateOnly.FromDateTime(DateTime.Today);
-            if (expiredDay < publishedDay && publishedDay< now)
+            if (expiredDay < publishedDay && publishedDay < now)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
@@ -98,21 +98,17 @@ namespace Bussiness.Services.VoucherService
                     number = lastIdNumber + 1;
                 }
             }
-
             var voucher = new Voucher
             {
                 VoucherId = $"V{number:000}",
-                CreatedBy = voucherCreate.CreatedBy,
+                CreatedBy = decodeModel.userid,
                 ExpiredDay = expiredDay,
                 PublishedDay = publishedDay,
                 Cost = voucherCreate.Cost,
                 CustomerCustomerId = voucherCreate.CustomerCustomerId,
             };
-
             await _voucherRepo.CreateVoucherAsync(voucher);
-            var createdVoucherWithIncludes = await _voucherRepo.GetVoucherByIdWithIncludesAsync(voucher.VoucherId);
-
-            resultModel.Data = createdVoucherWithIncludes;
+            resultModel.Data = voucher;
             resultModel.IsSuccess = true;
             resultModel.Code = (int)HttpStatusCode.OK;
             resultModel.Message = "Voucher created successfully.";

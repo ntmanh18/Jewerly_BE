@@ -82,11 +82,18 @@ namespace Bussiness.Services.VoucherService
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
             DateOnly publishedDay = new DateOnly(voucherCreate.PublishedDay.Year, voucherCreate.PublishedDay.Month, voucherCreate.PublishedDay.Day);
             DateOnly now = DateOnly.FromDateTime(DateTime.Today);
-            if (expiredDay < publishedDay && publishedDay< now)
+            if ( publishedDay< now)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
+                resultModel.Message = "PublishedDay cannot be earlier than now";
+                return resultModel;
+            }
+            if (expiredDay < publishedDay)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay";
                 return resultModel;
             }
             var lastVoucher = await _voucherRepo.GetLastVoucherAsync();

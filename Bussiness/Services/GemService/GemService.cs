@@ -95,7 +95,7 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "A gem with the same name already exists.";
                 return resultModel;
             }
-            if (CreateGemModel.Type!=1 || CreateGemModel.Type !=2)
+            if (CreateGemModel.Type!=1 && CreateGemModel.Type !=2)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.Conflict;

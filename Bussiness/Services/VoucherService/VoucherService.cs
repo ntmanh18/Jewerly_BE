@@ -71,12 +71,12 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = $"Customer with ID {voucherCreate.CustomerCustomerId} does not exist.";
                 return resultModel;
             }
-            if (voucherCreate.Cost > 1)
+            if (voucherCreate.Cost > 1 || voucherCreate.Cost <0)
             {
 
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.Forbidden;
-                resultModel.Message = "Cost must be smaller than 1";
+                resultModel.Message = "Cost must be in range 0-1";
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);

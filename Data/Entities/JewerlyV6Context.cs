@@ -177,7 +177,6 @@ public partial class JewerlyV6Context : DbContext
                             .HasMaxLength(50)
                             .IsUnicode(false)
                             .HasColumnName("ProductProductID");
-
                     });
         });
 
@@ -387,6 +386,7 @@ public partial class JewerlyV6Context : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("CustomerCustomerID");
+            entity.Property(e => e.Status).HasColumnName("status");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Vouchers)
                 .HasForeignKey(d => d.CreatedBy)

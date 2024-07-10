@@ -13,5 +13,7 @@ namespace Data.Model.VoucherModel
         public string? customerName { get; set; } = null;
         public string? customerPhone { get; set; } = null;
         public string? customerEmail { get; set; } = null;
+        public bool? isActive { get; set; } = true;
+        public string? Id { get; set; } = "";
     }
 }

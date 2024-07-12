@@ -10,8 +10,8 @@ namespace Data.Model.VoucherModel
     {
        
 
-        public DatePart ExpiredDay { get; set; }
-        public DatePart PublishedDay { get; set; }
+        public DateTime ExpiredDay { get; set; }
+        public DateTime PublishedDay { get; set; }
 
         public long Cost { get; set; }
 

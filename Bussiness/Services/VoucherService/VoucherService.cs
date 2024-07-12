@@ -261,10 +261,11 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             var query = _voucherRepo.GetVoucherQuery();
-            if (voucherSearch.expiredDay != null)
+            var searchDay = voucherSearch.expiredDay;
+            if (searchDay.HasValue)
             {
-                var searchDay = voucherSearch.expiredDay;
-                query = query.Where(v => v.ExpiredDay >= new DateOnly(searchDay.Year, searchDay.Month, searchDay.Day));
+                var searchDayValue = DateOnly.FromDateTime(searchDay.Value);
+                query = query.Where(v => v.ExpiredDay >= searchDayValue);
             }
 
             if (!string.IsNullOrEmpty(voucherSearch.customerId))

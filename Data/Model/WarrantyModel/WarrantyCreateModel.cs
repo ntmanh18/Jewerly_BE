@@ -11,7 +11,7 @@ namespace Data.Model.WarrantyModel
     {
         public string CustomerId { get; set; } = null!;
 
-        public DatePart StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public string Desc { get; set; }
 
         public string ProductId { get; set; } = null!;

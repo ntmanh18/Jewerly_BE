@@ -8,7 +8,7 @@ namespace Data.Model.VoucherModel
 {
     public class VoucherSearchModel
     {
-        public DatePart? expiredDay { get; set; } = null;
+        public DateTime? expiredDay { get; set; } = null;
         public string? customerId { get; set; } = null;
         public string? customerName { get; set; } = null;
         public string? customerPhone { get; set; } = null;

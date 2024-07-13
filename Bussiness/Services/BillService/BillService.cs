@@ -154,13 +154,7 @@ namespace Bussiness.Services.BillService
                 return res;
             }
             //if voucher belong to customer
-           if(voucher.CustomerCustomer != customer)
-            {
-                res.IsSuccess = false;
-                res.Code = (int)HttpStatusCode.Forbidden;
-                res.Message = "Invalid voucher";
-                return res;
-            }
+           
             
             
             foreach(var product in req.Product)
@@ -207,8 +201,10 @@ namespace Bussiness.Services.BillService
 
                 totalCost += productPrice;
             }
+
             if(voucher != null)
             {
+               
                 totalCost = CostWithVoucher(totalCost, voucher.Cost);
             }
             try

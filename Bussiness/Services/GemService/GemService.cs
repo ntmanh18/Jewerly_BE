@@ -54,14 +54,6 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "Gem not found.";
                 return resultModel;
             }
-            var existingGem = await _gemRepo.GetGemByName(gemRequestModel.Name);
-            if (existingGem != null)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.Conflict;
-                resultModel.Message = "A gem with the same name already exists.";
-                return resultModel;
-            }
             await _gemRepo.UpdateGem(updatedGem);
             resultModel.Data = updatedGem;
             resultModel.Message = "Gem updated successfully.";
@@ -95,7 +87,7 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "A gem with the same name already exists.";
                 return resultModel;
             }
-            if (CreateGemModel.Type!=1 || CreateGemModel.Type !=2)
+            if (CreateGemModel.Type!=1 && CreateGemModel.Type !=2)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.Conflict;

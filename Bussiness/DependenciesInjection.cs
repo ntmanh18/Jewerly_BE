@@ -21,6 +21,7 @@ using Data.Repository.DiscountRepo;
 using Microsoft.Extensions.DependencyInjection;
 using Data.Repository.GoldRepo;
 using Bussiness.Services.GoldService;
+using Bussiness.Services.PaymentService;
 
 namespace Bussiness
 {
@@ -50,6 +51,7 @@ namespace Bussiness
             services.AddScoped<IOldProductService, OldProductService>();
             services.AddScoped<IProductBillService, ProductBillService>();  
             services.AddScoped<IBillService,BillService>();
+            services.AddScoped<IVnPayService, VnPayService>();
 
 
             return services;

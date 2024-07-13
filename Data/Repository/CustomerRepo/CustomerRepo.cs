@@ -24,7 +24,7 @@ namespace Data.Repository.CustomerRepo
 
         public async Task<IEnumerable<Customer>> GetCustomers()
         {
-            var customers = await _context.Customers.ToListAsync();
+            var customers = await _context.Customers.Include(c => c.Bills).ToListAsync();
             return customers;
         }
 

@@ -5,6 +5,7 @@ using Data.Entities;
 using Data.Model.GemModel;
 using Data.Model.ResultModel;
 using Data.Repository.GemRepo;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Net;
 
@@ -25,165 +26,6 @@ namespace Bussiness.Services.GemService
             _authentocateService = authenticateService;
             _accountService = accountService;
         }
-
-        public async Task<IEnumerable<GemRequestModel>> GetGem()
-        {
-            var gem = await _gemRepo.GetGem();
-            List<GemRequestModel> getGem = new List<GemRequestModel>();
-            foreach (var gem1 in gem) 
-            {
-                GemRequestModel gem2 = new GemRequestModel
-                {
-                    GemId = gem1.GemId,
-                    Name = gem1.Name,
-                    Type = gem1.Type,
-                    Price = gem1.Price,
-                    Desc = gem1.Desc,
-                }; 
-                getGem.Add(gem2);
-            }
-            return getGem;
-        }
-
-        public async Task<ResultModel> GetGemById(string? token, string gemId)
-        {
-            var resultModel = new ResultModel
-            {
-                IsSuccess = true,
-                Code = (int)HttpStatusCode.OK,
-                Data = null,
-                Message = null,
-            };
-
-            var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
-            if (!isValidRole)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.Forbidden;
-                resultModel.Message = "You don't permission to perform this action.";
-
-                return resultModel;
-            }
-            IEnumerable<Gem> gems = await _gemRepo.GetGem();
-            List<GemRequestModel> gemList = new List<GemRequestModel>();
-            foreach (var gem1 in gems)
-            {
-                GemRequestModel gem2 = new GemRequestModel
-                {
-                    GemId = gem1.GemId,
-                    Name = gem1.Name,
-                    Type = gem1.Type,
-                    Price = gem1.Price,
-                    Desc = gem1.Desc,
-                };
-                gemList.Add(gem2);
-
-            }
-
-            IEnumerable<GemRequestModel> gemsList2 = gemList;
-
-
-
-            if (String.IsNullOrEmpty(gemId))
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                resultModel.Message = "Please enter any gemId";
-                resultModel.Data = gemsList2;
-            }
-            else
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                for (int i = 0; i < gemList.Count; i++)
-                {
-                    if (gemList[i].GemId != gemId)
-                    {
-                        gemList.RemoveAll(p => p.GemId == gemList[i].GemId);
-                        i = i - 1;
-                    }
-
-                }
-                if (gemList.Count() > 0)
-                {
-                    resultModel.Message = "Gem found";
-                }
-                else
-                {
-                    resultModel.Message = "Not found";
-                }
-                resultModel.Data = gemsList2;
-            }
-            return resultModel;
-        }
-
-        public async Task<ResultModel> GetGemByName(string? token, string gemName)
-        {
-            var resultModel = new ResultModel
-            {
-                IsSuccess = true,
-                Code = (int)HttpStatusCode.OK,
-                Data = null,
-                Message = null,
-            };
-
-            var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
-            if (!isValidRole)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.Forbidden;
-                resultModel.Message = "You don't permission to perform this action.";
-
-                return resultModel;
-            }
-            IEnumerable<Gem> gems = await _gemRepo.GetGem();
-            List<GemRequestModel> gemList = new List<GemRequestModel>();
-            foreach (var gem1 in gems)
-            {
-                GemRequestModel gem2 = new GemRequestModel
-                {
-                    GemId = gem1.GemId,
-                    Name = gem1.Name,
-                    Type = gem1.Type,
-                    Price = gem1.Price,
-                    Desc = gem1.Desc,
-                };
-                gemList.Add(gem2);
-
-            }
-
-            IEnumerable<GemRequestModel> gemsList2 = gemList;
-
-
-
-            if (String.IsNullOrEmpty(gemName))
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                resultModel.Message = "Please enter any gem name";
-                resultModel.Data = gemsList2;
-            }
-            else
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                gemsList2 = gemsList2.Where(p => p.Name.ToLower().Contains(gemName.ToLower()));
-                if (gemsList2.Count() > 0)
-                {
-                    resultModel.Message = $"Success - There are {gems.Count()} found";
-                }
-                else
-                {
-                    resultModel.Message = "Not found";
-                }
-
-                resultModel.Data = gemsList2;
-            }
-            return resultModel;
-        }
-
         public async Task<ResultModel> UpdateGem(string? token, GemRequestModel gemRequestModel)
         {
             var resultModel = new ResultModel
@@ -195,7 +37,7 @@ namespace Bussiness.Services.GemService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -212,14 +54,7 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "Gem not found.";
                 return resultModel;
             }
-            var existingGem = await _gemRepo.GetGemByName(gemRequestModel.Name);
-            if (existingGem != null)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.Code = (int)HttpStatusCode.Conflict;
-                resultModel.Message = "A gem with the same name already exists.";
-                return resultModel;
-            }
+            await _gemRepo.UpdateGem(updatedGem);
             resultModel.Data = updatedGem;
             resultModel.Message = "Gem updated successfully.";
             return resultModel;
@@ -235,7 +70,7 @@ namespace Bussiness.Services.GemService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -252,12 +87,24 @@ namespace Bussiness.Services.GemService
                 resultModel.Message = "A gem with the same name already exists.";
                 return resultModel;
             }
+            if (CreateGemModel.Type!=1 && CreateGemModel.Type !=2)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Conflict;
+                resultModel.Message = "The Type of the gem is incorrect. It must be 1 or 2.";
+                return resultModel;
+            }
+            if (CreateGemModel.Rate<0 || CreateGemModel.Rate>1)
+            {
+                CreateGemModel.Rate = 0;
+            }
             var gem = new Gem
             {
                 Name = CreateGemModel.Name,
                 Type = CreateGemModel.Type,
                 Price = CreateGemModel.Price,
                 Desc = CreateGemModel.Desc,
+                Rate = CreateGemModel.Rate
             };
             await _gemRepo.CreateGem(gem);
             resultModel.Data = gem;
@@ -267,5 +114,39 @@ namespace Bussiness.Services.GemService
             return resultModel;
         }
 
+        public async Task<ResultModel> ViewListGem(string? token, GemSearchModel gemSearch)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _gemRepo.GetVoucherQuery();
+            if (!string.IsNullOrEmpty(gemSearch.GemId))
+            {
+                query = query.Where(v => v.GemId == gemSearch.GemId);
+            }
+
+            if (!string.IsNullOrEmpty(gemSearch.Name))
+            {
+                query = query.Where(v => v.Name.Contains(gemSearch.Name));
+            }
+            var gems = await query.ToListAsync();
+            resultModel.Data = gems;
+
+            return resultModel;
+        }
     }
 }

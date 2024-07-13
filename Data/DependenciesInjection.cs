@@ -13,6 +13,7 @@ using Data.Repository.ProductGemRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
 using Data.Repository.VoucherRepo;
+using Data.Repository.WarrantyRepo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
@@ -38,6 +39,7 @@ namespace Data
             services.AddScoped<IProductBillRepo,ProductBillRepo>();
             services.AddScoped <IBillRepo,BillRepo>();
             services.AddScoped<IVoucherRepo, VoucherRepo>();
+            services.AddScoped<IWarrantyRepo, WarrantyRepo>();
 
             return services;
         }

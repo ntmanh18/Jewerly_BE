@@ -10,18 +10,21 @@ using Data.Repository.GemRepo;
 using Data.Repository.UserRepo;
 using Data.Repository.VoucherRepo;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RTools_NTS.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Bussiness.Services.VoucherService
 {
     public class VoucherService : IVoucherService
     {
+        private readonly JewerlyV6Context _context;
         private readonly IVoucherRepo _voucherRepo;
         private readonly IUserRepo _userRepo;
         private readonly ICustomerRepo _customerRepo;
@@ -59,7 +62,7 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = "You don't permission to perform this action.";
                 return resultModel;
             }
-            
+
             var customerExists = await _customerRepo.GetCustomerById(voucherCreate.CustomerCustomerId);
             if (customerExists == null)
             {
@@ -68,26 +71,36 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = $"Customer with ID {voucherCreate.CustomerCustomerId} does not exist.";
                 return resultModel;
             }
-            if(voucherCreate.Cost > 1)
+            if (voucherCreate.Cost > 1 || voucherCreate.Cost <0)
             {
 
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.Forbidden;
-                resultModel.Message = "Cost must be smaller than 1";
+                resultModel.Message = "Cost must be in range 0-1";
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
             DateOnly publishedDay = new DateOnly(voucherCreate.PublishedDay.Year, voucherCreate.PublishedDay.Month, voucherCreate.PublishedDay.Day);
             DateOnly now = DateOnly.FromDateTime(DateTime.Today);
-            if (expiredDay < publishedDay && publishedDay< now)
+            if (expiredDay < publishedDay && publishedDay < now)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
                 resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
                 return resultModel;
             }
+            var lastVoucher = await _voucherRepo.GetLastVoucherAsync();
+            int number = 1;
+            if (lastVoucher != null)
+            {
+                if (int.TryParse(lastVoucher.VoucherId.Substring(1), out int lastIdNumber))
+                {
+                    number = lastIdNumber + 1;
+                }
+            }
             var voucher = new Voucher
             {
+                VoucherId = $"V{number:000}",
                 CreatedBy = decodeModel.userid,
                 ExpiredDay = expiredDay,
                 PublishedDay = publishedDay,
@@ -113,7 +126,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -156,7 +169,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -171,6 +184,18 @@ namespace Bussiness.Services.VoucherService
                 resultModel.IsSuccess = true;
                 resultModel.Message = "Request voucher not found";
                 return resultModel;
+            }
+            if (string.IsNullOrEmpty(voucherUpdate.CreatedBy))
+            {
+                voucherUpdate.CreatedBy = voucherExists.CreatedBy;
+            }
+            if (string.IsNullOrEmpty(voucherUpdate.CustomerCustomerId))
+            {
+                voucherUpdate.CustomerCustomerId = voucherExists.CustomerCustomerId;
+            }
+            if (voucherUpdate.Cost < 0)
+            {
+                voucherUpdate.Cost = voucherExists.Cost;
             }
             var userExists = await _userRepo.GetByIdAsync(voucherUpdate.CreatedBy);
             if (userExists == null)
@@ -189,13 +214,16 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherUpdate.ExpiredDay.Year, voucherUpdate.ExpiredDay.Month, voucherUpdate.ExpiredDay.Day);
-            DateOnly publishedDay = new DateOnly(voucherUpdate.PublishedDay.Year, voucherUpdate.PublishedDay.Month, voucherUpdate.PublishedDay.Day);
-            DateOnly now = DateOnly.FromDateTime(DateTime.Today);
-            if (expiredDay < publishedDay && publishedDay < now)
+            //so sánh expiređay và punlisheDay
+            if (voucherUpdate.ExpiredDay.Year == 0 && voucherUpdate.ExpiredDay.Month == 0 && voucherUpdate.ExpiredDay.Day == 0)
+            {
+                expiredDay = voucherExists.ExpiredDay;
+            }
+            if (expiredDay <= voucherExists.PublishedDay)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay or PublishedDay cannot be earlier than now";
+                resultModel.Message = "ExpiredDay cannot be earlier than PublishedDay";
                 return resultModel;
             }
             Voucher voucher = new Voucher
@@ -203,12 +231,12 @@ namespace Bussiness.Services.VoucherService
                 VoucherId = voucherUpdate.VoucherId,
                 CreatedBy = voucherUpdate.CreatedBy,
                 ExpiredDay = expiredDay,
-                PublishedDay = publishedDay,
                 Cost = voucherUpdate.Cost,
                 CustomerCustomerId = voucherUpdate.CustomerCustomerId,
             };
-            var voucherUpdateLast = await _voucherRepo.UpdateVoucherAsync(voucher);
-            resultModel.Data = voucherUpdateLast;
+            await _voucherRepo.UpdateVoucherAsync(voucher);
+            var updateVoucherWithIncludes = await _voucherRepo.GetVoucherByIdWithIncludesAsync(voucher.VoucherId);
+            resultModel.Data = updateVoucherWithIncludes;
             resultModel.Message = "Voucher updated successfully.";
             return resultModel;
         }
@@ -224,7 +252,7 @@ namespace Bussiness.Services.VoucherService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2, 3 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;

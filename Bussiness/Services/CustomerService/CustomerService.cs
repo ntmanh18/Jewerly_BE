@@ -145,6 +145,12 @@ namespace Bussiness.Services.CustomerService
                     Point = customer.Point,
                     Rate = customer.Rate,
                     Status= customer.Status,
+                    Bills = customer.Bills.Select(b => new Bill
+                    {
+                        BillId = b.BillId,
+                        TotalCost = b.TotalCost,
+                        PublishDay = b.PublishDay,
+                    }).ToList(),
                 };
                 updatedCustomers.Add(customer1);
 
@@ -189,6 +195,12 @@ namespace Bussiness.Services.CustomerService
                     Point = customer.Point,
                     Rate = customer.Rate,
                     Status = customer.Status,
+                    Bills = customer.Bills.Select(b => new Bill
+                    {
+                        BillId = b.BillId,
+                        TotalCost = b.TotalCost,
+                        PublishDay = b.PublishDay,
+                    }).ToList(),
                 };
                 updatedCustomers.Add(customer1);
 
@@ -261,6 +273,12 @@ namespace Bussiness.Services.CustomerService
                     Point = customer.Point,
                     Rate = customer.Rate,
                     Status = customer.Status,
+                    Bills = customer.Bills.Select(b => new Bill
+                    {
+                        BillId = b.BillId,
+                        TotalCost = b.TotalCost,
+                        PublishDay = b.PublishDay,
+                    }).ToList(),
                 };
                 updatedCustomers.Add(customer1);
 

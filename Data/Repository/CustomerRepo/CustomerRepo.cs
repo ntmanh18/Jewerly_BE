@@ -24,17 +24,17 @@ namespace Data.Repository.CustomerRepo
 
         public async Task<IEnumerable<Customer>> GetCustomers()
         {
-            var customers = await _context.Customers.ToListAsync();
+            var customers = await _context.Customers.Include(c => c.Bills).ToListAsync();
             return customers;
         }
 
         public async Task<IEnumerable<Customer>> GetCustomersByName()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.Include(c => c.Bills).ToListAsync();
         }
         public async Task<IEnumerable<Customer>> GetCustomerByPhone()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.Include(c => c.Bills).ToListAsync();
         }
 
         public async Task<IEnumerable<Customer>> GetCustomerById()

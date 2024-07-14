@@ -14,16 +14,9 @@ using Data.Repository.GemRepo;
 using Data.Repository.ProductBillRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.VoucherRepo;
-using System;
 using System.Net;
-﻿using Bussiness.Services.AccountService;
-using Bussiness.Services.TokenService;
-using Data.Model.BillModel;
-using Data.Model.ResultModel;
-using Data.Repository.BillRepo;
-using Data.Repository.ProductBillRepo;
-using Data.Repository.ProductRepo;
-using System;
+using Data.Model.VoucherModel;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -45,7 +38,6 @@ namespace Bussiness.Services.BillService
         private readonly ICashierRepo _cashierRepo;
         private readonly IProductBillService _productBillService;
         private readonly IGemRepo _gemRepo;
-
 
         public BillService(IProductBillRepo productBillRepo,
             IProductRepo productRepo,
@@ -256,5 +248,39 @@ namespace Bussiness.Services.BillService
             return res;
 
     }
-}
+        public async Task<ResultModel> ViewBill(string? token, BillSearchModel billSearch)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _billRepo.GetBillQuery();
+
+            if (billSearch.stardate.HasValue || billSearch.enddate.HasValue)
+            {
+                query = query.Where(v =>
+                    (!billSearch.stardate.HasValue || v.PublishDay >= billSearch.stardate.Value) &&
+                    (!billSearch.enddate.HasValue || v.PublishDay <= billSearch.enddate.Value)
+                );
+            }
+
+            var vouchers = await query.ToListAsync();
+            resultModel.Data = vouchers;
+
+            return resultModel;
+        }
+    }
 }

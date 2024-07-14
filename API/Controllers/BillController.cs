@@ -2,6 +2,7 @@
 using Bussiness.Services.ProductBillService;
 using Data.Model.BillModel;
 using Data.Model.ProductBillModel;
+using Data.Model.VoucherModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,13 @@ namespace API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _BillService.CraeteBill(token, req);
+            return StatusCode(res.Code, res);
+        }
+        [HttpGet("ViewListBill")]
+        public async Task<ActionResult> ViewListBill([FromQuery] BillSearchModel billSearch)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _BillService.ViewBill(token, billSearch);
             return StatusCode(res.Code, res);
         }
     }

@@ -11,5 +11,6 @@ namespace Bussiness.Services.BillService
     public interface IBillService
     {
         Task<ResultModel> CraeteBill(string token, CreateBillReqModel model);
+        Task<ResultModel> ViewBill(string token, BillSearchModel billSearch);
     }
 }

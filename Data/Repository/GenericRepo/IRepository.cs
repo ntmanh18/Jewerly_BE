@@ -14,6 +14,9 @@ namespace Data.Repository.GenericRepo
         Task Insert(T entity);
         Task<bool> Update(T entity);
         Task<bool> Remove(T entity);
+        Task<bool> RemoveRange(List<T> entity);
+
+
     }
 }
 

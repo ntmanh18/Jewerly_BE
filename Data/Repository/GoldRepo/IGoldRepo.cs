@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Data.Repository.GenericRepo;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data.Repository.GoldRepo
 {
-    public interface IGoldRepo 
+    public interface IGoldRepo : IRepository<Gold>
     {
         public Task<IEnumerable<Gold>> GetGolds();
         public Task<Gold> GetGoldById(string id);

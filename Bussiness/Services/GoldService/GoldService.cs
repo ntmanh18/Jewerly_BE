@@ -52,7 +52,7 @@ namespace Bussiness.Services.GoldService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() {1, 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -99,7 +99,7 @@ namespace Bussiness.Services.GoldService
             };
 
             var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() {1, 2 });
             if (!isValidRole)
             {
                 resultModel.IsSuccess = false;
@@ -296,5 +296,48 @@ namespace Bussiness.Services.GoldService
             }
             return resultModel;
         }
+        public async Task<ResultModel> DeleteListGold(string token)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+
+            List<Gold> listGold = await _goldRepo.GetAll();
+
+            bool res =await _goldRepo.RemoveRange(listGold);
+
+            if (res)
+            {
+                resultModel.IsSuccess = true;
+                resultModel.Code = (int)HttpStatusCode.OK;
+                resultModel.Message = "Delete Success";
+
+                return resultModel;
+            }
+            else
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Delete Fail";
+
+                return resultModel;
+            }
+        }
+
     }
 }

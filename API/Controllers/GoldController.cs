@@ -72,5 +72,13 @@ namespace API.Controllers
             var res = await _goldService.UpdateGold(token, goldUpdate, userId);
             return StatusCode(res.Code, res);
         }
+
+        [HttpDelete("delete-golds")]
+        public async Task<ActionResult> DeleteGolds()
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _goldService.DeleteListGold(token);
+            return StatusCode(res.Code, res);
+        }
     }
 }

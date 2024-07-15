@@ -17,8 +17,7 @@ namespace Bussiness.Services.CashierService
         Task<ResultModel> UpdateCashier(string? token, CashierUpdateModel cashierModel);
         Task<ResultModel> DeactiveCashier(string? token, string id);
         Task<ResultModel> GetCashiersByUserId(string? token, string id);
-        Task<ResultModel> GetCashiersByDate(string? token, DateTime dateStart, DateTime dateEnd, int num);
-        Task<ResultModel> GetIncomeByDate(string? token, DateTime dateStart, DateTime dateEnd, int num);
+        Task<ResultModel> GetCashiersByDate(string? token, DateTime date);
         Task<User> GetUserById(string userId);
         public Task<List<Cashier>> GetCashiers();
         Task<ResultModel> GetCashierById(string id);

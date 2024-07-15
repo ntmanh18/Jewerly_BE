@@ -92,6 +92,10 @@ namespace Data.Repository.CashierRepo
         {
             return await _context.Cashiers.ToListAsync();
         }
+        public async Task<IEnumerable<Cashier>> GetCashiersByMonth()
+        {
+            return await _context.Cashiers.ToListAsync();
+        }
         public async Task<Cashier> UpdateStatusCashier(Cashier cashierUpdate)
         {
             try

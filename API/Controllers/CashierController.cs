@@ -6,6 +6,7 @@ using Data.Model.CustomerModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -62,17 +63,14 @@ namespace API.Controllers
         }
 
         [HttpGet("Search-By-Date")]
-        public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
-        [FromQuery] int month,
-        [FromQuery] int day,
-        [FromQuery] int hour,
-        [FromQuery] int minute,
-        [FromQuery] int second)
+        public async Task<ActionResult> GetCashierByDate(DateTime date,int num)
         {
-            DateTime dateTime;
+            DateTime dateStart;
+            DateTime dateEnd;
             try
             {
-                dateTime = new DateTime(year, month, day, hour, minute, second);
+                dateStart = new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
+                dateEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
             }
             catch (Exception ex)
             {
@@ -80,7 +78,28 @@ namespace API.Controllers
             }
 
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _cashierService.GetCashiersByDate(token, dateTime);
+            var res = await _cashierService.GetCashiersByDate(token, dateStart, dateEnd, num);
+            return StatusCode(res.Code, res);
+
+        }
+        [HttpGet("Income-By-Date")]
+        public async Task<ActionResult> GetIncomeByDate(DateTime date, int num)
+        {
+            
+            DateTime dateStart;
+            DateTime dateEnd;
+            try
+            {
+                dateStart = new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
+                dateEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid date-time parameters: {ex.Message}");
+            }
+
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetIncomeByDate(token, dateStart, dateEnd, num);
             return StatusCode(res.Code, res);
 
         }

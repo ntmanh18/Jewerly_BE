@@ -11,7 +11,7 @@ namespace Data.Model.VoucherModel
         public string VoucherId { get; set; } = null!;
         public string CreatedBy { get; set; } = null!;
 
-        public DatePart ExpiredDay { get; set; }
+        public DateTime ExpiredDay { get; set; }
 
         public long Cost { get; set; }
 

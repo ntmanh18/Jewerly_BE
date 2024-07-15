@@ -69,5 +69,12 @@ namespace Data.Repository.GenericRepo
             await context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> RemoveRange(List<T> entities)
+        {
+            _entities.RemoveRange(entities);
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }

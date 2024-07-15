@@ -48,5 +48,13 @@ namespace API.Controllers
             var res = await _voucherService.ViewListVoucher(token, voucherSearch);
             return StatusCode(res.Code, res);
         }
+
+        [HttpGet("ViewListVoucherv2")]
+        public async Task<ActionResult> ViewListVoucherv2([FromQuery] VoucherSearchModel voucherSearch)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _voucherService.ViewListVoucherv2(token, voucherSearch);
+            return StatusCode(res.Code, res);
+        }
     }
 }

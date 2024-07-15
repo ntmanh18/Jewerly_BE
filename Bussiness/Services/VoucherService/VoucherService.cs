@@ -71,12 +71,12 @@ namespace Bussiness.Services.VoucherService
                 resultModel.Message = $"Customer with ID {voucherCreate.CustomerCustomerId} does not exist.";
                 return resultModel;
             }
-            if (voucherCreate.Cost > 1 || voucherCreate.Cost <0)
+            if (voucherCreate.Cost <100000)
             {
 
                 resultModel.IsSuccess = false;
                 resultModel.Code = (int)HttpStatusCode.Forbidden;
-                resultModel.Message = "Cost must be in range 0-1";
+                resultModel.Message = "Cost must be greater than 100000";
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherCreate.ExpiredDay.Year, voucherCreate.ExpiredDay.Month, voucherCreate.ExpiredDay.Day);
@@ -106,6 +106,7 @@ namespace Bussiness.Services.VoucherService
                 PublishedDay = publishedDay,
                 Cost = voucherCreate.Cost,
                 CustomerCustomerId = voucherCreate.CustomerCustomerId,
+                Status = true
             };
             await _voucherRepo.CreateVoucherAsync(voucher);
             resultModel.Data = voucher;
@@ -261,15 +262,73 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             var query = _voucherRepo.GetVoucherQuery();
-            if (voucherSearch.expiredDay != null)
+            var searchDay = voucherSearch.expiredDay;
+            if (searchDay.HasValue)
             {
-                var searchDay = voucherSearch.expiredDay;
-                query = query.Where(v => v.ExpiredDay >= new DateOnly(searchDay.Year, searchDay.Month, searchDay.Day));
+                var searchDayValue = DateOnly.FromDateTime(searchDay.Value);
+                query = query.Where(v => v.ExpiredDay >= searchDayValue);
             }
+
 
             if (!string.IsNullOrEmpty(voucherSearch.customerId))
             {
                 query = query.Where(v => v.CustomerCustomer.CustomerId == voucherSearch.customerId);
+            }
+            if (!string.IsNullOrEmpty(voucherSearch.customerName))
+            {
+                query = query.Where(v => v.CustomerCustomer.FullName.Contains(voucherSearch.customerName));
+            }
+
+            if (!string.IsNullOrEmpty(voucherSearch.customerPhone))
+            {
+                query = query.Where(v => v.CustomerCustomer.Phone.Contains(voucherSearch.customerPhone));
+            }
+            
+            if (!string.IsNullOrEmpty(voucherSearch.customerEmail))
+            {
+                query = query.Where(v => v.CustomerCustomer.Email.Contains(voucherSearch.customerEmail));
+            }
+
+            var vouchers = await query.ToListAsync();
+            resultModel.Data = vouchers;
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> ViewListVoucherv2(string? token, VoucherSearchModel voucherSearch)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _voucherRepo.GetVoucherQuery();
+            
+                query = query.Where(v => v.ExpiredDay >= DateOnly.FromDateTime(DateTime.Now));
+                query = query.Where(v => v.PublishedDay <= DateOnly.FromDateTime(DateTime.Now));
+            if (!string.IsNullOrEmpty(voucherSearch.customerId))
+            {
+                query = query.Where(v => v.CustomerCustomer.CustomerId == voucherSearch.customerId);
+            }
+            if (!string.IsNullOrEmpty(voucherSearch.Id))
+            {
+                query = query.Where(v => v.VoucherId == voucherSearch.Id);
+            }
+            if (voucherSearch.isActive != true)
+            {
+                query = query.Where(v => v.Status == false);
             }
 
             if (!string.IsNullOrEmpty(voucherSearch.customerName))
@@ -281,7 +340,7 @@ namespace Bussiness.Services.VoucherService
             {
                 query = query.Where(v => v.CustomerCustomer.Phone.Contains(voucherSearch.customerPhone));
             }
-            
+
             if (!string.IsNullOrEmpty(voucherSearch.customerEmail))
             {
                 query = query.Where(v => v.CustomerCustomer.Email.Contains(voucherSearch.customerEmail));

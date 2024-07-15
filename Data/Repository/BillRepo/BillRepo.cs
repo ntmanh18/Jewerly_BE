@@ -1,5 +1,6 @@
 ﻿using Data.Entities;
 using Data.Repository.GenericRepo;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace Data.Repository.BillRepo
         {
             _context = context;
         }
+        public IQueryable<Bill> GetBillQuery() => _context.Bills.Include(v => v.Cashier).Include(v => v.Customer).Include(v=>v.VoucherVoucher).AsQueryable();
     }
 }

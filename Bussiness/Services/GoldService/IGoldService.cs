@@ -16,5 +16,7 @@ namespace Bussiness.Services.GoldService
         public Task<ResultModel> CreateGold(string token, GoldCreateModel goldModel, string userId);
         Task<ResultModel> UpdateGold(string? token, GoldUpdateModel goldModel, string userId);
 
+        Task<ResultModel> DeleteListGold(string token);
+
     }
 }

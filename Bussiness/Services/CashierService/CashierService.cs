@@ -83,6 +83,12 @@ namespace Bussiness.Services.CashierService
                 resultModel.Code = 400;
                 resultModel.Message = "User phải có role là Staff";
             }
+            else if(cashierModel.EndCash.Date != cashierModel.StartCash.Date)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = 400;
+                resultModel.Message = "phải nhập cùng ngày";
+            }
             else if (cashierModel.CashNumber != 1 && cashierModel.CashNumber != 2 && cashierModel.CashNumber != 3 && cashierModel.CashNumber != 4)
             {
                 resultModel.IsSuccess = false;
@@ -111,7 +117,7 @@ namespace Bussiness.Services.CashierService
                         CashNumber = cashierModel.CashNumber,
                         UserId = cashierModel.UserId,
                         Status = 1,
-                       
+
 
                     };
                     await _cashierRepo.CreateCashier(cashier);
@@ -489,7 +495,7 @@ namespace Bussiness.Services.CashierService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetCashiersByDate(string? token, DateTime date)
+        public async Task<ResultModel> GetCashiersByDate(string? token, DateTime dateStart, DateTime dateEnd, int num)
         {
             var resultModel = new ResultModel
             {
@@ -534,33 +540,248 @@ namespace Bussiness.Services.CashierService
 
 
 
-            if (String.IsNullOrEmpty(date.ToString()))
+            if (String.IsNullOrEmpty(dateStart.ToString()) || String.IsNullOrEmpty(dateEnd.ToString()))
             {
                 resultModel.Code = 200;
                 resultModel.IsSuccess = true;
-                resultModel.Message = "Please enter any user id";
+                resultModel.Message = "Please enter any date";
                 resultModel.Data = updatedCashiers2;
             }
             else
-            {
-                resultModel.Code = 200;
-                resultModel.IsSuccess = true;
-                updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash >= date && c.StartCash <= date);
-                if (updatedCashiers2.Count() > 0)
+            {if (num ==0)
                 {
-                    resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
+
+                    resultModel.Data = updatedCashiers2;
                 }
                 else
                 {
-                    resultModel.Message = "Not found";
-                }
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart && c.CashNumber == num);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
 
-                resultModel.Data = updatedCashiers2;
+                    resultModel.Data = updatedCashiers2;
+                }
+                
             }
             return resultModel;
         }
 
+        public async Task<ResultModel> GetIncomeByDate(string? token, DateTime dateStart, DateTime dateEnd, int num)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
 
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+
+
+            //var products = await _productRepo.GetProducts();
+            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
+            List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
+            foreach (var cashier in cashiers)
+            {
+                CashierUpdateModel cashier1 = new CashierUpdateModel
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            IEnumerable<CashierUpdateModel> updatedCashiers2 = updatedCashiers;
+
+
+
+            if (String.IsNullOrEmpty(dateStart.ToString()) || String.IsNullOrEmpty(dateEnd.ToString()))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any date";
+            }
+            else
+            {
+                if (num == 0)
+                {
+                    decimal tong = 0;
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                        foreach (var c in updatedCashiers2)
+                        {
+                            tong = (decimal)(tong + c.Income);
+                        }
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
+
+                    resultModel.Data = tong;
+                }
+                else
+                {
+                    decimal tong = 0;
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart && c.CashNumber == num);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = $"Success - There are {updatedCashiers2.Count()} found";
+                        foreach (var c in updatedCashiers2)
+                        {
+                            tong = (decimal)(tong + c.Income);
+                        }
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
+
+                    resultModel.Data = tong;
+                }  
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetIncomeByMonth(string? token, DateTime dateStart, DateTime dateEnd, int num)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+
+
+            //var products = await _productRepo.GetProducts();
+            IEnumerable<Cashier> cashiers = await _cashierRepo.GetAllCashiers();
+            List<CashierUpdateModel> updatedCashiers = new List<CashierUpdateModel>();
+            foreach (var cashier in cashiers)
+            {
+                CashierUpdateModel cashier1 = new CashierUpdateModel
+                {
+                    CashId = cashier.CashId,
+                    StartCash = cashier.StartCash,
+                    EndCash = cashier.EndCash,
+                    Income = cashier.Income,
+                    CashNumber = cashier.CashNumber,
+                    UserId = cashier.UserId,
+                    Status = cashier.Status,
+                };
+                updatedCashiers.Add(cashier1);
+
+            }
+
+            IEnumerable<CashierUpdateModel> updatedCashiers2 = updatedCashiers;
+
+
+
+            if (String.IsNullOrEmpty(dateStart.ToString()) || String.IsNullOrEmpty(dateEnd.ToString()))
+            {
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Please enter any date";
+            }
+            else
+            {
+                if (num == 0)
+                {
+                    decimal tong = 0;
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = "Success";
+                        foreach (var c in updatedCashiers2)
+                        {
+                            tong = (decimal)(tong + c.Income);
+                        }
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
+
+                    resultModel.Data = tong;
+                }
+                else
+                {
+                    decimal tong = 0;
+                    resultModel.Code = 200;
+                    resultModel.IsSuccess = true;
+                    updatedCashiers2 = updatedCashiers2.Where(c => c.EndCash <= dateEnd && c.StartCash >= dateStart && c.CashNumber == num);
+                    if (updatedCashiers2.Count() > 0)
+                    {
+                        resultModel.Message = "Success";
+                        foreach (var c in updatedCashiers2)
+                        {
+                            tong = (decimal)(tong + c.Income);
+                        }
+                    }
+                    else
+                    {
+                        resultModel.Message = "Not found";
+                    }
+
+                    resultModel.Data = tong;
+                }
+            }
+            return resultModel;
+        }
         private async Task<string> GenerateCustomerId()
         {
             var existingIds = await _cashierRepo.GetAllCashiers();

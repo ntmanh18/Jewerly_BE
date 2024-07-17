@@ -6,6 +6,7 @@ using Data.Model.CustomerModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -62,17 +63,14 @@ namespace API.Controllers
         }
 
         [HttpGet("Search-By-Date")]
-        public async Task<ActionResult> GetCashierByDate([FromQuery] int year,
-        [FromQuery] int month,
-        [FromQuery] int day,
-        [FromQuery] int hour,
-        [FromQuery] int minute,
-        [FromQuery] int second)
+        public async Task<ActionResult> GetCashierByDate(DateTime date,int num)
         {
-            DateTime dateTime;
+            DateTime dateStart;
+            DateTime dateEnd;
             try
             {
-                dateTime = new DateTime(year, month, day, hour, minute, second);
+                dateStart = new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
+                dateEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
             }
             catch (Exception ex)
             {
@@ -80,7 +78,71 @@ namespace API.Controllers
             }
 
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _cashierService.GetCashiersByDate(token, dateTime);
+            var res = await _cashierService.GetCashiersByDate(token, dateStart, dateEnd, num);
+            return StatusCode(res.Code, res);
+
+        }
+        [HttpGet("Income-By-Date")]
+        public async Task<ActionResult> GetIncomeByDate(DateTime date, int num)
+        {
+            
+            DateTime dateStart;
+            DateTime dateEnd;
+            try
+            {
+                dateStart = new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
+                dateEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid date-time parameters: {ex.Message}");
+            }
+
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetIncomeByDate(token, dateStart, dateEnd, num);
+            return StatusCode(res.Code, res);
+
+        }
+        [HttpGet("Income-By-Month")]
+        public async Task<ActionResult> GetIncomeByMonth(DateTime date, int num)
+        {
+
+            DateTime dateStart;
+            DateTime dateEnd;
+            try
+            {
+                if (date.Month == 01 || date.Month == 03 || date.Month == 05 || date.Month == 07 || date.Month == 08 || date.Month == 10 || date.Month == 12)
+                {
+                    dateStart = new DateTime(date.Year, date.Month, 01, 00, 00, 01);
+                    dateEnd = new DateTime(date.Year, date.Month, 31, 23, 59, 59);
+                }
+                else if (date.Month == 02 )
+                {
+                    if (date.Year%4==0)
+                    {
+                        dateStart = new DateTime(date.Year, date.Month, 01, 00, 00, 01);
+                        dateEnd = new DateTime(date.Year, date.Month, 28, 23, 59, 59);
+                    }
+                    else
+                    {
+                        dateStart = new DateTime(date.Year, date.Month, 01, 00, 00, 01);
+                        dateEnd = new DateTime(date.Year, date.Month, 29, 23, 59, 59);
+                    }
+                }
+                else
+                {
+                    dateStart = new DateTime(date.Year, date.Month, 01, 00, 00, 01);
+                    dateEnd = new DateTime(date.Year, date.Month, 30, 23, 59, 59);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid date-time parameters: {ex.Message}");
+            }
+
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetIncomeByDate(token, dateStart, dateEnd, num);
             return StatusCode(res.Code, res);
 
         }

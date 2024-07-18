@@ -12,10 +12,14 @@ namespace Data.Repository.BillRepo
     public class BillRepo : Repository<Bill>, IBillRepo
     {
         private readonly JewerlyV6Context _context;
-        public BillRepo(JewerlyV6Context context) : base(context) 
+        public BillRepo(JewerlyV6Context context) : base(context)
         {
             _context = context;
         }
-        public IQueryable<Bill> GetBillQuery() => _context.Bills.Include(v => v.Cashier).Include(v => v.Customer).Include(v=>v.VoucherVoucher).AsQueryable();
+        public IQueryable<Bill> GetBillQuery() => _context.Bills.Include(v => v.Cashier).Include(v => v.Customer).Include(v => v.VoucherVoucher).AsQueryable();
+        public async Task<decimal> TotalBill()
+        {
+            return await _context.Bills.CountAsync();
+        }
     }
 }

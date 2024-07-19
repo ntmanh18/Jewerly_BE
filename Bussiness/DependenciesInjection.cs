@@ -22,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Data.Repository.GoldRepo;
 using Bussiness.Services.GoldService;
 using Bussiness.Services.PaymentService;
+using Bussiness.Services.DashBoardService;
 
 namespace Bussiness
 {
@@ -52,6 +53,7 @@ namespace Bussiness
             services.AddScoped<IProductBillService, ProductBillService>();  
             services.AddScoped<IBillService,BillService>();
             services.AddScoped<IVnPayService, VnPayService>();
+            services.AddScoped<IDashService, DashService>();
 
 
             return services;

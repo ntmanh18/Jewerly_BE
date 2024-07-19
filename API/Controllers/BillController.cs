@@ -35,5 +35,12 @@ namespace API.Controllers
             var res = await _BillService.ViewBill(token, billSearch);
             return StatusCode(res.Code, res);
         }
+        [HttpGet("BillCount")]
+        public async Task<ActionResult> TotalBill()
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _BillService.BillCount(token);
+            return StatusCode(res.Code, res);
+        }
     }
 }

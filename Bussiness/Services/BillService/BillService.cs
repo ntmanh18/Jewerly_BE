@@ -283,5 +283,39 @@ namespace Bussiness.Services.BillService
 
             return resultModel;
         }
+        public async Task<ResultModel> BillCount(string? token)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            try
+            {
+                var totalBill = await _billRepo.TotalBill();
+                resultModel.Data = totalBill;
+                resultModel.Message = "Total bill retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.InternalServerError;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
     }
 }

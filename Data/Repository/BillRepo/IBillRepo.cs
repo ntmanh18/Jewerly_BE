@@ -11,5 +11,6 @@ namespace Data.Repository.BillRepo
     public interface IBillRepo : IRepository<Bill>
     {
         IQueryable<Bill> GetBillQuery();
+        Task<decimal> TotalBill();
     }
 }

@@ -208,6 +208,7 @@ namespace Bussiness.Services.BillService
                 b.BillId = GenerateId();
                 b.TotalCost = totalCost;
                 b.PublishDay = DateTime.Now;
+                
                 if (voucher != null)
                 {
                     b.VoucherVoucherId = voucher.VoucherId;

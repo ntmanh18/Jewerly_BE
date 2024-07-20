@@ -1,4 +1,5 @@
-﻿using Bussiness.Services.BillService;
+﻿using Azure.Core;
+using Bussiness.Services.BillService;
 using Bussiness.Services.PaymentService;
 using Data.Model.BillModel;
 using Data.Model.Payment;
@@ -29,7 +30,7 @@ namespace API.Controllers
         }
 
         [Route("make-payment")]
-        [HttpPost]
+        [HttpGet]
 
 
         public IActionResult MakePayment()

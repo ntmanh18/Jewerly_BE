@@ -182,8 +182,8 @@ namespace Bussiness.Services.BillService
                     //check available disount
                    foreach(var discount in existProduct.DiscountDiscounts)
                     {
-                        if(discount.PublishDay.CompareTo(DateTime.UtcNow) <= 0 &&
-                            discount.ExpiredDay.CompareTo(DateTime.UtcNow) >=0 
+                        if(discount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
+                            discount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
                             ) {
                             disCountList.Add(discount);
                         }
@@ -201,8 +201,6 @@ namespace Bussiness.Services.BillService
             }
             try
             {
-
-                
                 //create bill
                 Bill b = new Bill();
                 b.BillId = GenerateId();
@@ -239,6 +237,7 @@ namespace Bussiness.Services.BillService
                     await _voucherRepo.DeleteVoucherAsync(voucher);
                 }
                 //create warranty
+                res.Data = b;
                 return res;
             }catch (Exception ex)
             {

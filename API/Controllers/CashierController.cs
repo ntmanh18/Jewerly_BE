@@ -153,5 +153,14 @@ namespace API.Controllers
             var res = await _cashierService.UpdateStatusCashier(token, id);
             return StatusCode(res.Code, res);
         }
+
+        [HttpGet("get-cashier-by-user")]
+        public async Task<ActionResult> GetCashierByUser()
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _cashierService.GetCashierByUser(token);
+            return StatusCode(res.Code, res);
+
+        }
     }
 }

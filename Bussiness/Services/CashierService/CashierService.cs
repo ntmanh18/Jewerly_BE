@@ -952,6 +952,40 @@ namespace Bussiness.Services.CashierService
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
 
+        public async Task<ResultModel> GetCashierByUser(string token)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
 
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() {1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+
+                return resultModel;
+            }
+            try {
+                var cash = await _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
+                resultModel.IsSuccess = true;
+                resultModel.Data = cash;
+                return resultModel;
+
+            }catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = ex.Message;
+                return resultModel;
+            }
+
+        }
     }
 }

@@ -16,6 +16,17 @@ namespace Data.Repository.BillRepo
         {
             _context = context;
         }
+
+        public Task<Bill> GetBillByCash(string cashId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Bill> GetBillById(string billId)
+        {
+            throw new NotImplementedException();
+        }
+
         public IQueryable<Bill> GetBillQuery() => _context.Bills.Include(v => v.Cashier).Include(v => v.Customer).Include(v => v.VoucherVoucher).AsQueryable();
         public async Task<decimal> TotalBill()
         {

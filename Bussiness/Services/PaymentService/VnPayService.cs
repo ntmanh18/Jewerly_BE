@@ -85,17 +85,28 @@ namespace Bussiness.Services.PaymentService
                     Success = false
                 };
             }
-
-            return new PaymentResponseModel
+            if(responseCode == "00")
             {
-                Success = true,
-                PaymentMethod = "VnPay",
-                OrderDescription = orderInfo,
-                OrderId = txnRef,
-                TransactionId = transactionId,
-                Token = secureHash,
-                VnPayResponseCode = responseCode,
-            };
+                return new PaymentResponseModel
+                {
+                    Success = true,
+                    PaymentMethod = "VnPay",
+                    OrderDescription = orderInfo,
+                    OrderId = txnRef,
+                    TransactionId = transactionId,
+                    Token = secureHash,
+                    VnPayResponseCode = responseCode,
+                };
+            }
+            else
+            {
+                return new PaymentResponseModel()
+                {
+                    Success = false
+                };
+            }
+
+           
         }
 
     }

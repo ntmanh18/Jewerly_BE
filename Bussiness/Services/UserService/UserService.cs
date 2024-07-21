@@ -308,28 +308,44 @@ namespace Bussiness.Services.UserService
             }
             var isPhoneValid = await _userValidate.IsPhoneValid(model.Phone);
             
-            if(model.Username.Length > 0)
 
             if (model.Username.Length > 0)
             {
                 existingUser.Username = model.Username;
             }
 
-            if (model.DoB.HasValue)
+            if (2024 - model.DateOfBirth.Year > 50 || 2024 -model.DateOfBirth.Year < 18 )
             {
-                var date = model.DoB.Value.ToShortDateString();
-                existingUser.DoB = DateOnly.Parse(date);
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    Code = (int)HttpStatusCode.Forbidden,
+                    Data = null,
+                    Message = "Invalid DoB",
+                };
+                
             }
             else
             {
-                existingUser.DoB = existingUser.DoB;
+                var date = DateOnly.FromDateTime(model.DateOfBirth);
+                existingUser.DoB = date;
             }
             if (model.Address.Length > 0) { existingUser.Address = model.Address; }
             if(model.FullName.Length > 0) { existingUser.FullName  = model.FullName; }
-            if(isPhoneValid == null) { existingUser.Phone = model.Phone; }
             
-            if (model.FullName.Length > 0) { existingUser.FullName = model.FullName; }
-            if (isPhoneValid == null) { existingUser.Phone = model.Phone; }
+            if (isPhoneValid.IsSuccess == false) {
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    Code = (int)HttpStatusCode.Forbidden,
+                    Data = null,
+                    Message = "Invalid phone",
+                };
+            }
+            else
+            {
+              existingUser.Phone = model.Phone;
+            }
 
             try
             {

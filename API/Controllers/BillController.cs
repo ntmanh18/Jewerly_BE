@@ -42,5 +42,22 @@ namespace API.Controllers
             var res = await _BillService.BillCount(token);
             return StatusCode(res.Code, res);
         }
+
+        [HttpGet("get-bill-by-cash")]
+        public async Task<ActionResult> GetBillByCash()
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _BillService.GetBillByCash(token);
+            return StatusCode(res.Code, res);
+        }
+        [HttpGet("ViewBillById")]
+        public async Task<ActionResult> ViewBill([FromQuery] string id)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _BillService.getBillById(token, id);
+            return StatusCode(res.Code, res);
+        }
     }
+   
 }
+

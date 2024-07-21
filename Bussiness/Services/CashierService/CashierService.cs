@@ -77,11 +77,11 @@ namespace Bussiness.Services.CashierService
                 resultModel.Code = 400;
                 resultModel.Message = "Không tìm thấy User";
             }
-            else if (user.Role != 1)
+            else if (user.Role == 3)
             {
                 resultModel.IsSuccess = false;
                 resultModel.Code = 400;
-                resultModel.Message = "User phải có role là Staff";
+                resultModel.Message = "User phải có role là Staff hoặc Manager";
             }
             else if(cashierModel.EndCash.Date != cashierModel.StartCash.Date)
             {

@@ -11,5 +11,6 @@ namespace Bussiness.Services.ProductBillService
     public interface IProductBillService
     {
         Task<ResultModel> CreateProductBill(string token, CreateProductBillReqModel req);
+        Task<ResultModel> GetProductByBillId(string token, string billId);
     }
 }

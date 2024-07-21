@@ -23,6 +23,7 @@ using Data.Repository.GoldRepo;
 using Bussiness.Services.GoldService;
 using Bussiness.Services.PaymentService;
 using Bussiness.Services.DashBoardService;
+using Internship.Business.Services.EmailService;
 
 namespace Bussiness
 {
@@ -54,6 +55,8 @@ namespace Bussiness
             services.AddScoped<IBillService,BillService>();
             services.AddScoped<IVnPayService, VnPayService>();
             services.AddScoped<IDashService, DashService>();
+            services.AddScoped<IEmailService, EmailService>();
+
 
 
             return services;

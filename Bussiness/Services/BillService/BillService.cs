@@ -322,8 +322,27 @@ namespace Bussiness.Services.BillService
                 );
             }
 
-            var vouchers = await query.ToListAsync();
-            resultModel.Data = vouchers;
+            if (billSearch.CashNumber.HasValue)
+            {
+                query = query.Where(v => v.Cashier.CashNumber == billSearch.CashNumber);
+            }
+            if (billSearch.SortByTotalCost)
+            {
+                if (billSearch.SortByTotalCostDesc)
+                {
+                    query = query.OrderByDescending(v => v.TotalCost);
+                }
+                else
+                {
+                    query = query.OrderBy(v => v.TotalCost);
+                }
+            }
+            else
+            {
+                query = query.OrderBy(v => v.PublishDay);
+            }
+            var Bill = await query.ToListAsync();
+            resultModel.Data = Bill;
 
             return resultModel;
         }

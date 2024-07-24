@@ -306,6 +306,8 @@ namespace Bussiness.Services.ProductService
                 }
                 else
                 {
+                    var material = await _goldRepo.GetGoldById(productModel.Material);
+
                     resultModel.Code = 200;
                     resultModel.IsSuccess = true;
                     resultModel.Message = "Update success";
@@ -322,6 +324,7 @@ namespace Bussiness.Services.ProductService
                         Desc = productModel.Desc,
                         Image = productModel.Image,
                         MarkupRate = productModel.MarkupRate,
+                        Price = CalculateCost((decimal)material.SalePrice, (decimal)productModel.Weight, productModel.MachiningCost, 0, (decimal)productModel.MarkupRate),
                     };
                     var productUpdate = await _productRepo.UpdateProduct(product);
 
@@ -481,6 +484,8 @@ namespace Bussiness.Services.ProductService
                 Desc = productModel.Desc,
                 Image = productModel.Image,
                 MarkupRate = productModel.MarkupRate,
+                Price = CalculateCost((decimal)material.SalePrice, (decimal)productModel.Weight, productModel.MachiningCost, 0, (decimal)productModel.MarkupRate),
+
             };
             
             await _productRepo.Insert(p);
@@ -520,7 +525,6 @@ namespace Bussiness.Services.ProductService
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
                 res.Message = "You don't permission to perform this action.";
-
                 return res;
             }
             var product =await  _productRepo.GetAllProductsv2();
@@ -557,7 +561,8 @@ namespace Bussiness.Services.ProductService
                 ProductGems = c.ProductGems.Select(c=> c.GemGem.Name).ToList(),
                 Size = c.Size,
                 Weight = c.Weight,
-                Price = CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight,c.MachiningCost,GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
+                //Price = CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight,c.MachiningCost,GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
+                Price = price,
                 Discount = c.DiscountProducts.ToList(),
                 PriceWithDiscount = CostWithDiscount(
                     CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight, c.MachiningCost, GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),

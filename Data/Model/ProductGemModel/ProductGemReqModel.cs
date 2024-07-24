@@ -12,4 +12,9 @@ namespace Data.Model.ProductGemModel
         public Dictionary<string,int> Gem {  get; set; }
        
     }
+    public class DelteProductGemReqModel
+    {
+        public string ProductId { get; set; }
+        public string GemId { get; set; }
+    }
 }

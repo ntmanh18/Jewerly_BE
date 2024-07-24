@@ -73,5 +73,10 @@ namespace Data.Repository.ProductRepo
                 .Include(c => c.OldProducts).ThenInclude(c=> c.BillBill).Include(c=> c.ProductBills).ThenInclude(c=> c.BillBill).Include(c=>c.Warranties).Include(c=>c.DiscountProducts).
                 FirstOrDefaultAsync(c => c.ProductId == id);
         }
+
+        public async Task<List<Product>> GetProductByGold(string goldId)
+        {
+            return await _context.Products.Include(x=>x.MaterialNavigation).Where(x => x.Material == goldId).ToListAsync();
+        }
     }
 }

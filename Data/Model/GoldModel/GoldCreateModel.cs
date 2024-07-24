@@ -8,11 +8,11 @@ namespace Data.Model.GoldModel
 {
     public class GoldCreateModel
     {
-        public string? GoldName { get; set; }
+        public string GoldName { get; set; }
 
         public decimal? PurchasePrice { get; set; }
 
-        public decimal? SalePrice { get; set; }
+        public decimal SalePrice { get; set; }
 
         public DateTime ModifiedDate { get; set; }
 

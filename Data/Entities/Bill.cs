@@ -7,7 +7,7 @@ public partial class Bill
 {
     public string BillId { get; set; } = null!;
 
-    public decimal? TotalCost { get; set; }
+    public decimal TotalCost { get; set; }
 
     public DateTime PublishDay { get; set; }
 
@@ -17,7 +17,9 @@ public partial class Bill
 
     public string? CustomerId { get; set; }
 
-    public bool? Type { get; set; }
+    public bool Type { get; set; }
+
+    public int Payment { get; set; }
 
     public virtual Cashier Cashier { get; set; } = null!;
 

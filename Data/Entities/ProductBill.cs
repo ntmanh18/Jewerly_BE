@@ -11,6 +11,8 @@ public partial class ProductBill
 
     public int Amount { get; set; }
 
+    public decimal UnitPrice { get; set; }
+
     public virtual Bill BillBill { get; set; } = null!;
 
     public virtual Product ProductProduct { get; set; } = null!;

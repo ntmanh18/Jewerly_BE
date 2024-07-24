@@ -17,5 +17,5 @@ public partial class Discount
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 
-    public virtual ICollection<Product> ProductProducts { get; set; } = new List<Product>();
+    public virtual ICollection<DiscountProduct> DiscountProducts { get; set; } = new List<DiscountProduct>();
 }

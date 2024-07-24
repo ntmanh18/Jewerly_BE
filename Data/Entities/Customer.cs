@@ -21,7 +21,7 @@ public partial class Customer
 
     public string Rate { get; set; } = null!;
 
-    public bool? Status { get; set; }
+    public bool Status { get; set; }
 
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 

@@ -562,10 +562,10 @@ namespace Bussiness.Services.ProductService
                 Size = c.Size,
                 Weight = c.Weight,
                 //Price = CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight,c.MachiningCost,GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
-                Price = price,
+                Price = c.Price,
                 Discount = c.DiscountProducts.ToList(),
                 PriceWithDiscount = CostWithDiscount(
-                    CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight, c.MachiningCost, GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
+                    c.Price,
                     c.DiscountProducts.AsQueryable().Where(c => c.DiscountDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow) ) <= 0 &&
                             c.DiscountDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >= 0).ToList())
                 

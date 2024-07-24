@@ -99,7 +99,7 @@ namespace Bussiness.Services.ProductGemService
                         GemGemId = id.Key,
                         Amount = id.Value
                     };
-                    p.Price = p.Price + gem.Price;
+                    p.Price = p.Price + gem.Price * id.Value;
                     await _productRepo.Update(p);
                     await _productGemRepo.Insert(pg);
                 }
@@ -156,7 +156,7 @@ namespace Bussiness.Services.ProductGemService
                 return res;
             }
             try {
-                p.Price = p.Price - g.Price;
+                p.Price = (decimal)(p.Price -( g.Price * pg.Amount));
                 
                 await _productGemRepo.Remove(pg);
                 await _productRepo.Update(p);

@@ -186,7 +186,7 @@ namespace Bussiness.Services.BillService
                 //    res.Message = "Product already Existed";
                 //    return res;
                 //}
-                productPrice = CalculateCost((decimal)existProduct.MaterialNavigation.SalePrice, (decimal)existProduct.Weight, existProduct.MachiningCost, gemPrice, (decimal)existProduct.MarkupRate);
+                productPrice = existProduct.Price;
                 if(existProduct.DiscountProducts.Count > 0)
                 {
                     var disCountList = new List<DiscountProduct>();
@@ -219,6 +219,7 @@ namespace Bussiness.Services.BillService
                 b.TotalCost = totalCost;
                 b.PublishDay = DateTime.Now;
                 
+                
                 if (voucher != null)
                 {
                     b.VoucherVoucherId = voucher.VoucherId;
@@ -244,11 +245,15 @@ namespace Bussiness.Services.BillService
                         };
                         _warrantyService.CreateWarranty(token, warranty);
                     }
+                    var existProduct = await _productRepo.GetProductByIdv2(p.Key);
+
                     ProductBill item = new ProductBill()
                     {
                         BillBillId = b.BillId,
                         ProductProductId = p.Key,
                         Amount = p.Value,
+                        UnitPrice = existProduct.Price
+                        
                     };
                     pb.Add(item);
                 }

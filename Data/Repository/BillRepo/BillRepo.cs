@@ -19,7 +19,7 @@ namespace Data.Repository.BillRepo
 
         public Task<List<Bill>> GetBillByCash(string cashId)
         {
-            return _context.Bills.Where(x => x.CashierId == cashId).ToListAsync();
+            return _context.Bills.Where(x => x.CashierId == cashId).OrderByDescending(x => x.PublishDay).ToListAsync();
         }
 
         public Task<Bill> GetBillById(string billId)

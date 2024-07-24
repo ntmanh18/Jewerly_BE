@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Model.DiscountModel
+namespace Data.Model.DiscountProductModel
 {
     public class CreateDiscountProductReqModel
     {
-        public string DiscountId { get; set; }
-        public string ProductId { get; set; }
+        string discountId {  get; set; }    
+        string productId { get; set; }  
     }
 }

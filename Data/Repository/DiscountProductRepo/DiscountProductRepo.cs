@@ -1,5 +1,6 @@
 ﻿using Data.Entities;
 using Data.Repository.GenericRepo;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,37 @@ namespace Data.Repository.DiscountProductRepo
         {
             _context = context;
         }
-        public Task CreateDiscountProduct(Discount discount, Product product)
+        public async Task CreateDiscountProduct(DiscountProduct discountProduct)
         {
-            throw new NotImplementedException();
+           _context.Add(discountProduct);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteDiscountProduct(Discount discount, Product product)
+        public async Task DeleteDiscountProduct(DiscountProduct discountProduct)
         {
-            throw new NotImplementedException();
+             _context.Remove(discountProduct);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task<List<DiscountProduct>> GetAllDiscountProduct()
+        {
+            return await _context.DiscountProducts.ToListAsync();
+        }
+
+        public async Task<List<DiscountProduct>> GetDiscountProductByDiscout(string discountId)
+        {
+            return await _context.DiscountProducts.Where(x => x.DiscountDiscountId == discountId).Include(x => x.ProductProduct).Include(x => x.DiscountDiscount).ToListAsync();
+        }
+
+        public async Task<List<DiscountProduct>> GetDiscountProductByProduct(string productId)
+        {
+            return await _context.DiscountProducts.Where(x => x.ProductProductId == productId). Include(x => x.ProductProduct).Include(x=> x.DiscountDiscount).ToListAsync();
+        }
+
+        public async Task<DiscountProduct> GetUniqueDiscountProduct(string discountId, string productId)
+        {
+            return await _context.DiscountProducts.Where(x => x.ProductProductId == productId && x.DiscountDiscountId == discountId).Include(x => x.ProductProduct).Include(x => x.DiscountDiscount).FirstOrDefaultAsync();
         }
     }
 }

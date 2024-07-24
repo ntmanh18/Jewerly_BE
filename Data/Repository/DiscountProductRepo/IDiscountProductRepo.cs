@@ -10,7 +10,12 @@ namespace Data.Repository.DiscountProductRepo
 {
     public interface IDiscountProductRepo : IRepository<DiscountProduct>    
     {
-        Task DeleteDiscountProduct(Discount discount,Product product);
-        Task CreateDiscountProduct(Discount discount, Product product);
+        Task<List<DiscountProduct>> GetAllDiscountProduct();
+        Task<List<DiscountProduct>> GetDiscountProductByDiscout(string discountId);
+        Task<List<DiscountProduct>> GetDiscountProductByProduct(string productId);
+
+        Task DeleteDiscountProduct(DiscountProduct discountProduct);
+        Task CreateDiscountProduct(DiscountProduct discountProduct);
+        Task<DiscountProduct> GetUniqueDiscountProduct(string discountId, string productId);    
     }
 }

@@ -31,7 +31,7 @@ namespace Data.Model.ProductModel
         public List<string> ProductGems { get; set; } = new List<string>();
         public decimal Price { get; set; } = 0;
         public decimal PriceWithDiscount { get; set; } = 0;
-        public List<DiscountProduct> Discount { get; set; }
+        public List<Discount> Discount { get; set; } = new List<Discount>();
 
     }
 }

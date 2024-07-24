@@ -36,7 +36,7 @@ namespace Data.Repository.DiscountProductRepo
 
         public async Task<List<DiscountProduct>> GetDiscountProductByDiscout(string discountId)
         {
-            return await _context.DiscountProducts.Where(x => x.DiscountDiscountId == discountId).Include(x => x.ProductProduct).Include(x => x.DiscountDiscount).ToListAsync();
+            return await _context.DiscountProducts.Where(x => x.DiscountDiscountId == discountId).Include(x => x.ProductProduct).Include(x => x.DiscountDiscount).Include(x => x.ProductProduct).Include(x => x.DiscountDiscount).ToListAsync();
         }
 
         public async Task<List<DiscountProduct>> GetDiscountProductByProduct(string productId)

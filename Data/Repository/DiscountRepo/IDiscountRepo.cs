@@ -14,7 +14,6 @@ namespace Data.Repository.DiscountRepo
         Task<List<Discount>> GetAllDiscount();
         Task<List<Discount>> GetActiveDiscount(DateTime expiredDate);
         Task<Discount> GetDiscountById(string id);
-        Task  DeleteDiscountProduct(Discount discount);
         Task UpdateDiscount(Discount discount);
     }
 }

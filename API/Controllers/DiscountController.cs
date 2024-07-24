@@ -38,13 +38,6 @@ namespace API.Controllers
         }
 
 
-        [Route("create-discount-product")]
-        [HttpPost]
-        public async Task<IActionResult> CreateDiscountProduct(CreateDiscountProductReqModel req) { 
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _discountService.CreateDiscountProduct(token, req);
-            return StatusCode(res.Code, res);
-        }
         [Route("update-discount")]
         [HttpPut]
         public async Task<IActionResult> UpdateDiscount(UpdateDiscountReqModel req)
@@ -53,13 +46,6 @@ namespace API.Controllers
             var res = await _discountService.UpdateDiscount(token, req);
             return StatusCode(res.Code, res);
         }
-        [Route("delete-discount")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteDiscount([FromQuery] string discountid)
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _discountService.DeleteDiscount(token,discountid);
-            return StatusCode(res.Code, res);
-        }
+       
     }
 }

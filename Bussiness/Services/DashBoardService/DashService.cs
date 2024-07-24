@@ -55,7 +55,8 @@ namespace Bussiness.Services.DashBoardService
                 resultModel.Data = incomeByCashNumber.Select(group => new
                 {
                     CashNumber = group.Key,
-                    TotalIncome = group.Sum(c => c.Income ?? 0)
+                    //TotalIncome = group.Sum(c => c.Income ?? 0)
+                    TotalIncome = group.Sum(c => c.Income)
                 }).ToList();
                 resultModel.Message = "Income by cash number retrieved successfully.";
             }

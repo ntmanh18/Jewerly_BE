@@ -558,11 +558,11 @@ namespace Bussiness.Services.ProductService
                 Size = c.Size,
                 Weight = c.Weight,
                 Price = CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight,c.MachiningCost,GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
-                Discount = c.DiscountDiscounts.ToList(),
+                Discount = c.DiscountProducts.ToList(),
                 PriceWithDiscount = CostWithDiscount(
                     CalculateCost((decimal)c.MaterialNavigation.SalePrice, (decimal)c.Weight, c.MachiningCost, GemCost(c.ProductGems.ToList()), (decimal)c.MarkupRate),
-                    c.DiscountDiscounts.AsQueryable().Where(c => c.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow) ) <= 0 &&
-                            c.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >= 0).ToList())
+                    c.DiscountProducts.AsQueryable().Where(c => c.DiscountDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow) ) <= 0 &&
+                            c.DiscountDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >= 0).ToList())
                 
 
             }).ToList();
@@ -579,12 +579,12 @@ namespace Bussiness.Services.ProductService
             cost = (decimal)(((gold * weight) + material + gem) * markup);
             return cost;
         }
-        private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
+        private decimal CostWithDiscount(decimal productCost, List<DiscountProduct> discountList)
         {
             decimal cost = productCost;
-            foreach (Discount discount in discountList)
+            foreach (DiscountProduct discount in discountList)
             {
-                cost = cost - discount.Cost;
+                cost = cost - discount.DiscountDiscount.Cost;
             }
             return cost;
         }

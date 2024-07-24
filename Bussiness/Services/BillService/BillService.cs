@@ -92,12 +92,12 @@ namespace Bussiness.Services.BillService
         {
             return totalBill - (totalBill*voucher);
         }
-        private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
+        private decimal CostWithDiscount(decimal productCost, List<DiscountProduct> discountList)
         {
             decimal cost = productCost;
-            foreach(Discount discount in discountList)
+            foreach(DiscountProduct discount in discountList)
             {
-                cost = cost - discount.Cost;
+                cost = cost - discount.DiscountDiscount.Cost;
             }
             return cost;
         }
@@ -187,14 +187,14 @@ namespace Bussiness.Services.BillService
                 //    return res;
                 //}
                 productPrice = CalculateCost((decimal)existProduct.MaterialNavigation.SalePrice, (decimal)existProduct.Weight, existProduct.MachiningCost, gemPrice, (decimal)existProduct.MarkupRate);
-                if(existProduct.DiscountDiscounts.Count > 0)
+                if(existProduct.DiscountProducts.Count > 0)
                 {
-                    var disCountList = new List<Discount>();
+                    var disCountList = new List<DiscountProduct>();
                     //check available disount
-                   foreach(var discount in existProduct.DiscountDiscounts)
+                   foreach(var discount in existProduct.DiscountProducts)
                     {
-                        if(discount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
-                            discount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
+                        if(discount.DiscountDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
+                            discount.DiscountDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
                             ) {
                             disCountList.Add(discount);
                         }

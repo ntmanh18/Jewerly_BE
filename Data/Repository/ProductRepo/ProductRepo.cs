@@ -63,15 +63,27 @@ namespace Data.Repository.ProductRepo
 
         public  async Task<List<Product>> GetAllProductsv2()
         {
-            return  await  _context.Products.Include(c=>c.MaterialNavigation).Include(c => c.ProductGems).ThenInclude(c => c.GemGem).Include(c => c.MaterialNavigation)
-                .Include(c => c.OldProducts).ThenInclude(c => c.BillBill).Include(c => c.ProductBills).ThenInclude(c => c.BillBill).Include(c => c.Warranties).Include(c => c.DiscountDiscounts).ToListAsync();
+            return  await  _context.Products.Include(c=>c.MaterialNavigation).Include(c => c.ProductGems).ThenInclude(c => c.GemGem).Include(c => c.OldProducts).ThenInclude(c => c.BillBill).Include(c => c.ProductBills).ThenInclude(c => c.BillBill).Include(c => c.Warranties).Include(c => c.DiscountProducts).ToListAsync();
         }
 
         public async Task<Product> GetProductByIdv2(string id)
         {
-            return  await _context.Products.Include(c => c.ProductGems).ThenInclude(c => c.GemGem).Include(c=> c.MaterialNavigation)
-                .Include(c => c.OldProducts).ThenInclude(c=> c.BillBill).Include(c=> c.ProductBills).ThenInclude(c=> c.BillBill).Include(c=>c.Warranties).Include(c=>c.DiscountDiscounts).
-                FirstOrDefaultAsync(c => c.ProductId == id);
+            return await _context.Products
+       .Include(p => p.ProductGems)
+           .ThenInclude(pg => pg.GemGem)
+       .Include(p => p.MaterialNavigation)
+       .Include(p => p.OldProducts)
+       .Include(p => p.ProductBills)
+           .ThenInclude(pb => pb.BillBill)
+       .Include(p => p.Warranties)
+       .Include(p => p.DiscountProducts)
+           
+       .FirstOrDefaultAsync(p => p.ProductId == id);
+        }
+
+        public async Task<List<Product>> GetProductByGold(string goldId)
+        {
+            return await _context.Products.Include(x=>x.MaterialNavigation).Where(x => x.Material == goldId).ToListAsync();
         }
     }
 }

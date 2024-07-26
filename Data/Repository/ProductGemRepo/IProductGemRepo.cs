@@ -11,6 +11,7 @@ namespace Data.Repository.ProductGemRepo
     public interface IProductGemRepo :IRepository<ProductGem>
     {
         Task<ProductGem> GetProductGemUnique(string productId, string gemId);
+        Task<List<ProductGem>> GetByProduct(string productId);
 
     }
 }

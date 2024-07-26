@@ -19,12 +19,28 @@ namespace API.Controllers
         }
         [Route("create-productgem")]
         [HttpPost]
-
-
-        public async Task<IActionResult> CreateUser([FromBody] ProductGemReqModel req)
+        public async Task<IActionResult> CreateProductGem([FromBody] ProductGemReqModel req)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _productGemService.CreateProductGem(token, req);
+            return StatusCode(res.Code, res);
+        }
+
+        [Route("delete-productgem")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductGem(DelteProductGemReqModel req)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _productGemService.DeleteProductGem(token, req);
+            return StatusCode(res.Code, res);
+        }
+
+        [Route("update-productgem")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateProductGem(ProductGemReqModel req)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _productGemService.UpdateProductGem(token, req);
             return StatusCode(res.Code, res);
         }
     }

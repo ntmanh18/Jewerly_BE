@@ -5,6 +5,7 @@ using Data.Repository.BillRepo;
 using Data.Repository.CashierRepo;
 using Data.Repository.CustomerRepo;
 using Data.Repository.DashBoardRepo;
+using Data.Repository.DiscountProductRepo;
 using Data.Repository.DiscountRepo;
 using Data.Repository.GemRepo;
 using Data.Repository.GoldRepo;
@@ -42,6 +43,7 @@ namespace Data
             services.AddScoped<IVoucherRepo, VoucherRepo>();
             services.AddScoped<IWarrantyRepo, WarrantyRepo>();
             services.AddScoped<IDashRepo, DashRepo>();
+            services.AddScoped<IDiscountProductRepo,DiscountProductRepo>();
 
             return services;
         }

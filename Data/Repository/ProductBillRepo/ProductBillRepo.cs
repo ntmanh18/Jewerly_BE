@@ -16,9 +16,15 @@ namespace Data.Repository.ProductBillRepo
         {
             _context = context;
         }
+
+        public async Task<List<ProductBill>> GetProducByBillId(string billId)
+        {
+            return await _context.ProductBills.Where(x => x.BillBillId == billId).Include(x => x.BillBill ).ThenInclude(x=> x.VoucherVoucher).Include(x=> x.ProductProduct).ToListAsync();
+        }
+
         public async Task<ProductBill> GetUniqueProductBill(string billId, string productId)
         {
-            return await _context.ProductBills.Where(x => x.ProductProductId == productId && x.BillBillId == billId).FirstOrDefaultAsync();
+            return await _context.ProductBills.Where(x => x.ProductProductId == productId && x.BillBillId == billId).Include(c => c.BillBill).Include(c=> c.ProductProduct).FirstOrDefaultAsync();
         }
     }
 }

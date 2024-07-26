@@ -14,5 +14,7 @@ namespace Bussiness.Services.ProductGemService
     public interface IProductGemService 
     {
         Task<ResultModel> CreateProductGem(string token,ProductGemReqModel req);
+        Task<ResultModel> DeleteProductGem(string token, DelteProductGemReqModel req);
+        Task<ResultModel> UpdateProductGem(string token,ProductGemReqModel req);
     }
 }

@@ -18,6 +18,7 @@ namespace Data.Repository.ProductRepo
         Task<List<Product>> GetAllProductsv2();
         Task<Product> GetProductByIdv2(string id);   
         public Task<Gold> GetGoldById(string goldId);
+        Task<List<Product>> GetProductByGold(string goldId);
 
     }
 }

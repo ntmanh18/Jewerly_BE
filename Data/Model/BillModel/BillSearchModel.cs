@@ -10,5 +10,8 @@ namespace Data.Model.BillModel
     {
         public DateTime? stardate { get; set; } = null;
         public DateTime? enddate { get; set; } = null;
+        public int? CashNumber { get; set; }
+        public bool SortByTotalCost { get; set; }
+        public bool SortByTotalCostDesc { get; set; }
     }
 }

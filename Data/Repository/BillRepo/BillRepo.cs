@@ -17,17 +17,20 @@ namespace Data.Repository.BillRepo
             _context = context;
         }
 
-        public Task<Bill> GetBillByCash(string cashId)
+        public Task<List<Bill>> GetBillByCash(string cashId)
         {
-            throw new NotImplementedException();
+            return _context.Bills.Where(x => x.CashierId == cashId).OrderByDescending(x => x.PublishDay).ToListAsync();
         }
 
         public Task<Bill> GetBillById(string billId)
         {
-            throw new NotImplementedException();
+            return _context.Bills.Where(x => x.BillId == billId).Include(x=> x.Customer). FirstOrDefaultAsync();
         }
 
-        public IQueryable<Bill> GetBillQuery() => _context.Bills.Include(v => v.Cashier).Include(v => v.Customer).Include(v => v.VoucherVoucher).AsQueryable();
+        public IQueryable<Bill> GetBillQuery() => _context.Bills
+            .Include(v => v.Cashier)
+            .Include(v => v.Customer)
+            .Include(v => v.VoucherVoucher).AsQueryable();
         public async Task<decimal> TotalBill()
         {
             return await _context.Bills.CountAsync();

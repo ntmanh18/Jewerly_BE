@@ -7,6 +7,7 @@ using Data.Model.GoldModel;
 using Data.Model.ResultModel;
 using Data.Repository.CustomerRepo;
 using Data.Repository.GoldRepo;
+using Data.Repository.ProductRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,14 @@ namespace Bussiness.Services.GoldService
         private readonly IAccountService _accountService;
         private readonly IAuthenticateService _authentocateService;
         private readonly IToken _token;
+        private readonly IProductRepo _productRepo;
 
         public GoldService(
             IGoldRepo goldRepo,
             IToken token,
             IAuthenticateService authenticateService,
-            IAccountService accountService
+            IAccountService accountService,
+            IProductRepo productRepo
             )
         {
 
@@ -38,6 +41,7 @@ namespace Bussiness.Services.GoldService
             _authentocateService = authenticateService;
             _accountService = accountService;
             _goldRepo = goldRepo;
+            _productRepo = productRepo;
 
         }
 
@@ -290,7 +294,12 @@ namespace Bussiness.Services.GoldService
                         WorldPrice = goldModel.WorldPrice,
                     };
                     var goldUpdate = await _goldRepo.UpdateGold(gold);
-
+                    List<Product> p = await _productRepo.GetProductByGold(goldModel.GoldId);
+                foreach (var product in p)
+                {
+                    product.Price = (decimal)(product.Price - product.MaterialNavigation.SalePrice + goldModel.SalePrice);
+                    _productRepo.UpdateProduct(product);
+                }
                     resultModel.Data = goldUpdate;
                 
             }

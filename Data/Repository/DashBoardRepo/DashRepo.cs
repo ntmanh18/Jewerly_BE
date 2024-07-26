@@ -19,7 +19,8 @@ namespace Data.Repository.DashBoardRepo
         }
         public async Task<decimal> GetTotalIncomeAsync()
         {
-            return await _context.Cashiers.SumAsync(c => c.Income ?? 0);
+            //return await _context.Cashiers.SumAsync(c => c.Income ?? 0);
+            return await _context.Cashiers.SumAsync(c => c.Income );
         }
 
         public async Task<IEnumerable<IGrouping<int, Cashier>>> GetIncomeByCashNumberAsync()
@@ -34,7 +35,9 @@ namespace Data.Repository.DashBoardRepo
                 {
                     Year = g.Key.Year,
                     Month = g.Key.Month,
-                    TotalIncome = g.Sum(c => c.Income ?? 0)
+                    //TotalIncome = g.Sum(c => c.Income ?? 0)
+                    TotalIncome = g.Sum(c => c.Income)
+
                 })
                 .Where(dto => dto.TotalIncome != null)
                 .ToListAsync();

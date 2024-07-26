@@ -404,7 +404,7 @@ namespace Bussiness.Services.CustomerService
 
         public async Task<ResultModel> UpdateCustomer(string? token, CustomerUpdateModel customerModel)
         {
-            bool? status = GetCustomerById(customerModel.CustomerId).Result.Status;
+            bool status = GetCustomerById(customerModel.CustomerId).Result.Status;
             var resultModel = new ResultModel
             {
                 IsSuccess = true,

@@ -16,6 +16,11 @@ namespace Data.Repository.ProductGemRepo
         _context = context;
         }
 
+        public async Task<List<ProductGem>> GetByProduct(string productId)
+        {
+           return await _context.ProductGems.Where(x=> x.ProductProductId == productId).Include(x => x.ProductProduct).Include(x=>x.GemGem).ToListAsync();
+        }
+
         public async Task<ProductGem> GetProductGemUnique(string productId, string gemId)
         {
             return await _context.ProductGems.FirstOrDefaultAsync(c => c.ProductProductId == productId && c.GemGemId==gemId);

@@ -19,42 +19,6 @@ namespace Data.Repository.DiscountRepo
             _context = context;
         }
 
-        public async Task DeleteDiscountProduct(Discount discount)
-        {
-            try
-            {
-                var existingDiscount = await _context.Discounts
-                                        .Include(x => x.ProductProducts)
-                                        .FirstOrDefaultAsync(x => x.DiscountId == discount.DiscountId);
-
-                if (existingDiscount != null)
-                {
-                    //Update the existing discount values
-                    _context.Entry(existingDiscount).CurrentValues.SetValues(discount);
-
-                    //Ensure the ProductProducts collection is not null
-                    if (existingDiscount.ProductProducts != null)
-                    {
-                        //Remove the existing relationships
-                        foreach (var productProduct in existingDiscount.ProductProducts.ToList())
-                        {
-                            _context.Entry(existingDiscount).State = EntityState.Deleted;
-                        }
-                    }
-
-                    //Save changes
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new Exception("Discount not found.");
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("An error occurred while saving the entity changes.", e);
-            }
-        }
 
 
         public Task<List<Discount>> GetActiveDiscount(DateTime expiredDate)
@@ -65,7 +29,7 @@ namespace Data.Repository.DiscountRepo
 
         public async Task<List<Discount>> GetAllDiscount()
         {
-            return await _context.Discounts.Include(c => c.ProductProducts).Include(c=> c.CreatedByNavigation).Select( c=> new Discount
+            return await _context.Discounts.Include(c => c.DiscountProducts).Include(c=> c.CreatedByNavigation).Select( c=> new Discount
             {
                DiscountId = c.DiscountId,
                CreatedBy = c.CreatedByNavigation.UserId,
@@ -73,14 +37,14 @@ namespace Data.Repository.DiscountRepo
                PublishDay = c.PublishDay,
                Cost = c.Cost,
                CreatedByNavigation = c.CreatedByNavigation,
-               ProductProducts = c.ProductProducts
+               DiscountProducts = c.DiscountProducts
 
             }).AsQueryable().ToListAsync();
         }
 
         public async Task<Discount> GetDiscountById(string id)
         {
-            return await _context.Discounts.Include(c => c.ProductProducts).FirstOrDefaultAsync(c => c.DiscountId ==id);
+            return await _context.Discounts.Include(c => c.DiscountProducts).FirstOrDefaultAsync(c => c.DiscountId ==id);
             }
 
         public async Task UpdateDiscount(Discount discount)

@@ -17,6 +17,8 @@ using Data.Repository.VoucherRepo;
 using System.Net;
 using Data.Model.VoucherModel;
 using Microsoft.EntityFrameworkCore;
+using Data.Model.WarrantyModel;
+using Bussiness.Services.WarrantyService;
 
 
 
@@ -38,6 +40,7 @@ namespace Bussiness.Services.BillService
         private readonly ICashierRepo _cashierRepo;
         private readonly IProductBillService _productBillService;
         private readonly IGemRepo _gemRepo;
+        private readonly IWarrantyService _warrantyService;
 
         public BillService(IProductBillRepo productBillRepo,
             IProductRepo productRepo,
@@ -49,7 +52,8 @@ namespace Bussiness.Services.BillService
             IDiscountRepo discountRepo,
             ICashierRepo cashierRepo,
             IProductBillService productBillService,
-            IGemRepo gemRepo
+            IGemRepo gemRepo,
+            IWarrantyService warrantyService
 
             )
         {
@@ -65,6 +69,7 @@ namespace Bussiness.Services.BillService
             _cashierRepo = cashierRepo; 
             _productBillService = productBillService;
             _gemRepo = gemRepo; 
+            _warrantyService = warrantyService;
 
         }
 
@@ -87,12 +92,12 @@ namespace Bussiness.Services.BillService
         {
             return totalBill - (totalBill*voucher);
         }
-        private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
+        private decimal CostWithDiscount(decimal productCost, List<DiscountProduct> discountList)
         {
             decimal cost = productCost;
-            foreach(Discount discount in discountList)
+            foreach(DiscountProduct discount in discountList)
             {
-                cost = cost - discount.Cost;
+                cost = cost - discount.DiscountDiscount.Cost;
             }
             return cost;
         }
@@ -153,7 +158,13 @@ namespace Bussiness.Services.BillService
             {
                 var existProduct = await _productRepo.GetProductByIdv2(product.Key);
                 decimal productPrice = 0;
-                decimal gemPrice = GemCost(existProduct.ProductGems.ToList());
+                decimal gemPrice = 0;
+                if(existProduct.ProductGems.Count > 0) {
+                    gemPrice = GemCost(existProduct.ProductGems?.ToList());
+
+                }
+                
+
                 if (existProduct == null)
                 {
                     res.IsSuccess = false;
@@ -175,15 +186,15 @@ namespace Bussiness.Services.BillService
                 //    res.Message = "Product already Existed";
                 //    return res;
                 //}
-                productPrice = CalculateCost((decimal)existProduct.MaterialNavigation.SalePrice, (decimal)existProduct.Weight, existProduct.MachiningCost, gemPrice, (decimal)existProduct.MarkupRate);
-                if(existProduct.DiscountDiscounts.Count > 0)
+                productPrice = existProduct.Price;
+                if(existProduct.DiscountProducts.Count > 0)
                 {
-                    var disCountList = new List<Discount>();
+                    var disCountList = new List<DiscountProduct>();
                     //check available disount
-                   foreach(var discount in existProduct.DiscountDiscounts)
+                   foreach(var discount in existProduct.DiscountProducts)
                     {
-                        if(discount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
-                            discount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
+                        if(discount.DiscountDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
+                            discount.DiscountDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
                             ) {
                             disCountList.Add(discount);
                         }
@@ -203,9 +214,11 @@ namespace Bussiness.Services.BillService
             {
                 //create bill
                 Bill b = new Bill();
+                b.Type = true;
                 b.BillId = GenerateId();
                 b.TotalCost = totalCost;
                 b.PublishDay = DateTime.Now;
+                
                 
                 if (voucher != null)
                 {
@@ -213,30 +226,67 @@ namespace Bussiness.Services.BillService
                 }
                 b.CashierId = cash.CashId;
                 if(customer != null) { b.CustomerId = customer.CustomerId; }
+
+
+                b.BillId = GenerateId();
+                List<ProductBill> pb = new List<ProductBill>();
                 
-                
-                
+                foreach (var p in req.Product)
+                {
+                    if (customer != null)
+                    {
+                        WarrantyCreateModel warranty = new WarrantyCreateModel()
+                        {
+                            CustomerId = customer.CustomerId,
+                            StartDate = DateTime.Now,
+                            ProductId = p.Key,
+                            
+                            Desc = "One-year warranty"
+                        };
+                        _warrantyService.CreateWarranty(token, warranty);
+                    }
+                    var existProduct = await _productRepo.GetProductByIdv2(p.Key);
+
+                    ProductBill item = new ProductBill()
+                    {
+                        BillBillId = b.BillId,
+                        ProductProductId = p.Key,
+                        Amount = p.Value,
+                        UnitPrice = existProduct.Price
+                        
+                    };
+                    pb.Add(item);
+                }
+                if (customer != null)
+                {
+                    b.CustomerId = customer.CustomerId;
+
+                }
+                b.ProductBills = pb;
                 await _billRepo.Insert(b);
                 // add relationship product bill
-                CreateProductBillReqModel model = new CreateProductBillReqModel()
-                {
-                    BillId = GenerateId(),
-                    Product = req.Product,
-                };
-                await _productBillService.CreateProductBill(token, model);
+                //CreateProductBillReqModel model = new CreateProductBillReqModel()
+                //{
+                //    BillId = b.BillId,
+                //    Product = req.Product,
+                //};
+                //await _productBillService.CreateProductBill(token, model);
                 //update cash income
                 cash.Income += totalCost;
-                await _cashierRepo.UpdateCashier(cash);
+                 _cashierRepo.UpdateCashier(cash);
                 //update customer point
                 if(customer != null)
                 {
                     int point = customer.Point += (int)Math.Floor((totalCost / 100000));
+                    await _customerRepo.UpdateCustomer(customer);
+
                 }
                 //delete voucher
                 if (voucher != null) {
-                    await _voucherRepo.DeleteVoucherAsync(voucher);
+                     _voucherRepo.DeleteVoucherAsync(voucher);
                 }
                 //create warranty
+                
                 res.Data = b;
                 return res;
             }catch (Exception ex)
@@ -277,8 +327,27 @@ namespace Bussiness.Services.BillService
                 );
             }
 
-            var vouchers = await query.ToListAsync();
-            resultModel.Data = vouchers;
+            if (billSearch.CashNumber.HasValue)
+            {
+                query = query.Where(v => v.Cashier.CashNumber == billSearch.CashNumber);
+            }
+            if (billSearch.SortByTotalCost)
+            {
+                if (billSearch.SortByTotalCostDesc)
+                {
+                    query = query.OrderByDescending(v => v.TotalCost);
+                }
+                else
+                {
+                    query = query.OrderBy(v => v.TotalCost);
+                }
+            }
+            else
+            {
+                query = query.OrderBy(v => v.PublishDay);
+            }
+            var Bill = await query.ToListAsync();
+            resultModel.Data = Bill;
 
             return resultModel;
         }
@@ -313,6 +382,71 @@ namespace Bussiness.Services.BillService
                 resultModel.Code = (int)HttpStatusCode.InternalServerError;
                 resultModel.Message = ex.Message;
             }
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetBillByCash(string token)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            Cashier cash = await _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
+            if (cash == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "Invalid cash";
+                return resultModel;
+            }
+
+            List<Bill> bills = await _billRepo.GetBillByCash(cash.CashId);
+            resultModel.IsSuccess = true;
+            resultModel.Code = (int)HttpStatusCode.OK;
+            resultModel.Data = bills;
+            return resultModel;
+
+        }
+
+        public async Task<ResultModel> getBillById(string? token, string id)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            var query = _billRepo.GetBillById(id);
+
+
+          
+
+            resultModel.Data = query;
 
             return resultModel;
         }

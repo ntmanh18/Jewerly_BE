@@ -25,6 +25,18 @@ namespace API.Controllers
             var res = await _productBillService.CreateProductBill(token, req);
             return StatusCode(res.Code, res);
         }
+
+
+        [Route("view-productbill")]
+        [HttpGet]
+
+
+        public async Task<IActionResult> ViewProductBill([FromQuery] string billId)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _productBillService.GetProductByBillId(token, billId);
+            return StatusCode(res.Code, res);
+        }
     }
 }
 

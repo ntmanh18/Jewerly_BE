@@ -27,6 +27,10 @@ public partial class Product
 
     public float? MarkupRate { get; set; }
 
+    public decimal Price { get; set; }
+
+    public virtual ICollection<DiscountProduct> DiscountProducts { get; set; } = new List<DiscountProduct>();
+
     public virtual Gold MaterialNavigation { get; set; } = null!;
 
     public virtual ICollection<OldProduct> OldProducts { get; set; } = new List<OldProduct>();
@@ -36,6 +40,4 @@ public partial class Product
     public virtual ICollection<ProductGem> ProductGems { get; set; } = new List<ProductGem>();
 
     public virtual ICollection<Warranty> Warranties { get; set; } = new List<Warranty>();
-
-    public virtual ICollection<Discount> DiscountDiscounts { get; set; } = new List<Discount>();
 }

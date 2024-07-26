@@ -5,10 +5,12 @@ using Bussiness.Services.Validate;
 using Data.Entities;
 using Data.Model.DiscountModel;
 using Data.Model.ResultModel;
+using Data.Repository.DiscountProductRepo;
 using Data.Repository.DiscountRepo;
 using Data.Repository.ProductRepo;
 using Data.Repository.UserRepo;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,16 +29,19 @@ namespace Bussiness.Services.DiscountService
         private readonly IToken _token;
         private readonly IDiscountRepo _discountRepo;
         private readonly IProductRepo _productRepo;
+        private readonly IDiscountProductRepo _discountProductRepo;
         public DiscountService(IToken token,
             IAccountService accountService,
             IDiscountRepo discountRepo,
-            IProductRepo productRepo
+            IProductRepo productRepo,
+            IDiscountProductRepo discountProductRepo
            )
         {
             _discountRepo = discountRepo;
             _token = token;
             _accountService = accountService;
             _productRepo = productRepo;
+            _discountProductRepo = discountProductRepo;
             
         }
 
@@ -163,7 +168,7 @@ namespace Bussiness.Services.DiscountService
                 }
                 else
                 {
-                  discounts = discounts.Where(c => c.ProductProducts.ToList().Exists(c => c.ProductId == query.productId)).ToList();
+                  discounts = discounts.Where(c => c.DiscountProducts.ToList().Exists(c => c.ProductProduct.ProductId == query.productId)).ToList();
                 }
             }
             var now = DateOnly.FromDateTime(DateTime.Now);
@@ -190,79 +195,6 @@ namespace Bussiness.Services.DiscountService
             res.Code = (int)HttpStatusCode.OK;
             res.Data = data;
             return res;
-
-        }
-
-        public async Task<ResultModel> CreateDiscountProduct(string token, CreateDiscountProductReqModel req)
-        {
-            var res = new ResultModel
-            {
-                IsSuccess = true,
-                Code = (int)HttpStatusCode.OK,
-                Data = null,
-                Message = null,
-            };
-
-            var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2 });
-            if (!isValidRole)
-            {
-                res.IsSuccess = false;
-                res.Code = (int)HttpStatusCode.Forbidden;
-                res.Message = "You don't permission to perform this action.";
-                return res;
-            }
-            Discount existingDiscount = await _discountRepo.GetDiscountById(req.DiscountId);
-            if (existingDiscount == null)
-            {
-                res.IsSuccess = false;
-                res.Code = (int)HttpStatusCode.NotFound;
-                res.Message = "Discount is not existed";
-                return res;
-            }
-            List<Product> productList = new List<Product>();
-            if (req.ProductIds.Count < 0)
-            {
-                res.IsSuccess = false;
-                res.Code = (int)HttpStatusCode.NotFound;
-                res.Message = "Product list can not be null";
-                return res;
-            }
-            foreach (var x in req.ProductIds)
-            {
-                Product p = await _productRepo.GetProductByIdv2(x.ToUpper());
-
-                if (p == null)
-                {
-                    res.IsSuccess = false;
-                    res.Code = (int)HttpStatusCode.Forbidden;
-                    res.Message = "Invalid product";
-                    return res;
-                }
-                productList.Add(p);
-            }
-            try
-            {
-                existingDiscount.ProductProducts = productList;
-                await _discountRepo.Update(existingDiscount);
-                res.IsSuccess = true;
-                res.Code = (int)HttpStatusCode.OK;
-                var data = new
-                {
-                    discount = req.DiscountId,
-                    productList = req.ProductIds
-                };
-                res.Data = data;
-                return res;
-            }
-            
-            catch (Exception ex)
-            {
-                res.IsSuccess= false;
-                res.Message= ex.ToString();
-                return res;
-            }
-
 
         }
 
@@ -348,6 +280,7 @@ namespace Bussiness.Services.DiscountService
             }
 
         }
+
         public async Task<ResultModel> DeleteDiscount(string token, string discountId)
         {
             var res = new ResultModel
@@ -376,23 +309,28 @@ namespace Bussiness.Services.DiscountService
                 return res;
             }
 
-            try
-            {
-                //await _discountRepo.DeleteDiscountProduct(discountId);
-                //oldDiscount = await _discountRepo.GetDiscountById(discountId);
-                
-                await _discountRepo.DeleteDiscountProduct(oldDiscount);
+            var discountProduct = await _discountProductRepo.GetDiscountProductByDiscout(discountId);
+            if (discountProduct != null) {
+
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Can not delete discount applying to Product";
+                return res;
+            }
+            try {
+                await _discountRepo.Remove(oldDiscount);
                 res.IsSuccess = true;
                 res.Code = (int)HttpStatusCode.OK;
-                res.Message = "Delete Discount Successfully";
+                res.Message = "Delete discount successfully";
                 return res;
-            }
-            catch (Exception ex)
+            }catch (Exception ex)
             {
                 res.IsSuccess = false;
-                res.Data = ex.ToString();
+                res.Code= (int)HttpStatusCode.BadRequest;
+                res.Message = ex.Message;
                 return res;
             }
+           
         }
     }
 }

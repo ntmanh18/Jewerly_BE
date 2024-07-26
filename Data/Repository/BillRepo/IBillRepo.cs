@@ -12,8 +12,9 @@ namespace Data.Repository.BillRepo
     {
         IQueryable<Bill> GetBillQuery();
         Task<decimal> TotalBill();
-        Task<Bill> GetBillByCash(string cashId);
+        Task<List<Bill>> GetBillByCash(string cashId);
         Task<Bill> GetBillById(string billId);
+        
 
     }
 }

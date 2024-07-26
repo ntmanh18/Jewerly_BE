@@ -51,6 +51,7 @@ namespace Bussiness.Services.UserService
 
             var decodeModel = _token.decode(token);
             
+
             var existingUser = await _userRepo.GetByIdAsync(decodeModel.userid);
             bool isMatch = HashPass.VerifyPassword(model.OldPassword, existingUser.Password);
             if (!isMatch)
@@ -60,12 +61,15 @@ namespace Bussiness.Services.UserService
                 res.Message = "Old password is wrong";
                 return res;
             }
-            try {
+          
+            try
+            {
 
                 string hashNewPassword = HashPass.HashPassword(model.NewPassword);
                 existingUser.Password = hashNewPassword;
                 await _userRepo.Update(existingUser);
                 
+
                 res.IsSuccess = true;
                 res.Code = 200;
                 res.Message = "Change password succesfully";
@@ -81,6 +85,7 @@ namespace Bussiness.Services.UserService
 
 
         }
+            
 
         public async Task<ResultModel> CreateUser(string token, CreateUserReqModel model)
         {
@@ -175,6 +180,7 @@ namespace Bussiness.Services.UserService
                 };
             }
              if(existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
+            if (existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
             try
             {
                 var result = await _userRepo.Update(existingUser);
@@ -223,7 +229,9 @@ namespace Bussiness.Services.UserService
 
                 return res;
             }
-            if(!(model.Role ==1 || model.Role ==2 || model.Role == 3)) {
+            
+            if (!(model.Role == 1 || model.Role == 2 || model.Role == 3))
+            {
 
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
@@ -287,6 +295,7 @@ namespace Bussiness.Services.UserService
                 return res;
             }
             var existingUser =await _userRepo.GetByIdAsync(decodeModel.userid);
+            
             if (existingUser == null)
             {
                 return new ResultModel
@@ -299,24 +308,45 @@ namespace Bussiness.Services.UserService
             }
             var isPhoneValid = await _userValidate.IsPhoneValid(model.Phone);
             
-            if(model.Username.Length > 0)
+
+            if (model.Username.Length > 0)
             {
                 existingUser.Username = model.Username;
             }
 
-            if (model.DoB.HasValue)
+            if (2024 - model.DateOfBirth.Year > 50 || 2024 -model.DateOfBirth.Year < 18 )
             {
-                var date = model.DoB.Value.ToShortDateString();
-                existingUser.DoB = DateOnly.Parse(date);
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    Code = (int)HttpStatusCode.Forbidden,
+                    Data = null,
+                    Message = "Invalid DoB",
+                };
+                
             }
             else
             {
-                existingUser.DoB = existingUser.DoB;
+                var date = DateOnly.FromDateTime(model.DateOfBirth);
+                existingUser.DoB = date;
             }
             if (model.Address.Length > 0) { existingUser.Address = model.Address; }
             if(model.FullName.Length > 0) { existingUser.FullName  = model.FullName; }
-            if(isPhoneValid == null) { existingUser.Phone = model.Phone; }
             
+            if (isPhoneValid.IsSuccess == false) {
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    Code = (int)HttpStatusCode.Forbidden,
+                    Data = null,
+                    Message = "Invalid phone",
+                };
+            }
+            else
+            {
+              existingUser.Phone = model.Phone;
+            }
+
             try
             {
                 _userRepo.Update(existingUser);
@@ -328,7 +358,9 @@ namespace Bussiness.Services.UserService
                     Message = "Update successfully!",
                 };
             }
-            catch (Exception ex) {
+           
+            catch (Exception ex)
+            {
                 return new ResultModel
                 {
                     IsSuccess = false,
@@ -337,11 +369,6 @@ namespace Bussiness.Services.UserService
                     Message = ex.Message,
                 };
             }
-            
-
-
-
-
         }
 
         public async Task<ResultModel> ViewUserList(string token, UserQueryObject query)
@@ -366,10 +393,12 @@ namespace Bussiness.Services.UserService
             }
             var users = await _userRepo.GetAllUserQuery();
             if(query.role != 0)
+            if (query.role != 0)
             {
                 users = users.Where(x => x.Role == query.role).ToList();
             }
             if(query.status.HasValue)
+            if (query.status.HasValue)
             {
                 users = users.Where(x => x.Status == query.status).ToList();
             }
@@ -387,6 +416,7 @@ namespace Bussiness.Services.UserService
                 if (query.sortBy.Equals("Id", StringComparison.OrdinalIgnoreCase))
                 {
                     users= query.isDescending ? users.OrderByDescending(s => s.UserId).ToList() : users.OrderBy(s => s.UserId).ToList();
+                    users = query.isDescending ? users.OrderByDescending(s => s.UserId).ToList() : users.OrderBy(s => s.UserId).ToList();
                 }
                 if (query.sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
@@ -413,6 +443,8 @@ namespace Bussiness.Services.UserService
                
             
 
+
+
             res.IsSuccess = true;
             res.Code = (int)HttpStatusCode.OK;
             res.Data = users;
@@ -431,6 +463,7 @@ namespace Bussiness.Services.UserService
             string name = nameList.Last();
             return name + id;
         }
+
 
     }
 }

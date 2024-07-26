@@ -5,8 +5,10 @@ using Data.Entities;
 //using Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -32,6 +34,7 @@ builder.Services.AddDbContext<JewerlyV6Context>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringDB"));
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
+
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 builder.Services.AddCors(options =>
 {

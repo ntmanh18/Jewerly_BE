@@ -497,14 +497,32 @@ namespace Bussiness.Services.ProductService
 
             };
             
-            await _productRepo.Insert(p);
-            ProductGemReqModel model = new ProductGemReqModel() { 
-            ProductId=id,
-            Gem = productModel.Gem,
-            };
-            await _productGemService.CreateProductGem(token, model);
-           
+            List<ProductGem> productGems = new List<ProductGem>();
+
             
+            foreach (var x in productModel.Gem)
+            {
+                
+                    ProductGem model = new ProductGem()
+                    {
+                        ProductProductId = id,
+                        GemGemId = x.Key,
+                        Amount = x.Value
+
+
+                    };
+                    productGems.Add(model);
+                
+
+
+
+
+            }
+            
+            p.ProductGems = productGems;
+            await _productRepo.Insert(p);
+
+
             res.IsSuccess = true;
             res.Code = (int)HttpStatusCode.OK;
             res.Data = productModel;

@@ -92,12 +92,12 @@ namespace Bussiness.Services.BillService
         {
             return totalBill - (totalBill*voucher);
         }
-        private decimal CostWithDiscount(decimal productCost, List<DiscountProduct> discountList)
+        private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
         {
             decimal cost = productCost;
-            foreach(DiscountProduct discount in discountList)
+            foreach(Discount discount in discountList)
             {
-                cost = cost - discount.DiscountDiscount.Cost;
+                cost = cost - discount.Cost;
             }
             return cost;
         }
@@ -140,10 +140,11 @@ namespace Bussiness.Services.BillService
                 return res;
             }
             decimal totalCost = 0;
-            Customer customer =await _customerRepo.GetCustomerById(req.CustomerId);
-            Voucher voucher = await _voucherRepo.GetVoucherByIdAsync(req.VoucherId);
-            Cashier cash = await _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
-            if(cash == null)
+            var customer = await _customerRepo.GetCustomerById(req.CustomerId);
+            var voucher =await _voucherRepo.GetVoucherByIdAsync(req.VoucherId);
+            var cash =await  _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
+            
+            if (cash == null)
             {
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
@@ -159,10 +160,6 @@ namespace Bussiness.Services.BillService
                 var existProduct = await _productRepo.GetProductByIdv2(product.Key);
                 decimal productPrice = 0;
                 decimal gemPrice = 0;
-                if(existProduct.ProductGems.Count > 0) {
-                    gemPrice = GemCost(existProduct.ProductGems?.ToList());
-
-                }
                 
 
                 if (existProduct == null)
@@ -186,23 +183,28 @@ namespace Bussiness.Services.BillService
                 //    res.Message = "Product already Existed";
                 //    return res;
                 //}
-                productPrice = existProduct.Price;
+                
                 if(existProduct.DiscountProducts.Count > 0)
                 {
-                    var disCountList = new List<DiscountProduct>();
+                    var disCountList = new List<Discount>();
                     //check available disount
                    foreach(var discount in existProduct.DiscountProducts)
                     {
-                        if(discount.DiscountDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
-                            discount.DiscountDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
+                       
+                          var checkDiscount = await _discountRepo.GetDiscountById(discount.DiscountDiscountId);
+                            
+                        
+
+                            if (checkDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
+                            checkDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >=0 
                             ) {
-                            disCountList.Add(discount);
+                            disCountList.Add(checkDiscount);
                         }
                     }
-                  productPrice = CostWithDiscount(productPrice,disCountList);
+                  productPrice = CostWithDiscount(existProduct.Price , disCountList);
                 }
 
-                totalCost += productPrice;
+                totalCost += productPrice * product.Value;
             }
 
             if(voucher != null)
@@ -218,6 +220,7 @@ namespace Bussiness.Services.BillService
                 b.BillId = GenerateId();
                 b.TotalCost = totalCost;
                 b.PublishDay = DateTime.Now;
+                b.Payment = req.PaymentType;
                 
                 
                 if (voucher != null)
@@ -243,16 +246,36 @@ namespace Bussiness.Services.BillService
                             
                             Desc = "One-year warranty"
                         };
-                        _warrantyService.CreateWarranty(token, warranty);
+                      await  _warrantyService.CreateWarranty(token, warranty);
                     }
                     var existProduct = await _productRepo.GetProductByIdv2(p.Key);
+                    decimal unitprice = 0;
+                    if (existProduct.DiscountProducts.Count > 0)
+                    {
+                        var disCountList = new List<Discount>();
+                        //check available disount
+                        foreach (var discount in existProduct.DiscountProducts)
+                        {
 
+                            var checkDiscount = await _discountRepo.GetDiscountById(discount.DiscountDiscountId);
+
+
+
+                            if (checkDiscount.PublishDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) <= 0 &&
+                            checkDiscount.ExpiredDay.CompareTo(DateOnly.FromDateTime(DateTime.UtcNow)) >= 0
+                            )
+                            {
+                                disCountList.Add(checkDiscount);
+                            }
+                        }
+                        unitprice = CostWithDiscount(existProduct.Price, disCountList);
+                    }
                     ProductBill item = new ProductBill()
                     {
                         BillBillId = b.BillId,
                         ProductProductId = p.Key,
                         Amount = p.Value,
-                        UnitPrice = existProduct.Price
+                        UnitPrice = unitprice,
                         
                     };
                     pb.Add(item);
@@ -263,7 +286,7 @@ namespace Bussiness.Services.BillService
 
                 }
                 b.ProductBills = pb;
-                await _billRepo.Insert(b);
+                 await _billRepo.Insert(b);
                 // add relationship product bill
                 //CreateProductBillReqModel model = new CreateProductBillReqModel()
                 //{
@@ -273,17 +296,18 @@ namespace Bussiness.Services.BillService
                 //await _productBillService.CreateProductBill(token, model);
                 //update cash income
                 cash.Income += totalCost;
-                 _cashierRepo.UpdateCashier(cash);
+                await _cashierRepo.UpdateCashier(cash);
                 //update customer point
                 if(customer != null)
                 {
                     int point = customer.Point += (int)Math.Floor((totalCost / 100000));
-                    await _customerRepo.UpdateCustomer(customer);
+                 await    _customerRepo.UpdateCustomer(customer);
 
                 }
                 //delete voucher
                 if (voucher != null) {
-                     _voucherRepo.DeleteVoucherAsync(voucher);
+                    voucher.Status = false;
+                    await _voucherRepo.Update(voucher);
                 }
                 //create warranty
                 

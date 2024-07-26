@@ -2,6 +2,7 @@
 using Data.Model.GemModel;
 using Data.Model.ResultModel;
 using Data.Model.VoucherModel;
+using Data.Repository.GenericRepo;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Data.Repository.VoucherRepo
 {
-    public interface IVoucherRepo
+    public interface IVoucherRepo :IRepository<Voucher>
     {
         public Task<Voucher> CreateVoucherAsync(Voucher voucher);
         public Task<Voucher> UpdateVoucherAsync(Voucher voucherUpdate);

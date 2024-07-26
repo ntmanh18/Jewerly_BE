@@ -9,6 +9,7 @@ using Data.Model.ResultModel;
 using Data.Repository.DiscountRepo;
 using Data.Repository.GemRepo;
 using Data.Repository.GoldRepo;
+using Data.Repository.ProductGemRepo;
 using Data.Repository.ProductRepo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -36,6 +37,7 @@ namespace Bussiness.Services.ProductService
         private readonly IGemRepo _gemRepo;
         private readonly IProductGemService _productGemService;
         private readonly IDiscountRepo _discountRepo;
+        private readonly IProductGemRepo _productGemRepo;
 
 
         public ProductService(IProductRepo productRepo, IToken token,
@@ -44,7 +46,8 @@ namespace Bussiness.Services.ProductService
             IGoldRepo goldRepo,
             IGemRepo gemRepo,
             IProductGemService productGemService,
-            IDiscountRepo discountRepo
+            IDiscountRepo discountRepo,
+            IProductGemRepo productGemRepo
             )    
         {
             
@@ -56,6 +59,7 @@ namespace Bussiness.Services.ProductService
             _gemRepo = gemRepo;
             _productGemService = productGemService;
             _discountRepo = discountRepo;
+            _productGemRepo = productGemRepo;
             
         }
         
@@ -554,6 +558,15 @@ namespace Bussiness.Services.ProductService
              var resDataList = new List<ViewProductResultModel>();
             foreach( var c in product)
             {
+                Dictionary<string, int> gemList = new Dictionary<string, int>();
+                List<ProductGem> productGem = await _productGemRepo.GetByProduct(c.ProductId);
+                if(productGem.Count > 0) {
+                    foreach (var gem in productGem)
+                    {
+                        gemList.Add(gem.GemGem.Name, (int)gem.Amount);
+                    }
+                }
+                
                 var discountList = new List<Discount>();
                 foreach(var d in c.DiscountProducts) {
                     var discount =await _discountRepo.GetDiscountById(d.DiscountDiscountId);
@@ -569,7 +582,7 @@ namespace Bussiness.Services.ProductService
                     Desc = c.Desc,
                     Image = c.Image,
                     MachiningCost = c.MachiningCost,
-                    ProductGems = c.ProductGems.Select(c => c.GemGem.Name).ToList(),
+                    ProductGems = gemList,
                     Size = c.Size,
                     Weight = c.Weight,
                     Discount = discountList,

@@ -12,6 +12,7 @@ namespace Data.Model.BillModel
         public string VoucherId { get; set; }
 
         public string? CustomerId { get; set; }
+        public int PaymentType { get; set; }
 
     }
 }

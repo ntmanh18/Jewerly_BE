@@ -326,9 +326,9 @@ namespace Bussiness.Services.VoucherService
             {
                 query = query.Where(v => v.VoucherId == voucherSearch.Id);
             }
-            if (voucherSearch.isActive != true)
+            if (voucherSearch.isActive != null)
             {
-                query = query.Where(v => v.Status == false);
+                query = query.Where(v => v.Status == voucherSearch.isActive);
             }
 
             if (!string.IsNullOrEmpty(voucherSearch.customerName))

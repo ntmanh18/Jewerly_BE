@@ -94,6 +94,7 @@ namespace Bussiness.Services.BillService
         }
         private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
         {
+            if(discountList.Count <= 0) { return productCost; }
             decimal cost = productCost;
             foreach(Discount discount in discountList)
             {
@@ -158,7 +159,7 @@ namespace Bussiness.Services.BillService
             foreach(var product in req.Product)
             {
                 var existProduct = await _productRepo.GetProductByIdv2(product.Key);
-                decimal productPrice = 0;
+                decimal productPrice = existProduct.Price;
                 decimal gemPrice = 0;
                 
 
@@ -204,7 +205,7 @@ namespace Bussiness.Services.BillService
                   productPrice = CostWithDiscount(existProduct.Price , disCountList);
                 }
 
-                totalCost += productPrice * product.Value;
+                totalCost = totalCost +( productPrice * product.Value);
             }
 
             if(voucher != null)

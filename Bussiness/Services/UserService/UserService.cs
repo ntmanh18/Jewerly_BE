@@ -108,7 +108,7 @@ namespace Bussiness.Services.UserService
                 return res;
             }
             var isPhoneValid = await _userValidate.IsPhoneValid(model.Phone);
-            if (isPhoneValid != null) { return isPhoneValid; }
+            if (isPhoneValid.IsSuccess == false) { return isPhoneValid; }
             if (!(model.Role == 1 || model.Role == 2 || model.Role == 3))
             {
 

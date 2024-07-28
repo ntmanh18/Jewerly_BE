@@ -28,6 +28,7 @@ namespace Data.Model.ProductModel
         public string? Desc { get; set; }
 
         public string Image { get; set; } = null!;
+        public float MarkupRate { get; set; } = 0;
         public Dictionary<string, int> ProductGems { get; set; }
         public decimal Price { get; set; } = 0;
         public decimal PriceWithDiscount { get; set; } = 0;

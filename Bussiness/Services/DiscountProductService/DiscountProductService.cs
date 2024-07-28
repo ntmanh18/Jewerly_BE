@@ -79,6 +79,13 @@ namespace Bussiness.Services.DiscountProductService
                 res.Message = "Cannot apply expired discount to product";
                 return res;
             }
+            if(Discount.Cost > product.Price/2)
+            {
+                res.IsSuccess = false;
+                res.Code= (int)HttpStatusCode.Forbidden;
+                res.Message = "Discount can not be > 50% of product";
+                return res;
+            }
             DiscountProduct discountProduct = new DiscountProduct()
             {
                 DiscountDiscountId = req.DiscountId,

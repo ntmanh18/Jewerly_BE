@@ -90,7 +90,7 @@ namespace Bussiness.Services.BillService
         }
         private decimal CostWithVoucher(decimal totalBill, decimal voucher)
         {
-            return totalBill - (totalBill*voucher);
+            return totalBill - voucher;
         }
         private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
         {
@@ -250,7 +250,7 @@ namespace Bussiness.Services.BillService
                       await  _warrantyService.CreateWarranty(token, warranty);
                     }
                     var existProduct = await _productRepo.GetProductByIdv2(p.Key);
-                    decimal unitprice = 0;
+                    decimal unitprice = existProduct.Price;
                     if (existProduct.DiscountProducts.Count > 0)
                     {
                         var disCountList = new List<Discount>();
@@ -301,7 +301,8 @@ namespace Bussiness.Services.BillService
                 //update customer point
                 if(customer != null)
                 {
-                    int point = customer.Point += (int)Math.Floor((totalCost / 100000));
+                    int point = customer.Point + (int)Math.Floor((totalCost / 100000));
+                    customer.Point = point;
                  await    _customerRepo.UpdateCustomer(customer);
 
                 }

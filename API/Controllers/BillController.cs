@@ -1,5 +1,6 @@
 ﻿using Bussiness.Services.BillService;
 using Bussiness.Services.ProductBillService;
+using Data.Entities;
 using Data.Model.BillModel;
 using Data.Model.ProductBillModel;
 using Data.Model.VoucherModel;
@@ -55,6 +56,14 @@ namespace API.Controllers
         {
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _BillService.getBillById(token, id);
+            return StatusCode(res.Code, res);
+        }
+
+        [HttpGet("filter-bill")]
+        public async Task<ActionResult> FilterBill([FromQuery]  FilterBillModel filter)
+        {
+            string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            var res = await _BillService.FilterBill(token, filter);
             return StatusCode(res.Code, res);
         }
     }

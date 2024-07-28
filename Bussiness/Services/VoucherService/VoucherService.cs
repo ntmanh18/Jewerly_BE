@@ -215,7 +215,6 @@ namespace Bussiness.Services.VoucherService
                 return resultModel;
             }
             DateOnly expiredDay = new DateOnly(voucherUpdate.ExpiredDay.Year, voucherUpdate.ExpiredDay.Month, voucherUpdate.ExpiredDay.Day);
-            //so sánh expiređay và punlisheDay
             if (voucherUpdate.ExpiredDay.Year == 0 && voucherUpdate.ExpiredDay.Month == 0 && voucherUpdate.ExpiredDay.Day == 0)
             {
                 expiredDay = voucherExists.ExpiredDay;
@@ -232,6 +231,7 @@ namespace Bussiness.Services.VoucherService
                 VoucherId = voucherUpdate.VoucherId,
                 CreatedBy = voucherUpdate.CreatedBy,
                 ExpiredDay = expiredDay,
+                PublishedDay= voucherExists.PublishedDay,
                 Cost = voucherUpdate.Cost,
                 CustomerCustomerId = voucherUpdate.CustomerCustomerId,
             };

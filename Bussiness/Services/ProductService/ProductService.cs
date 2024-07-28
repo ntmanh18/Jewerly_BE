@@ -604,6 +604,7 @@ namespace Bussiness.Services.ProductService
                     Size = c.Size,
                     Weight = c.Weight,
                     Discount = discountList,
+                    MarkupRate = (float)c.MarkupRate,
                     
                     Price = c.Price,
 

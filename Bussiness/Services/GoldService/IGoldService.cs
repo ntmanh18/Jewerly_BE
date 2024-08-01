@@ -14,7 +14,7 @@ namespace Bussiness.Services.GoldService
         public Task<ResultModel> GetGolds(string token);
         Task<ResultModel> GetGoldById(string? token, string id);
         public Task<ResultModel> CreateGold(string token, GoldCreateModel goldModel, string userId);
-        Task<ResultModel> UpdateGold(string? token, GoldUpdateModel goldModel, string userId);
+        Task<ResultModel> UpdateGold(string? token, GoldUpdateModel goldModel);
 
         Task<ResultModel> DeleteListGold(string token);
 

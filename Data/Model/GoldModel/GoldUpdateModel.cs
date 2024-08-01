@@ -16,7 +16,7 @@ namespace Data.Model.GoldModel
 
         public decimal? SalePrice { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
 
         public string? Kara { get; set; }
 

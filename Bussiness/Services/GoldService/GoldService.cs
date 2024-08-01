@@ -248,7 +248,7 @@ namespace Bussiness.Services.GoldService
             return newItem;
         }
 
-        public async Task<ResultModel> UpdateGold(string? token, GoldUpdateModel goldModel, string userId)
+        public async Task<ResultModel> UpdateGold(string? token, GoldUpdateModel goldModel)
         {
             var resultModel = new ResultModel
             {
@@ -268,15 +268,15 @@ namespace Bussiness.Services.GoldService
 
                 return resultModel;
             }
-            var existingGold = await GetGoldById(token, goldModel.GoldId);
+            var existingGold = await _goldRepo.Get(goldModel.GoldId);
 
-            if (existingGold.Message == "Not found")
+            if (existingGold == null)
             {
                 resultModel.Code = 200;
                 resultModel.IsSuccess = true;
                 resultModel.Message = "Request gold not found";
             }
-            else if (existingGold.Message == "Gold found")
+            else 
             {
                     resultModel.Code = 200;
                     resultModel.IsSuccess = true;
@@ -287,7 +287,7 @@ namespace Bussiness.Services.GoldService
                         GoldName = goldModel.GoldName,
                         PurchasePrice = goldModel.PurchasePrice,
                         SalePrice = goldModel.SalePrice,
-                        ModifiedBy = userId,
+                        ModifiedBy = decodeModel.userid,
                         ModifiedDate = goldModel.ModifiedDate,
                         Kara = goldModel.Kara,
                         GoldPercent = goldModel.GoldPercent,

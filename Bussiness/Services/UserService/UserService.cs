@@ -194,7 +194,7 @@ namespace Bussiness.Services.UserService
                     Message = "User doesn't exist"
                 };
             }
-            if (existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
+           
             if (existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
             try
             {

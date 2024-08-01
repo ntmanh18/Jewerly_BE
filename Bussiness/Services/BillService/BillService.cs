@@ -80,17 +80,9 @@ namespace Bussiness.Services.BillService
             var length = bill.Result.Count() + 1;
             return  "B" + randomNumber.ToString() +  length.ToString();
         }
-
-
-        private decimal CalculateCost(decimal gold, decimal weight, decimal material, decimal gem, decimal markup )
-        {
-            decimal cost = 0;
-             cost = (decimal)(((gold * weight) + material + gem) * markup);
-            return cost;
-        }
         private decimal CostWithVoucher(decimal totalBill, decimal voucher)
         {
-            return totalBill - (totalBill*voucher);
+            return totalBill - voucher;
         }
         private decimal CostWithDiscount(decimal productCost, List<Discount> discountList)
         {
@@ -108,15 +100,7 @@ namespace Bussiness.Services.BillService
 
 
         }
-        private long GemCost(List<ProductGem> gems)
-        {
-            long gemCost = 0;
-            foreach (ProductGem pGem in gems)
-            {
-                gemCost += pGem.GemGem.Price;
-            }
-            return gemCost;
-        }
+      
 
         public async Task<ResultModel> CraeteBill(string token, CreateBillReqModel req)
         {
@@ -250,7 +234,7 @@ namespace Bussiness.Services.BillService
                       await  _warrantyService.CreateWarranty(token, warranty);
                     }
                     var existProduct = await _productRepo.GetProductByIdv2(p.Key);
-                    decimal unitprice = 0;
+                    decimal unitprice = existProduct.Price;
                     if (existProduct.DiscountProducts.Count > 0)
                     {
                         var disCountList = new List<Discount>();
@@ -301,7 +285,8 @@ namespace Bussiness.Services.BillService
                 //update customer point
                 if(customer != null)
                 {
-                    int point = customer.Point += (int)Math.Floor((totalCost / 100000));
+                    int point = customer.Point + (int)Math.Floor((totalCost / 100000));
+                    customer.Point = point;
                  await    _customerRepo.UpdateCustomer(customer);
 
                 }
@@ -474,6 +459,63 @@ namespace Bussiness.Services.BillService
             resultModel.Data = query;
 
             return resultModel;
+        }
+
+        public async Task<ResultModel>  FilterBill(string token, FilterBillModel filter)
+        {
+            var resultModel = new ResultModel
+            {
+                IsSuccess = true,
+                Code = (int)HttpStatusCode.OK,
+                Data = null,
+                Message = null,
+            };
+
+            var decodeModel = _token.decode(token);
+            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1, 2 });
+            if (!isValidRole)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "You don't permission to perform this action.";
+                return resultModel;
+            }
+            Cashier cash = await _cashierRepo.GetCashierByUser(decodeModel.userid, DateTime.Now);
+            if (cash == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.Forbidden;
+                resultModel.Message = "Invalid cash";
+                return resultModel;
+            }
+
+            List<Bill> bills = await _billRepo.GetBillByCash(cash.CashId);
+
+            if (bills == null)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.Code = (int)HttpStatusCode.NotFound;
+                resultModel.Message = "Bill is empty";
+                return resultModel;
+            }
+            var query = bills.AsQueryable();
+            if (filter.PayBy != 0)
+            {
+                query = query.Where(x => x.Payment == filter.PayBy);
+            }
+            if(filter.Type == 1)
+            {
+                query = query.Where(x => x.Type == true);
+            }
+            if(filter.Type == 0)
+            {
+                query = query.Where(x => x.Type == false);
+            }
+
+            resultModel.IsSuccess = true;
+            resultModel.Code = (int)(HttpStatusCode.OK);
+            resultModel.Data = query.ToList();
+            resultModel.Message = null; return resultModel;
         }
     }
 }

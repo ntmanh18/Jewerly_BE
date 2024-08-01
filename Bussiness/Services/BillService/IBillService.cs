@@ -1,4 +1,5 @@
-﻿using Data.Model.BillModel;
+﻿using Data.Entities;
+using Data.Model.BillModel;
 using Data.Model.ResultModel;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace Bussiness.Services.BillService
         Task<ResultModel> ViewBill(string token, BillSearchModel billSearch);
         Task<ResultModel> BillCount(string? token);
         Task<ResultModel> GetBillByCash(string token);
-         Task<ResultModel> getBillById(string? token, string id);
+        Task<ResultModel> getBillById(string? token, string id);
+        Task<ResultModel> FilterBill(string token,  FilterBillModel filter);
 
     }
 }

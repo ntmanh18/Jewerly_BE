@@ -69,7 +69,7 @@ namespace API.Controllers
             }
             var userId = userIdClaim;
             string? token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            var res = await _goldService.UpdateGold(token, goldUpdate, userId);
+            var res = await _goldService.UpdateGold(token, goldUpdate);
             return StatusCode(res.Code, res);
         }
 

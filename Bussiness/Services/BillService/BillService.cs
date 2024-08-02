@@ -263,6 +263,7 @@ namespace Bussiness.Services.BillService
                         UnitPrice = unitprice,
                         
                     };
+                    
                     pb.Add(item);
                 }
                 if (customer != null)
@@ -511,6 +512,7 @@ namespace Bussiness.Services.BillService
             {
                 query = query.Where(x => x.Type == false);
             }
+            
 
             resultModel.IsSuccess = true;
             resultModel.Code = (int)(HttpStatusCode.OK);

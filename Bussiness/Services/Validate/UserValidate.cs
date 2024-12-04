@@ -21,6 +21,7 @@ namespace Bussiness.Services.Validate
         public async Task<ResultModel> IsPhoneValid(string phone)
         {
             var res = new ResultModel();
+            res.IsSuccess = true;
 
             try
             {
@@ -41,7 +42,6 @@ namespace Bussiness.Services.Validate
                     res.Message = "The provided phone has already existed";
                     return res;
                 }
-                return null;
 
 
             }
@@ -52,7 +52,7 @@ namespace Bussiness.Services.Validate
                 res.Message = ex.Message;
                 return res;
             }
-            return null;
+            return res;
         }
 
         public async Task<ResultModel> IsUserNameUnique(string username)

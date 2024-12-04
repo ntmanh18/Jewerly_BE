@@ -9,6 +9,7 @@ namespace Data.Model.AuthenticateModel
     public class UserLoginReqModel
     {
         public string username {  get; set; }
+        
         public string password { get; set; }
 
     }

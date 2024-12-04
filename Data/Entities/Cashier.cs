@@ -11,11 +11,13 @@ public partial class Cashier
 
     public DateTime EndCash { get; set; }
 
-    public long Income { get; set; }
+    public decimal Income { get; set; }
 
     public int CashNumber { get; set; }
 
     public string UserId { get; set; } = null!;
+
+    public int Status { get; set; }
 
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 

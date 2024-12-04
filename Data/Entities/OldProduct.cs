@@ -13,6 +13,8 @@ public partial class OldProduct
 
     public string BillBillId { get; set; } = null!;
 
+    public decimal Price { get; set; }
+
     public virtual Bill BillBill { get; set; } = null!;
 
     public virtual Product ProductProduct { get; set; } = null!;

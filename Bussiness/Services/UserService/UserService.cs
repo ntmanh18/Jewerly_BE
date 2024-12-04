@@ -50,7 +50,8 @@ namespace Bussiness.Services.UserService
             };
 
             var decodeModel = _token.decode(token);
-            
+
+
             var existingUser = await _userRepo.GetByIdAsync(decodeModel.userid);
             bool isMatch = HashPass.VerifyPassword(model.OldPassword, existingUser.Password);
             if (!isMatch)
@@ -60,12 +61,15 @@ namespace Bussiness.Services.UserService
                 res.Message = "Old password is wrong";
                 return res;
             }
-            try {
+
+            try
+            {
 
                 string hashNewPassword = HashPass.HashPassword(model.NewPassword);
                 existingUser.Password = hashNewPassword;
                 await _userRepo.Update(existingUser);
-                
+
+
                 res.IsSuccess = true;
                 res.Code = 200;
                 res.Message = "Change password succesfully";
@@ -81,6 +85,7 @@ namespace Bussiness.Services.UserService
 
 
         }
+
 
         public async Task<ResultModel> CreateUser(string token, CreateUserReqModel model)
         {
@@ -102,8 +107,23 @@ namespace Bussiness.Services.UserService
 
                 return res;
             }
+            var users = await _userRepo.GetAllUserQuery();
+            var existPhone = users.Where(x => x.Phone == model.Phone).FirstOrDefault();
+            if (existPhone != null) {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Phone number has existed";
+                return res;
+            }
+            if (model.Phone.Length != 10)
+            {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Phone number lenghth must be 10";
+                return res;
+            }
             var isPhoneValid = await _userValidate.IsPhoneValid(model.Phone);
-            if (isPhoneValid != null) { return isPhoneValid; }
+            if (isPhoneValid.IsSuccess == false) { return isPhoneValid; }
             if (!(model.Role == 1 || model.Role == 2 || model.Role == 3))
             {
 
@@ -174,7 +194,8 @@ namespace Bussiness.Services.UserService
                     Message = "User doesn't exist"
                 };
             }
-             if(existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
+           
+            if (existingUser.Status == true) { existingUser.Status = false; } else { existingUser.Status = true; }
             try
             {
                 var result = await _userRepo.Update(existingUser);
@@ -223,7 +244,9 @@ namespace Bussiness.Services.UserService
 
                 return res;
             }
-            if(!(model.Role ==1 || model.Role ==2 || model.Role == 3)) {
+
+            if (!(model.Role == 1 || model.Role == 2 || model.Role == 3))
+            {
 
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
@@ -286,7 +309,8 @@ namespace Bussiness.Services.UserService
 
                 return res;
             }
-            var existingUser =await _userRepo.GetByIdAsync(decodeModel.userid);
+            var existingUser = await _userRepo.GetByIdAsync(decodeModel.userid);
+
             if (existingUser == null)
             {
                 return new ResultModel
@@ -298,139 +322,182 @@ namespace Bussiness.Services.UserService
                 };
             }
             var isPhoneValid = await _userValidate.IsPhoneValid(model.Phone);
-            
-            if(model.Username.Length > 0)
+
+
+            if (model.Username.Length > 0)
             {
                 existingUser.Username = model.Username;
             }
 
-            if (model.DoB.HasValue)
+            if (2024 - model.DateOfBirth.Year > 50 || 2024 - model.DateOfBirth.Year < 18)
             {
-                var date = model.DoB.Value.ToShortDateString();
-                existingUser.DoB = DateOnly.Parse(date);
-            }
-            else
-            {
-                existingUser.DoB = existingUser.DoB;
-            }
-            if (model.Address.Length > 0) { existingUser.Address = model.Address; }
-            if(model.FullName.Length > 0) { existingUser.FullName  = model.FullName; }
-            if(isPhoneValid == null) { existingUser.Phone = model.Phone; }
-            
-            try
-            {
-                _userRepo.Update(existingUser);
-                return new ResultModel
-                {
-                    IsSuccess = true,
-                    Code = (int)HttpStatusCode.OK,
-                    Data = existingUser,
-                    Message = "Update successfully!",
-                };
-            }
-            catch (Exception ex) {
                 return new ResultModel
                 {
                     IsSuccess = false,
-                    Code = (int)HttpStatusCode.InternalServerError,
-                    Data = existingUser,
-                    Message = ex.Message,
+                    Code = (int)HttpStatusCode.Forbidden,
+                    Data = null,
+                    Message = "Invalid DoB",
                 };
+
             }
-            
-
-
-
-
-        }
-
-        public async Task<ResultModel> ViewUserList(string token, UserQueryObject query)
-        {
-            var res = new ResultModel
+            else
             {
-                IsSuccess = true,
-                Code = (int)HttpStatusCode.OK,
-                Data = null,
-                Message = null,
-            };
+                var date = DateOnly.FromDateTime(model.DateOfBirth);
+                existingUser.DoB = date;
+            }
+            var users = await _userRepo.GetAllUserQuery();
 
-            var decodeModel = _token.decode(token);
-            var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 2, 3 });
-            if (!isValidRole)
+            if (model.Address.Length > 0) { existingUser.Address = model.Address; }
+            if (model.FullName.Length > 0) { existingUser.FullName = model.FullName; }
+            var existPhone = users.Where(x => x.Phone == model.Phone).FirstOrDefault();
+            if (existPhone != null) {
+                res.IsSuccess = false;
+                res.Code = (int)HttpStatusCode.Forbidden;
+                res.Message = "Phone number has existed";
+                return res;
+            }
+            if (model.Phone.Length != 10)
             {
                 res.IsSuccess = false;
                 res.Code = (int)HttpStatusCode.Forbidden;
-                res.Message = "You don't permission to perform this action.";
-
+                res.Message = "Phone number lenghth must be 10";
                 return res;
             }
-            var users = await _userRepo.GetAllUserQuery();
-            if(query.role != 0)
-            {
-                users = users.Where(x => x.Role == query.role).ToList();
-            }
-            if(query.status.HasValue)
-            {
-                users = users.Where(x => x.Status == query.status).ToList();
-            }
-            if (!string.IsNullOrWhiteSpace(query.name))
-            {
-                users = users.Where(x => x.FullName.Contains(query.name)).ToList();
-            }
-            if (!string.IsNullOrWhiteSpace(query.id))
-            {
-                users = users.Where(x => x.UserId.Contains(query.id)).ToList();
-            }
 
-            if (!string.IsNullOrWhiteSpace(query.sortBy))
-            {
-                if (query.sortBy.Equals("Id", StringComparison.OrdinalIgnoreCase))
-                {
-                    users= query.isDescending ? users.OrderByDescending(s => s.UserId).ToList() : users.OrderBy(s => s.UserId).ToList();
+
+            if (isPhoneValid.IsSuccess == false) {
+                    return new ResultModel
+                    {
+                        IsSuccess = false,
+                        Code = (int)HttpStatusCode.Forbidden,
+                        Data = null,
+                        Message = "Invalid phone",
+                    };
                 }
-                if (query.sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    users = query.isDescending ? users.OrderByDescending(s => s.FullName).ToList() : users.OrderBy(s => s.FullName).ToList();
+                    existingUser.Phone = model.Phone;
                 }
 
+                try
+                {
+                    _userRepo.Update(existingUser);
+                    return new ResultModel
+                    {
+                        IsSuccess = true,
+                        Code = (int)HttpStatusCode.OK,
+                        Data = existingUser,
+                        Message = "Update successfully!",
+                    };
+                }
 
+                catch (Exception ex)
+                {
+                    return new ResultModel
+                    {
+                        IsSuccess = false,
+                        Code = (int)HttpStatusCode.InternalServerError,
+                        Data = existingUser,
+                        Message = ex.Message,
+                    };
+                }
             }
 
-            ViewUserResModel user = new ViewUserResModel();
-            users.Select(s => new ViewUserResModel
+            public async Task<ResultModel> ViewUserList(string token, UserQueryObject query)
             {
-                UserId = s.UserId,
-                FullName = s.FullName,
-                Username = s.Username,
-                Role = s.Role,
-                DoB = s.DoB,
-                Phone = s.Phone,
-                Address = s.Address,
-                Status = s.Status
+                var res = new ResultModel
+                {
+                    IsSuccess = true,
+                    Code = (int)HttpStatusCode.OK,
+                    Data = null,
+                    Message = null,
+                };
+
+                var decodeModel = _token.decode(token);
+                var isValidRole = _accountService.IsValidRole(decodeModel.role, new List<int>() { 1,2, 3 });
+                if (!isValidRole)
+                {
+                    res.IsSuccess = false;
+                    res.Code = (int)HttpStatusCode.Forbidden;
+                    res.Message = "You don't permission to perform this action.";
+
+                    return res;
+                }
+                var users = await _userRepo.GetAllUserQuery();
+                if (query.role != 0)
+                    if (query.role != 0)
+                    {
+                        users = users.Where(x => x.Role == query.role).ToList();
+                    }
+                if (query.status.HasValue)
+                    if (query.status.HasValue)
+                    {
+                        users = users.Where(x => x.Status == query.status).ToList();
+                    }
+                if (!string.IsNullOrWhiteSpace(query.name))
+                {
+                    users = users.Where(x => x.FullName.Contains(query.name)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(query.id))
+                {
+                    users = users.Where(x => x.UserId.Contains(query.id)).ToList();
+                }
+
+                if (!string.IsNullOrWhiteSpace(query.sortBy))
+                {
+                    if (query.sortBy.Equals("Id", StringComparison.OrdinalIgnoreCase))
+                    {
+                        users = query.isDescending ? users.OrderByDescending(s => s.UserId).ToList() : users.OrderBy(s => s.UserId).ToList();
+                        users = query.isDescending ? users.OrderByDescending(s => s.UserId).ToList() : users.OrderBy(s => s.UserId).ToList();
+                    }
+                    if (query.sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                    {
+                        users = query.isDescending ? users.OrderByDescending(s => s.FullName).ToList() : users.OrderBy(s => s.FullName).ToList();
+                    }
 
 
-            });
-               
-            
+                }
 
-            res.IsSuccess = true;
-            res.Code = (int)HttpStatusCode.OK;
-            res.Data = users;
-            return res;
-        }
+                ViewUserResModel user = new ViewUserResModel();
+                users.Select(s => new ViewUserResModel
+                {
+                    UserId = s.UserId,
+                    FullName = s.FullName,
+                    Username = s.Username,
+                    Role = s.Role,
+                    DoB = s.DoB,
+                    Phone = s.Phone,
+                    Address = s.Address,
+                    Status = s.Status
 
+
+                });
+
+
+
+
+
+                res.IsSuccess = true;
+                res.Code = (int)HttpStatusCode.OK;
+                res.Data = users;
+                return res;
+            }
+        
         private async Task<string> GenerateID()
-        {
-            var userList = await _userRepo.GetAllUser();
-            int userLength = userList.Count() + 1;
-            return "USR" + userLength.ToString();
-        }
-        private string GenerateUsername(string fullname, string id)
-        {
-            string[] nameList = fullname.Split(' ');
-            string name = nameList.Last();
-            return name + id;
-        }
+            {
+                var userList = await _userRepo.GetAllUser();
+                int userLength = userList.Count() + 1;
+                return "USR" + userLength.ToString();
+            }
+       private string GenerateUsername(string fullname, string id)
+            {
+                string[] nameList = fullname.Split(' ');
+                string name = nameList.Last();
+                return name + id;
+            }
 
+
+        }
     }
-}
+
+

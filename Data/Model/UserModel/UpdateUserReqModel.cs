@@ -14,14 +14,8 @@ namespace Data.Model.UserModel
 
         public string? FullName { get; set; } = null!;
         
-        public string? DateOfBirth { get; set; }
-        [JsonIgnore]
-        public DateTime? DoB
-        {
-            get { if (DateOfBirth.Length == 0) return null;
-                else { return DateTime.Parse(DateOfBirth, new CultureInfo("en-US")); } }
-           
-        }
+        public DateTime DateOfBirth { get; set; }
+        
 
         public string? Phone { get; set; } = null!;
 

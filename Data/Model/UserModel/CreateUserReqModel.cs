@@ -19,6 +19,6 @@ namespace Data.Model.UserModel
 
         public string Address { get; set; } = null!;
 
-        
+
     }
 }

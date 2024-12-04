@@ -13,11 +13,9 @@ public partial class Discount
 
     public DateOnly PublishDay { get; set; }
 
-    public int Amount { get; set; }
-
     public long Cost { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 
-    public virtual ICollection<Product> ProductProducts { get; set; } = new List<Product>();
+    public virtual ICollection<DiscountProduct> DiscountProducts { get; set; } = new List<DiscountProduct>();
 }

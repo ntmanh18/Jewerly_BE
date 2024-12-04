@@ -19,7 +19,7 @@ namespace Data.Repository.GenericRepo
             _entities = context.Set<T>();
         }
 
-        public async Task<T?> Get(Guid id)
+        public async Task<T?> Get(string id)
         {
             return await _entities.FindAsync(id.ToString());
         }
@@ -66,6 +66,13 @@ namespace Data.Repository.GenericRepo
         public async Task<bool> UpdateRange(List<T> entities)
         {
             _entities.UpdateRange(entities);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveRange(List<T> entities)
+        {
+            _entities.RemoveRange(entities);
             await context.SaveChangesAsync();
             return true;
         }

@@ -17,6 +17,8 @@ public partial class Voucher
 
     public string CustomerCustomerId { get; set; } = null!;
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
     public virtual User CreatedByNavigation { get; set; } = null!;

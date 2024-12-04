@@ -20,10 +20,12 @@ namespace API.Controllers
         [Route("create-user")]
         [HttpPost]
         
-        public async Task<IActionResult> CreateUser([FromBody]CreateUserReqModel userModel)
+
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserReqModel userModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             var res = await _userService.CreateUser(token,userModel);
+           
             return StatusCode(res.Code, res);
         }
 

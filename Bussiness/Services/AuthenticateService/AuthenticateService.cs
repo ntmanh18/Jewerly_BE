@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Bussiness.Services.AuthenticateService
 {
     public class AuthenticateService :IAuthenticateService
+ 
     {
         private readonly JwtSecurityTokenHandler _tokenHandler;
         private readonly IConfiguration _config;
@@ -20,7 +21,6 @@ namespace Bussiness.Services.AuthenticateService
         {
             _config = config;
             _tokenHandler = new JwtSecurityTokenHandler();
-
         }
 
         public string decodeToken(string jwtToken, string nameClaim)

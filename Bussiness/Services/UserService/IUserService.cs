@@ -17,5 +17,6 @@ namespace Bussiness.Services.UserService
         Task<ResultModel> ViewUserList(string token, UserQueryObject query);
         Task<ResultModel> ChangePassword(string token, ChangePasswordModel model);
         
+
     }
 }
